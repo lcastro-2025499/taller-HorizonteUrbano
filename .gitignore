@@ -1,0 +1,55 @@
+# ==========================================
+# Archivos compilados de Java
+# ==========================================
+*.class
+*.jar
+*.war
+*.ear
+*.log
+hs_err_pid*
+
+# ==========================================
+# Carpetas de compilación (según tu IDE)
+# ==========================================
+build/
+dist/
+
+# ==========================================
+# Configuraciones de IDEs
+# ==========================================
+nbproject/private/
+nbbuild/
+nbdist/
+
+# ==========================================
+# JavaFX / Scene Builder
+# ==========================================
+*.fxml~
+*.bak
+
+# ==========================================
+# SQL y Bases de Datos
+# ==========================================
+*.db
+*.sqlite
+*.sqlite3
+*.sql.bak
+*.dump
+
+# ==========================================
+# Credenciales
+# ==========================================
+config.properties
+credentials.properties
+.env
+*.env.local
+src/org/horizonteurbano/system/config/Enviroment.java
+
+# ==========================================
+# Archivos basura del Sistema Operativo
+# ==========================================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+/HorizonteUrbanoIn4am/nbproject/private/
