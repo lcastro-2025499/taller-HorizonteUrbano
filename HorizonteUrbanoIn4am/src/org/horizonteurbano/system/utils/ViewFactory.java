@@ -35,7 +35,7 @@ public class ViewFactory {
             Stage stage = new Stage();
             stage.setTitle("LOGIN - Horizonte Urbano");
             stage.setResizable(false);
-            Scene scene = loadFileFXML("LoginView.fxml", 500, 550);
+            Scene scene = loadFileFXML("LoginView.fxml", 600, 400);
             stage.setScene(scene);
             stage.show();
         } catch (NullPointerException nullObject) {
@@ -48,7 +48,7 @@ public class ViewFactory {
             Stage stage = new Stage();
             stage.setTitle("DASHBOARD - Horizonte Urbano");
             stage.setResizable(true);
-            Scene scene = loadFileFXML("DashboardView.fxml", 800, 600);
+            Scene scene = loadFileFXML("DashboardView.fxml", 600, 500);
             stage.setScene(scene);
             stage.show();
         } catch (NullPointerException nullObject) {
