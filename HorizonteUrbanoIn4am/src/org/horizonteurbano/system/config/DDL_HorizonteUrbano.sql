@@ -3,405 +3,404 @@ create database HorizonteUrbano_in4am;
 use HorizonteUrbano_in4am;
 
 create table Role(
-    id_role int not null,
-    name_role varchar(40) not null,
-    active boolean not null default true,
-    constraint pk_role primary key (id_role)
+    id_role INT NOT NULL,
+    name_role VARCHAR(40) NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    CONSTRAINT pk_role PRIMARY KEY (id_role)
 );
 
 create table PropertyType(
-    id_property_type int not null,
-    type_name varchar(20) not null,
-    active boolean not null default true,
-    constraint pk_property_type primary key (id_property_type)
+    id_property_type INT NOT NULL,
+    type_name VARCHAR(20) NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    CONSTRAINT pk_property_type PRIMARY KEY (id_property_type)
 );
 
 create table State(
-    id_state int not null,
-    state_name varchar(20) not null,
-    active boolean not null default true,
-    constraint pk_state primary key (id_state)
+    id_state INT NOT NULL,
+    state_name VARCHAR(20) NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    CONSTRAINT pk_state PRIMARY KEY (id_state)
 );
 
 create table Users(
-    id_user varchar(36) not null,
-    name varchar(40) not null,
-    last_name varchar(40) not null,
-    password varchar(80) not null,
-    email varchar(40) not null,
-    user_name varchar(30) not null,
-    active boolean not null default true,
-    id_role int not null,
-    constraint pk_users primary key (id_user),
-    constraint uk_users_email unique (email),
-    constraint uk_users_user_name unique (user_name),
-    constraint fk_users_role foreign key (id_role)
-        references Role(id_role) on delete restrict on update cascade
+    id_user VARCHAR(36) NOT NULL,
+    name VARCHAR(40) NOT NULL,
+    last_name VARCHAR(40) NOT NULL,
+    password VARCHAR(80) NOT NULL,
+    email VARCHAR(40) NOT NULL,
+    user_name VARCHAR(30) NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    id_role INT NOT NULL,
+    CONSTRAINT pk_users PRIMARY KEY (id_user),
+    CONSTRAINT uk_users_email UNIQUE (email),
+    CONSTRAINT uk_users_user_name UNIQUE (user_name),
+    CONSTRAINT fk_users_role FOREIGN KEY (id_role)
+        REFERENCES Role(id_role) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 create table Properties(
-    id_property int not null,
-    internal_code varchar(20) not null,
-    address varchar(35) not null,
-    area_m2 float not null check (area_m2 > 0), 
-    price decimal(10,2) not null check (price > 0), 
-    active boolean not null default true,
-    date_register datetime default current_timestamp not null,
-    update_date datetime not null default current_timestamp on update current_timestamp,
-    cover_url varchar(255) not null,
-    id_state int not null,
-    id_user varchar(36) not null,
-    id_property_type int not null,
-    constraint pk_properties primary key (id_property),
-    constraint uk_properties_internal_code unique (internal_code),
-    constraint fk_properties_state foreign key (id_state)
-        references State(id_state) on delete restrict on update cascade,
-    constraint fk_properties_user foreign key (id_user)
-        references Users(id_user) on delete restrict on update cascade,
-    constraint fk_properties_type foreign key (id_property_type)
-        references PropertyType(id_property_type) on delete restrict on update cascade
+    id_property INT NOT NULL,
+    internal_code VARCHAR(20) NOT NULL,
+    address VARCHAR(35) NOT NULL,
+    area_m2 FLOAT NOT NULL CHECK (area_m2 > 0), 
+    price DECIMAL(10,2) NOT NULL CHECK (price > 0), 
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    date_register DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    update_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    cover_url VARCHAR(255) NOT NULL,
+    id_state INT NOT NULL,
+    id_user VARCHAR(36) NOT NULL,
+    id_property_type INT NOT NULL,
+    CONSTRAINT pk_properties PRIMARY KEY (id_property),
+    CONSTRAINT uk_properties_internal_code UNIQUE (internal_code),
+    CONSTRAINT fk_properties_state FOREIGN KEY (id_state)
+        REFERENCES State(id_state) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_properties_user FOREIGN KEY (id_user)
+        REFERENCES Users(id_user) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_properties_type FOREIGN KEY (id_property_type)
+        REFERENCES PropertyType(id_property_type) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 create table PropertyImages(
-    id_image int not null auto_increment,
-    id_property int not null,
-    images_url varchar(255) not null,
-    constraint pk_property_images primary key (id_image),
-    constraint fk_property_images_property foreign key (id_property)
-        references Properties(id_property) on delete cascade on update cascade
+    id_image INT NOT NULL AUTO_INCREMENT,
+    id_property INT NOT NULL,
+    images_url VARCHAR(255) NOT NULL,
+    CONSTRAINT pk_property_images PRIMARY KEY (id_image),
+    CONSTRAINT fk_property_images_property FOREIGN KEY (id_property)
+        REFERENCES Properties(id_property) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-----------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------
 # CREATE USER
-delimiter $$
-create procedure sp_create_user(in name_p varchar(40),
-                                in last_name_p varchar(40),
-                                in password_p varchar(80),
-                                in email_p varchar(40),
-                                in user_name_p varchar(30),
-                                in active_p boolean,
-                                in id_role_p int)
-begin
-    insert into Users (id_user, name, last_name, password, email, user_name, active, id_role)
-    values (uuid(), name_p, last_name_p, password_p, email_p, user_name_p, active_p, id_role_p);
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_create_user(IN name_p VARCHAR(40),
+									IN last_name_p VARCHAR(40),
+									IN password_p VARCHAR(80),
+									IN email_p VARCHAR(40),
+									IN user_name_p VARCHAR(30),
+									IN active_p BOOLEAN,
+									IN id_role_p INT)
+		begin
+			insert into Users (id_user, name, last_name, password, email, user_name, active, id_role)
+			values (uuid(), name_p, last_name_p, password_p, email_p, user_name_p, active_p, id_role_p);
+		end $$
+DELIMITER ;
 
 # READ USERS
-delimiter $$
-create procedure sp_read_users()
-begin
-    select id_user, name, last_name, email, user_name, active, id_role
-    from Users
-    where active = true;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_read_users()
+	begin
+		select id_user, name, last_name, email, user_name, active, id_role
+		from Users
+		where active = true;
+	end $$
+DELIMITER ;
 
 # READ USER BY ID
-delimiter $$
-create procedure sp_read_userid(in id_user_p varchar(36))
-begin
-    select id_user, name, last_name, email, user_name, active, id_role
-    from Users
-    where id_user = id_user_p;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_read_userid(IN id_user_p VARCHAR(36))
+	begin
+		select id_user, name, last_name, email, user_name, active, id_role
+		from Users
+		where id_user = id_user_p;
+	end $$
+DELIMITER ;
 
 # UPDATE USER
-delimiter $$
-create procedure sp_update_user(in id_user_p varchar(36),
-                                in name_p varchar(40),
-                                in last_name_p varchar(40),
-                                in password_p varchar(80),
-                                in email_p varchar(40),
-                                in user_name_p varchar(30),
-                                in active_p boolean,
-                                in id_role_p int)
-begin
-    update Users
-    set
-        name = name_p,
-        last_name = last_name_p,
-        password = password_p,
-        email = email_p,
-        user_name = user_name_p,
-        active = active_p,
-        id_role = id_role_p
-    where id_user = id_user_p;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_update_user(IN id_user_p VARCHAR(36),
+									IN name_p VARCHAR(40),
+									IN last_name_p VARCHAR(40),
+									IN password_p VARCHAR(80),
+									IN email_p VARCHAR(40),
+									IN user_name_p VARCHAR(30),
+									IN active_p BOOLEAN,
+									IN id_role_p INT)
+	begin
+		update Users
+		set
+			name = name_p,
+			last_name = last_name_p,
+			password = password_p,
+			email = email_p,
+			user_name = user_name_p,
+			active = active_p,
+			id_role = id_role_p
+		where id_user = id_user_p;
+	end $$
+DELIMITER ;
 
 # DELETE USER
-delimiter $$
-create procedure sp_delete_user(in id_user_p varchar(36))
-begin
-    update Users set active = false where id_user = id_user_p;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_delete_user(IN id_user_p VARCHAR(36))
+	begin
+		update Users set active = false where id_user = id_user_p;
+	end $$
+DELIMITER ;
 
 # LOGIN USER
-delimiter $$
-create procedure sp_login_user(
-    in identifier_p varchar(40),
-    in password_p varchar(80))
-begin
-    select id_user, name, last_name, email, user_name, active, id_role
-    from Users
-    where (email = identifier_p or user_name = identifier_p)
-      and password = password_p
-      and active = true;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_login_user(	IN identifier_p VARCHAR(40),
+									IN password_p VARCHAR(80))
+	begin
+		select id_user, name, last_name, email, user_name, active, id_role
+		from Users
+		where (email = identifier_p or user_name = identifier_p)
+		and password = password_p
+		and active = true;
+	end $$
+DELIMITER ;
 
-----------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------
 # CREATE PROPERTY
-delimiter $$
-create procedure sp_create_property(in id_property_p int,
-                                    in internal_code_p varchar(20),
-                                    in address_p varchar(35),
-                                    in area_m2_p float,
-                                    in price_p decimal(10,2),
-                                    in active_p boolean,
-                                    in date_register_p datetime,
-                                    in update_date_p datetime,
-                                    in cover_url_p varchar(255),
-                                    in id_state_p int,
-                                    in id_user_p varchar(36),
-                                    in id_property_type_p int)
-begin
-    insert into Properties (
-        id_property, internal_code, address, area_m2, price, active,
-        date_register, update_date, cover_url, id_state, id_user, id_property_type)
-    values (
-        id_property_p, internal_code_p, address_p, area_m2_p, price_p, active_p,
-        date_register_p, update_date_p, cover_url_p, id_state_p, id_user_p, id_property_type_p);
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_create_property(IN id_property_p INT,
+										IN internal_code_p VARCHAR(20),
+										IN address_p VARCHAR(35),
+										IN area_m2_p FLOAT,
+										IN price_p DECIMAL(10,2),
+										IN active_p BOOLEAN,
+										IN date_register_p DATETIME,
+										IN update_date_p DATETIME,
+										IN cover_url_p VARCHAR(255),
+										IN id_state_p INT,
+										IN id_user_p VARCHAR(36),
+											IN id_property_type_p INT)
+	begin
+		insert into Properties (
+			id_property, internal_code, address, area_m2, price, active,
+			date_register, update_date, cover_url, id_state, id_user, id_property_type)
+		values (
+			id_property_p, internal_code_p, address_p, area_m2_p, price_p, active_p,
+			date_register_p, update_date_p, cover_url_p, id_state_p, id_user_p, id_property_type_p);
+	end $$
+DELIMITER ;
 
 # READ PROPERTIES
-delimiter $$
-create procedure sp_read_properties()
-begin
-    select * from Properties where active = true;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_read_properties()
+	begin
+		select * from Properties where active = true;
+	end $$
+DELIMITER ;
 
 # READ PROPERTY BY ID
-delimiter $$
-create procedure sp_read_propertyid(in id_property_p int)
-begin
-    select * from Properties where id_property = id_property_p;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_read_propertyid(IN id_property_p INT)
+	begin
+		select * from Properties where id_property = id_property_p;
+	end $$
+DELIMITER ;
 
 # UPDATE PROPERTY
-delimiter $$
-create procedure sp_update_property(in id_property_p int,
-                                    in internal_code_p varchar(20),
-                                    in address_p varchar(35),
-                                    in area_m2_p float,
-                                    in price_p decimal(10,2),
-                                    in active_p boolean,
-                                    in cover_url_p varchar(255),
-                                    in id_state_p int,
-                                    in id_user_p varchar(36),
-                                    in id_property_type_p int)
-begin
-    update Properties
-    set
-        internal_code = internal_code_p,
-        address = address_p,
-        area_m2 = area_m2_p,
-        price = price_p,
-        active = active_p,
-        cover_url = cover_url_p,
-        id_state = id_state_p,
-        id_user = id_user_p,
-        id_property_type = id_property_type_p
-    where id_property = id_property_p;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_update_property(IN id_property_p INT,
+										IN internal_code_p VARCHAR(20),
+										IN address_p VARCHAR(35),
+										IN area_m2_p FLOAT,
+										IN price_p DECIMAL(10,2),
+										IN active_p BOOLEAN,
+										IN cover_url_p VARCHAR(255),
+										IN id_state_p INT,
+										IN id_user_p VARCHAR(36),
+										IN id_property_type_p INT)
+	begin
+		update Properties
+		set
+			internal_code = internal_code_p,
+			address = address_p,
+			area_m2 = area_m2_p,
+			price = price_p,
+			active = active_p,
+			cover_url = cover_url_p,
+			id_state = id_state_p,
+			id_user = id_user_p,
+			id_property_type = id_property_type_p
+		where id_property = id_property_p;
+	end $$
+DELIMITER ;
 
 # DELETE PROPERTY 
-delimiter $$
-create procedure sp_delete_property(in id_property_p int)
-begin
-    update Properties set active = false where id_property = id_property_p;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_delete_property(IN id_property_p INT)
+	begin
+		update Properties set active = false where id_property = id_property_p;
+	end $$
+DELIMITER ;
 
 # SEARCH PROPERTY
-delimiter $$
-create procedure sp_search_properties(in search_text varchar(50),
-										in min_price decimal(10,2),
-										in max_price decimal(10,2),
-										in min_area float,
-										in max_area float,
-										in p_id_state int,
-										in p_id_property_type int
-)
-begin
-    select id_property, internal_code, address, area_m2, price, active, 
-           date_register, update_date, cover_url, id_state, id_user, id_property_type 
-    from Properties
-    where active = true
-      and (search_text is null or address like concat('%', search_text, '%') or internal_code like concat('%', search_text, '%'))
-      and (min_price is null or price >= min_price)
-      and (max_price is null or price <= max_price)
-      and (min_area is null or area_m2 >= min_area)
-      and (max_area is null or area_m2 <= max_area)
-      and (p_id_state is null or id_state = p_id_state)
-      and (p_id_property_type is null or id_property_type = p_id_property_type);
-end $$
-delimiter ;
-----------------------------------------------------------------------------------
+DELIMITER $$
+	create procedure sp_search_properties(IN search_text VARCHAR(50),
+											IN min_price DECIMAL(10,2),
+											IN max_price DECIMAL(10,2),
+											IN min_area FLOAT,
+											IN max_area FLOAT,
+											IN p_id_state INT,
+											IN p_id_property_type INT
+	)
+	begin
+		select id_property, internal_code, address, area_m2, price, active, 
+			   date_register, update_date, cover_url, id_state, id_user, id_property_type 
+		from Properties
+		where active = true
+		  and (search_text is null or address like concat('%', search_text, '%') or internal_code like concat('%', search_text, '%'))
+		  and (min_price is null or price >= min_price)
+		  and (max_price is null or price <= max_price)
+		  and (min_area is null or area_m2 >= min_area)
+		  and (max_area is null or area_m2 <= max_area)
+		  and (p_id_state is null or id_state = p_id_state)
+		  and (p_id_property_type is null or id_property_type = p_id_property_type);
+	end $$
+DELIMITER ;
+#----------------------------------------------------------------------------------
 # CREATE ROLE
-delimiter $$
-create procedure sp_create_role(in id_role_p int, in name_role_p varchar(40))
-begin
-    insert into Role (id_role, name_role) values (id_role_p, name_role_p);
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_create_role(IN id_role_p INT, IN name_role_p VARCHAR(40))
+	begin
+		insert into Role (id_role, name_role) values (id_role_p, name_role_p);
+	end $$
+DELIMITER ;
 
 # READ ROLES
-delimiter $$
-create procedure sp_read_roles()
-begin
-    select * from Role where active = true;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_read_roles()
+	begin
+		select * from Role where active = true;
+	end $$
+DELIMITER ;
 
 # UPDATE ROLE
-delimiter $$
-create procedure sp_update_role(in id_role_p int, in name_role_p varchar(40))
-begin
-    update Role set name_role = name_role_p where id_role = id_role_p;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_update_role(IN id_role_p INT, IN name_role_p VARCHAR(40))
+	begin
+		update Role set name_role = name_role_p where id_role = id_role_p;
+	end $$
+DELIMITER ;
 
 # DELETE ROLE
-delimiter $$
-create procedure sp_delete_role(in id_role_p int)
-begin
-    update Role set active = false where id_role = id_role_p;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_delete_role(IN id_role_p INT)
+	begin
+		update Role set active = false where id_role = id_role_p;
+	end $$
+DELIMITER ;
 
-----------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------
 # CREATE PROPERTY TYPE
-delimiter $$
-create procedure sp_create_propertytype(in id_property_type_p int, in type_name_p varchar(20))
-begin
-    insert into PropertyType (id_property_type, type_name) values (id_property_type_p, type_name_p);
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_create_propertytype(IN id_property_type_p INT, IN type_name_p VARCHAR(20))
+	begin
+		insert into PropertyType (id_property_type, type_name) values (id_property_type_p, type_name_p);
+	end $$
+DELIMITER ;
 
 # READ PROPERTY TYPES
-delimiter $$
-create procedure sp_read_propertytypes()
-begin
-    select * from PropertyType where active = true;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_read_propertytypes()
+	begin
+		select * from PropertyType where active = true;
+	end $$
+DELIMITER ;
 
 # UPDATE PROPERTY TYPE
-delimiter $$
-create procedure sp_update_propertytype(in id_property_type_p int, in type_name_p varchar(20))
-begin
-    update PropertyType set type_name = type_name_p where id_property_type = id_property_type_p;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_update_propertytype(IN id_property_type_p INT, IN type_name_p VARCHAR(20))
+	begin
+		update PropertyType set type_name = type_name_p where id_property_type = id_property_type_p;
+	end $$
+DELIMITER ;
 
 # DELETE PROPERTY TYPE
-delimiter $$
-create procedure sp_delete_propertytype(in id_property_type_p int)
-begin
-    update PropertyType set active = false where id_property_type = id_property_type_p;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_delete_propertytype(IN id_property_type_p INT)
+	begin
+		update PropertyType set active = false where id_property_type = id_property_type_p;
+	end $$
+DELIMITER ;
 
-----------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------
 # CREATE STATE
-delimiter $$
-create procedure sp_create_state(in id_state_p int, in state_name_p varchar(20))
-begin
-    insert into State (id_state, state_name) values (id_state_p, state_name_p);
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_create_state(IN id_state_p INT, IN state_name_p VARCHAR(20))
+	begin
+		insert into State (id_state, state_name) values (id_state_p, state_name_p);
+	end $$
+DELIMITER ;
 
 # READ STATES
-delimiter $$
-create procedure sp_read_states()
-begin
-    select * from State where active = true;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_read_states()
+	begin
+		select * from State where active = true;
+	end $$
+DELIMITER ;
 
 # UPDATE STATE
-delimiter $$
-create procedure sp_update_state(in id_state_p int, in state_name_p varchar(20))
-begin
-    update State set state_name = state_name_p where id_state = id_state_p;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_update_state(IN id_state_p INT, IN state_name_p VARCHAR(20))
+	begin
+		update State set state_name = state_name_p where id_state = id_state_p;
+	end $$
+DELIMITER ;
 
 # DELETE STATE 
-delimiter $$
-create procedure sp_delete_state(in id_state_p int)
-begin
-    update State set active = false where id_state = id_state_p;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_delete_state(IN id_state_p INT)
+	begin
+		update State set active = false where id_state = id_state_p;
+	end $$
+DELIMITER ;
 
-----------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------
 # CREATE PROPERTY IMAGE
-delimiter $$
-create procedure sp_create_property_image(in id_property_p int,
-                                          in images_url_p varchar(255))
-begin
-    insert into PropertyImages (id_property, images_url)
-    values (id_property_p, images_url_p);
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_create_property_image(IN id_property_p INT,
+											  IN images_url_p VARCHAR(255))
+	begin
+		insert into PropertyImages (id_property, images_url)
+		values (id_property_p, images_url_p);
+	end $$
+DELIMITER ;
 
 # READ PROPERTY IMAGES
-delimiter $$
-create procedure sp_read_property_images(in id_property_p int)
-begin
-    select id_image, id_property, images_url
-    from PropertyImages
-    where id_property = id_property_p;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_read_property_images(IN id_property_p INT)
+	begin
+		select id_image, id_property, images_url
+		from PropertyImages
+		where id_property = id_property_p;
+	end $$
+DELIMITER ;
 
 # READ PROPERTY IMAGE BY ID
-delimiter $$
-create procedure sp_read_property_image_by_id(in id_image_p int)
-begin
-    select id_image, id_property, images_url
-    from PropertyImages
-    where id_image = id_image_p;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_read_property_image_by_id(IN id_image_p INT)
+	begin
+		select id_image, id_property, images_url
+		from PropertyImages
+		where id_image = id_image_p;
+	end $$
+DELIMITER ;
 
 # UPDATE PROPERTY IMAGE
-delimiter $$
-create procedure sp_update_property_image(in id_image_p int,
-                                          in id_property_p int,
-                                          in images_url_p varchar(255))
-begin
-    update PropertyImages
-    set
-        id_property = id_property_p,
-        images_url = images_url_p
-    where id_image = id_image_p;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_update_property_image(IN id_image_p INT,
+											  IN id_property_p INT,
+											  IN images_url_p VARCHAR(255))
+	begin
+		update PropertyImages
+		set
+			id_property = id_property_p,
+			images_url = images_url_p
+		where id_image = id_image_p;
+	end $$
+DELIMITER ;
 
 # DELETE PROPERTY IMAGE 
-delimiter $$
-create procedure sp_delete_property_image(in id_image_p int)
-begin
-    delete from PropertyImages where id_image = id_image_p;
-end $$
-delimiter ;
+DELIMITER $$
+	create procedure sp_delete_property_image(IN id_image_p INT)
+	begin
+		delete from PropertyImages where id_image = id_image_p;
+	end $$
+DELIMITER ;
