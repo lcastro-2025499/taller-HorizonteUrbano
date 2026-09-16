@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../styles/LoginStyles.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../styles/LoginStyles.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controllers.LoginController">
    <children>
       <VBox alignment="TOP_CENTER" layoutX="107.0" layoutY="56.0" prefHeight="269.0" prefWidth="370.0" styleClass="glass-card">
          <children>
@@ -25,12 +25,12 @@
                   </Label>
                </children>
             </HBox>
-            <TextField alignment="CENTER" promptText="Ingrese su Email" styleClass="glass-input">
+            <TextField fx:id="txtEmail" alignment="CENTER" promptText="Ingrese su Email" styleClass="glass-input">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
-            <PasswordField alignment="CENTER" promptText="Ingrese su contaseña" styleClass="glass-input">
+            <PasswordField fx:id="txtPassword" alignment="CENTER" promptText="Ingrese su contaseña" styleClass="glass-input">
                <font>
                   <Font size="14.0" />
                </font>
@@ -55,7 +55,7 @@
                   </Hyperlink>
                </children>
             </HBox>
-            <Button mnemonicParsing="false" styleClass="login-btn" text="Ingresar ">
+            <Button mnemonicParsing="false" onAction="#btnIniciarSesion" styleClass="login-btn" text="Ingresar ">
                <font>
                   <Font size="14.0" />
                </font>
