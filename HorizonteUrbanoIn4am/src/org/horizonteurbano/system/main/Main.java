@@ -1,9 +1,9 @@
 package org.horizonteurbano.system.main;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
 import org.horizonteurbano.system.utils.SceneManager;
 import org.horizonteurbano.system.utils.ViewFactory;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
 public class Main extends Application {
 

@@ -1,22 +1,21 @@
 package org.horizonteurbano.system.utils;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.net.URL;
+import org.horizonteurbano.system.main.Main;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.horizonteurbano.system.main.Main;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.URL;
 
 public class ViewFactory {
-    
+
     private final String PATH_VIEWS = "/org/horizonteurbano/system/view/";
-    
+
     public ViewFactory() {
-        
     }
-    
+
     private Scene loadFileFXML(String nameFXML, int width, int height) {
         String pathOfFile = PATH_VIEWS + nameFXML;
         try {
@@ -29,7 +28,7 @@ public class ViewFactory {
             throw new UncheckedIOException(exception);
         }
     }
-    
+
     public void showLoginWindow() {
         try {
             Stage stage = new Stage();
