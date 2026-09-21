@@ -43,7 +43,7 @@ config.properties
 credentials.properties
 .env
 *.env.local
-src/org/horizonteurbano/system/config/Enviroment.java
+src/org/horizonteurbano/system/config/Environment.java
 
 # ==========================================
 # Archivos basura del Sistema Operativo
