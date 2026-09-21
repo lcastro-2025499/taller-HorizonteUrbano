@@ -1,0 +1,79 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 21/09/2026, 15:35:52
+    Author     : pedro
+*/
+#rootPane {
+    -fx-background-color: #3e3228;
+}
+
+#panelPrincipal {
+    -fx-background-color: rgba(0, 0, 0, 0.4);
+}
+
+#panelFormulario {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+}
+
+#panelRegistros {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-radius: 8;
+}
+
+#lblTitulo {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+#lblTituloForm {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+#lblRegistros {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+#lblCodigo, #lblTipo, #lblArea,
+#lblDireccion, #lblEstado, #lblPrecio,
+#lblDescripcion {
+    -fx-font-size: 11px;
+    -fx-text-fill: white;
+}
+
+#lblUsuario, #lblEstado {
+    -fx-font-size: 11px;
+    -fx-text-fill: white;
+}
+
+#btnLimpiar, #btnCancelar, #btnGuardar {
+    -fx-background-color: #8B7355;
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+#btnLimpiar:hover, #btnCancelar:hover, #btnGuardar:hover {
+    -fx-background-color: #a08565;
+}
+
+#listRegistros {
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-background-radius: 4;
+}
+
+#txtCodigo, #txtArea, #txtDireccion, #txtPrecio,
+#cmbTipo, #cmbEstado, #txtDescripcion {
+    -fx-background-radius: 4;
+}
