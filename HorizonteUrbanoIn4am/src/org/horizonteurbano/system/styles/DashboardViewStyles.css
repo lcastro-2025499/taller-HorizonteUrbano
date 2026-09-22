@@ -1,77 +1,148 @@
-/*
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
-*/
-/* =========================================
-              ESTILO DASHBOARD
-   ========================================= */
+
 #rootPane {
-    -fx-background-color: #3e3228;
+    -fx-background-color: linear-gradient(to bottom right, #2a1813, #472820);
 }
 
-#panelPrincipal {
-    -fx-background-color: rgba(0, 0, 0, 0.4);
+#mainPanel, #recordsPanel {
+    -fx-background-color: rgba(71, 40, 32, 0.4);
+    -fx-background-radius: 15;
+    -fx-border-color: rgba(232, 220, 200, 0.3);
+    -fx-border-radius: 15;
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 15, 0.1, 0, 5);
 }
 
-#panelFormulario {
-    -fx-background-color: rgba(255, 255, 255, 0.15);
-    -fx-background-radius: 10;
-    -fx-border-color: rgba(255, 255, 255, 0.3);
-    -fx-border-radius: 10;
-    -fx-border-width: 1;
+#formPanel {
+    -fx-background-color: rgba(232, 220, 200, 0.15);
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-width: 1.5;
 }
 
-#panelRegistros {
-    -fx-background-color: rgba(255, 255, 255, 0.1);
+.label {
+    -fx-text-fill: #E8DCC8; 
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+#lblTitle {
+    -fx-font-size: 20px;
+    -fx-text-fill: white;
+}
+
+#lblFormTitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.text-field, .text-area, .combo-box, .combo-box .list-cell {
+    -fx-background-color: rgba(255, 255, 255, 0.85);
     -fx-background-radius: 8;
+    -fx-border-color: rgba(71, 40, 32, 0.4);
+    -fx-border-radius: 8;
+    -fx-text-fill: #472820;
+    -fx-padding: 5 10 5 10;
 }
 
-#lblTitulo {
-    -fx-font-size: 18px;
+.text-area {
+    -fx-padding: 5;
+}
+
+.text-area .content {
+    -fx-background-color: transparent;
+}
+
+.text-field:focused, .text-area:focused, .combo-box:focused {
+    -fx-border-color: #349626;
+    -fx-border-width: 2;
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+}
+
+.button {
+    -fx-background-color: rgba(232, 220, 200, 0.8);
+    -fx-text-fill: #472820;
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-radius: 8;
     -fx-font-weight: bold;
-    -fx-text-fill: white;
-}
-
-#lblTituloForm {
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
-}
-
-#lblRegistros {
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
-}
-
-#lblCodigo, #lblTipo, #lblArea, #lblDireccion, 
-#lblEstado, #lblPrecio, #lblDescripcion {
-    -fx-font-size: 11px;
-    -fx-text-fill: white;
-}
-
-#lblUsuario, #lblEstado {
-    -fx-font-size: 11px;
-    -fx-text-fill: white;
-}
-
-#btnLimpiar, #btnCancelar, #btnGuardar {
-    -fx-background-color: #8B7355;
-    -fx-text-fill: white;
-    -fx-background-radius: 4;
+    -fx-padding: 8 15 8 15;
     -fx-cursor: hand;
 }
 
-#btnLimpiar:hover, #btnCancelar:hover, #btnGuardar:hover {
-    -fx-background-color: #a08565;
+.button:hover {
+    -fx-background-color: #E8DCC8;
+    -fx-effect: dropshadow(gaussian, rgba(232, 220, 200, 0.5), 10, 0, 0, 0);
 }
 
-#listRegistros {
-    -fx-background-color: rgba(255, 255, 255, 0.9);
-    -fx-background-radius: 4;
+#btnSave {
+    -fx-background-color: rgba(52, 150, 38, 0.85);
+    -fx-text-fill: #E8DCC8;
 }
 
-#txtCodigo, #txtArea, #txtDireccion, #txtPrecio,
-#cmbTipo, #cmbEstado, #txtDescripcion {
-    -fx-background-radius: 4;
+#btnSave:hover {
+    -fx-background-color: rgba(52, 150, 38, 1.0);
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(52, 150, 38, 0.5), 10, 0, 0, 0);
+}
+
+#listRecords {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(232, 220, 200, 0.3);
+    -fx-border-radius: 10;
+    -fx-padding: 1;
+}
+
+#listRecords .list-cell {
+    -fx-background-color: rgba(232, 220, 200, 0.6);
+    -fx-text-fill: #472820;
+    -fx-font-weight: normal;
+}
+
+#listRecords .list-cell:odd {
+    -fx-background-color: rgba(232, 220, 200, 0.45);
+}
+
+#listRecords .list-cell:selected {
+    -fx-background-color: rgba(52, 150, 38, 0.7);
+    -fx-text-fill: white;
+}
+
+#listRecords .virtual-flow .corner, 
+#listRecords .virtual-flow .scroll-bar {
+    -fx-background-color: transparent;
+}
+
+#footerBox {
+    -fx-border-color: rgba(232, 220, 200, 0.3) transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 10 0 0 0;
+}
+
+.hyperlink {
+    -fx-text-fill: #E8DCC8; 
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-weight: bold;
+    -fx-underline: false; 
+    -fx-border-color: transparent;
+    -fx-padding: 5 10 5 10;
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+}
+
+.hyperlink:hover {
+    -fx-text-fill: #349626;
+    -fx-underline: true;
+    -fx-effect: dropshadow(gaussian, rgba(52, 150, 38, 0.4), 8, 0, 0, 0);
+}
+
+.hyperlink:pressed, .hyperlink:visited {
+    -fx-text-fill: rgba(232, 220, 200, 0.7); 
+    -fx-underline: false;
+}
+
+.hyperlink:focused {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
 }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -15,9 +14,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="mainContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="mainContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="490.0" prefWidth="610.0" stylesheets="@../styles/RegisterStyles.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox layoutX="233.0" layoutY="14.0" prefHeight="461.0" prefWidth="351.0" spacing="12.0" styleClass="glass-card">
+      <VBox layoutX="250.0" layoutY="15.0" prefHeight="465.0" prefWidth="340.0" spacing="5.0" styleClass="glass-card" AnchorPane.topAnchor="14.0">
          <children>
             <Label alignment="CENTER" prefHeight="450.0" prefWidth="350.0" styleClass="title-label" text="Registro">
                <font>
@@ -32,7 +31,7 @@
                   <Insets bottom="10.0" />
                </VBox.margin>
             </TextField>
-            <TextField alignment="CENTER" promptText="Ingrese email" styleClass="glass-input">
+            <TextField alignment="CENTER" promptText="Ingrese su email" styleClass="glass-input">
                <VBox.margin>
                   <Insets bottom="10.0" />
                </VBox.margin>
@@ -47,21 +46,21 @@
                   <Insets bottom="10.0" />
                </VBox.margin>
             </PasswordField>
-            <CheckBox mnemonicParsing="false" styleClass="glass-checkbox" text="Acepta Terminos &amp; Condiciones">
+            <CheckBox alignment="CENTER" mnemonicParsing="false" styleClass="glass-checkbox" text="Acepta Terminos &amp; Condiciones">
                <VBox.margin>
-                  <Insets bottom="15.0" left="25.0" />
+                  <Insets bottom="5.0" left="25.0" top="15.0" />
                </VBox.margin>
             </CheckBox>
-            <Button mnemonicParsing="false" styleClass="login-btn" text="Registrarse">
+            <Button alignment="CENTER" mnemonicParsing="false" styleClass="login-btn" text="Registrarse">
                <VBox.margin>
-                  <Insets left="75.0" />
+                  <Insets left="80.0" />
                </VBox.margin>
             </Button>
             <HBox prefHeight="113.0" prefWidth="203.0">
                <children>
-                  <Hyperlink styleClass="glass-link" text="¿Ya tienes cuenta? Inicia sesión">
+                  <Hyperlink alignment="CENTER" styleClass="glass-link" text="¿Ya tienes cuenta? Inicia sesión">
                      <HBox.margin>
-                        <Insets left="35.0" top="15.0" />
+                        <Insets left="35.0" top="10.0" />
                      </HBox.margin>
                   </Hyperlink>
                </children>
@@ -74,14 +73,10 @@
             <Insets bottom="100.0" />
          </padding>
       </VBox>
-      <ImageView fx:id="logoImage" fitHeight="200.0" fitWidth="200.0" layoutX="8.0" layoutY="90.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="logoImage" fitHeight="200.0" fitWidth="200.0" layoutX="20.0" layoutY="140.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@logoImage.png" />
+            <Image url="@../resources/logoImage.png" />
          </image>
       </ImageView>
    </children>
-   <styleClass>
-      <String fx:value="org.horizonteurbano.system.controller.RegisterController" />
-      <String fx:value="root" />
-   </styleClass>
 </AnchorPane>
