@@ -2,10 +2,9 @@
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
 */
-/* 
-    Created on : 21/09/2026, 15:48:25
-    Author     : pedro
-*/
+/* =========================================
+                ESTILO SEARCH
+   ========================================= */
 #rootPane {
     -fx-background-color: #3e3228;
 }
@@ -22,7 +21,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-border-width: 1;
 }
 
-
 #lblTitulo {
     -fx-font-size: 18px;
     -fx-font-weight: bold;
@@ -33,7 +31,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-font-size: 12px;
     -fx-text-fill: white;
 }
-
 
 #lblTipo, #lblEstado, #lblPrecio {
     -fx-font-size: 11px;

@@ -24,17 +24,6 @@ public class ConnectionDB {
         }
     }
 
-    public static ConnectionDB getInstanceConnectionDB() {
-        if (instanceConnectionDB == null) {
-            instanceConnectionDB = new ConnectionDB();
-        }
-        return instanceConnectionDB;
-    }
-
-    public Connection getConnection() {
-        return connection;
-    }
-
     public void closeConnection() {
         if (connection != null) {
             try {
@@ -45,5 +34,16 @@ public class ConnectionDB {
                 sqlException.printStackTrace();
             }
         }
+    }
+
+    public static ConnectionDB getInstanceConnectionDB() {
+        if (instanceConnectionDB == null) {
+            instanceConnectionDB = new ConnectionDB();
+        }
+        return instanceConnectionDB;
+    }
+
+    public Connection getConnection() {
+        return connection;
     }
 }

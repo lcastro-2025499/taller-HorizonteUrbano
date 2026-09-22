@@ -1,13 +1,10 @@
 /*
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
-*/
-
-   
+*/   
 /* =========================================
-   ESTILO REGISTRO (LETRAS MÁS GRANDES Y CLARAS)
+                ESTILO REGISTER
    ========================================= */
-
 /* Fondo base */
 .root {
     -fx-background-color: linear-gradient(to bottom right, #E3D8C8 0%, #A4AD8F 50%, #6E8354 100%);

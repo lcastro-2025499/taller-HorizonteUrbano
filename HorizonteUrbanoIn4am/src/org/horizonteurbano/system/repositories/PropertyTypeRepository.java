@@ -16,13 +16,13 @@ public class PropertyTypeRepository {
         String query = "SELECT * FROM PropertyType";
         
         try (Connection conn = ConnectionDB.getInstanceConnectionDB().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query);
-             ResultSet rs = pstmt.executeQuery()) {
+             PreparedStatement preparedStmt = conn.prepareStatement(query);
+             ResultSet resultSet = preparedStmt.executeQuery()) {
             
-            while (rs.next()) {
+            while (resultSet.next()) {
                 PropertyType type = new PropertyType();
-                type.setIdType(rs.getInt("id_type")); 
-                type.setNameType(rs.getString("name_type"));
+                type.setIdType(resultSet.getInt("id_type")); 
+                type.setNameType(resultSet.getString("name_type"));
                 types.add(type);
             }
         } catch (SQLException e) {

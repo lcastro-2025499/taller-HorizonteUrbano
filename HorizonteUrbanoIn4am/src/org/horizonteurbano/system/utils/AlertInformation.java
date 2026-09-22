@@ -9,7 +9,6 @@ public class AlertInformation {
     }
 
     public void viewAlert(int alertType, String title, String message, String header) {
-
         AlertType alertTypeToShow = AlertType.NONE;
 
         switch (alertType) {

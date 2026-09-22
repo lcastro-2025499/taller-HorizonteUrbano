@@ -21,9 +21,9 @@ public class Property {
     }
 
     public Property(int idProperty, String internalCode, PropertyType type, String address,
-            State state, double area, double price, boolean active,
-            LocalDateTime dateRegister, LocalDateTime updateDate,
-            String imageUrl, String idUser) {
+            State state, double area, double price, boolean active, LocalDateTime dateRegister,
+            LocalDateTime updateDate, String imageUrl, String idUser) {
+
         this.idProperty = idProperty;
         this.internalCode = internalCode;
         this.type = type;

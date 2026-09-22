@@ -15,14 +15,14 @@ public class StateRepository {
         List<State> states = new ArrayList<>();
         String query = "SELECT * FROM State";
         
-        try (Connection conn = ConnectionDB.getInstanceConnectionDB().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query);
-             ResultSet rs = pstmt.executeQuery()) {
+        try (Connection connection = ConnectionDB.getInstanceConnectionDB().getConnection();
+             PreparedStatement preparedStmt = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStmt.executeQuery()) {
             
-            while (rs.next()) {
+            while (resultSet.next()) {
                 State state = new State();
-                state.setIdState(rs.getInt("id_state"));
-                state.setNameState(rs.getString("name_state"));
+                state.setIdState(resultSet.getInt("id_state"));
+                state.setNameState(resultSet.getString("name_state"));
                 states.add(state);
             }
         } catch (SQLException e) {

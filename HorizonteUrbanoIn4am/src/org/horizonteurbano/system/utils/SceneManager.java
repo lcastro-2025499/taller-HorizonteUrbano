@@ -6,16 +6,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.net.URL;
 
-/**
- * SceneManager - Scene Manager for Horizonte Urbano Handles navigation between
- * different views of the application.
- *
- * @author Your Name
- * @version 1.0
- */
 public class SceneManager {
-
-    private static SceneManager instance;
+    private static SceneManager instanceSceneManager;
     private Stage mainStage;
 
     private Scene searchScene;
@@ -29,11 +21,11 @@ public class SceneManager {
 
     }
 
-    public static SceneManager getInstance() {
-        if (instance == null) {
-            instance = new SceneManager();
+    public static SceneManager getInstanceSceneManager() {
+        if (instanceSceneManager == null) {
+            instanceSceneManager = new SceneManager();
         }
-        return instance;
+        return instanceSceneManager;
     }
 
     public void showSearchView() {

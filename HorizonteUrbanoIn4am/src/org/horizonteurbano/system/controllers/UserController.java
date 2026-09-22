@@ -1,46 +1,44 @@
 package org.horizonteurbano.system.controllers;
 
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.TextField;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.ComboBox;
-import javafx.event.ActionEvent;
-
 import org.horizonteurbano.system.models.User;
 import org.horizonteurbano.system.models.Role;
 import org.horizonteurbano.system.repositories.UserRepository;
 import org.horizonteurbano.system.repositories.RoleRepository;
 import org.horizonteurbano.system.utils.AlertInformation;
+import javafx.scene.control.TextField;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.ComboBox;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.event.ActionEvent;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class UserController implements Initializable {
 
     @FXML
-    private TextField textFieldIdUser;
+    private TextField txtIdUser;
     @FXML
-    private TextField textFieldName;
+    private TextField txtName;
     @FXML
-    private TextField textFieldLastName;
+    private TextField txtLastName;
     @FXML
-    private TextField textFieldEmail;
+    private TextField txtEmail;
     @FXML
-    private TextField textFieldPhone;
+    private TextField txtPhone;
     @FXML
-    private PasswordField passwordFieldPassword;
+    private PasswordField pwdPassword;
     @FXML
-    private ComboBox<String> comboBoxRole;
+    private ComboBox<String> cmbRole;
 
     private UserRepository userRepository;
     private RoleRepository roleRepository;
-    private AlertInformation alerta;
+    private AlertInformation alert;
 
     public UserController() {
         this.userRepository = new UserRepository();
         this.roleRepository = new RoleRepository();
-        this.alerta = new AlertInformation();
+        this.alert = new AlertInformation();
     }
 
     @Override
@@ -59,38 +57,41 @@ public class UserController implements Initializable {
     public void createUser(ActionEvent event) {
         try {
             User newUser = new User();
-            newUser.setIdUser(textFieldIdUser.getText());
-            newUser.setName(textFieldName.getText());
-            newUser.setLastName(textFieldLastName.getText());
-            newUser.setEmail(textFieldEmail.getText());
-            newUser.setPhone(textFieldPhone.getText());
-            newUser.setPassword(passwordFieldPassword.getText());
+            newUser.setIdUser(txtIdUser.getText());
+            newUser.setName(txtName.getText());
+            newUser.setLastName(txtLastName.getText());
+            newUser.setEmail(txtEmail.getText());
+            newUser.setPhone(txtPhone.getText());
+            newUser.setPassword(pwdPassword.getText());
 
             Role role = new Role();
-            role.setIdRole(comboBoxRole.getSelectionModel().getSelectedIndex() + 1);
+            role.setIdRole(cmbRole.getSelectionModel().getSelectedIndex() + 1);
             newUser.setRol(role);
 
             newUser.setActive(true);
-
+            
+            //1 = SUCCESS
+            //2 = ERROR
+            //3 = CRITICAL ERROR
             if (userRepository.saveUser(newUser)) {
-                alerta.viewAlert(1, "Éxito", "Usuario registrado correctamente en el sistema.", null);
-                limpiarCampos();
+                alert.viewAlert(1, "Éxito", "Usuario registrado correctamente en el sistema.", null);
+                clearFields();
             } else {
-                alerta.viewAlert(3, "Error", "No se pudo registrar al usuario. Verifica los datos.", null);
+                alert.viewAlert(3, "Error", "No se pudo registrar al usuario. Verifica los datos.", null);
             }
         } catch (Exception e) {
-            alerta.viewAlert(3, "Error Crítico", "Ocurrió un problema al procesar los datos.", null);
+            alert.viewAlert(3, "Error Crítico", "Ocurrió un problema al procesar los datos.", null);
         }
     }
 
-    private void limpiarCampos() {
-        textFieldIdUser.clear();
-        textFieldName.clear();
-        textFieldLastName.clear();
-        textFieldEmail.clear();
-        textFieldPhone.clear();
-        passwordFieldPassword.clear();
-        comboBoxRole.getSelectionModel().clearSelection();
+    private void clearFields() {
+        txtIdUser.clear();
+        txtName.clear();
+        txtLastName.clear();
+        txtEmail.clear();
+        txtPhone.clear();
+        pwdPassword.clear();
+        cmbRole.getSelectionModel().clearSelection();
     }
 
     @FXML

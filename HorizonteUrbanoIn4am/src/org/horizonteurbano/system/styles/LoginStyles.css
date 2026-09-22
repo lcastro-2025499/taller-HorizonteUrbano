@@ -2,14 +2,12 @@
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
 */
-
-
-
-
+/* =========================================
+                ESTILO LOGIN
+   ========================================= */
 .root {
     -fx-background-color: linear-gradient(to bottom right, #E3D8C8 0%, #A4AD8F 50%, #6E8354 100%);
 }
-
 
 .glass-card {
     -fx-background-color: rgba(35, 45, 30, 0.52);
@@ -21,7 +19,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.35), 18, 0, 0, 6);
 }
 
-
 .title-label {
     -fx-text-fill: #ffffff;
     -fx-font-size: 30px; 
@@ -29,7 +26,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-font-family: 'Segoe UI', sans-serif;
     -fx-alignment: center;
 }
-
 
 .glass-input {
     -fx-background-color: transparent;
@@ -45,10 +41,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-border-color: transparent transparent #ffffff transparent;
 }
 
-
 .glass-checkbox {
     -fx-text-fill: rgba(255, 255, 255, 0.95);
-    -fx-font-size: 15px; /* Aumentado a 15px */
+    -fx-font-size: 15px;
 }
 
 .glass-checkbox .box {
@@ -57,11 +52,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-border-radius: 3px;
 }
 
-
 .glass-link {
     -fx-text-fill: rgba(255, 255, 255, 0.95);
     -fx-border-color: transparent;
-    -fx-font-size: 15px; /* Aumentado a 15px */
+    -fx-font-size: 15px;
     -fx-underline: false;
 }
 
@@ -69,7 +63,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-text-fill: #ffffff;
     -fx-underline: true;
 }
-
 
 .login-btn {
     -fx-background-color: #5D7343;

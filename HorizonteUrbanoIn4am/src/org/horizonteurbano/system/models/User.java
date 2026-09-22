@@ -20,6 +20,7 @@ public class User {
 
     public User(String idUser, String name, String lastName, String userName, String email,
             Role rol, String phone, String password, boolean active, LocalDateTime dateRegister) {
+
         this.idUser = idUser;
         this.name = name;
         this.lastName = lastName;

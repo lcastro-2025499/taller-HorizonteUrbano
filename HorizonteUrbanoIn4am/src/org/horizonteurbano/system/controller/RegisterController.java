@@ -1,58 +1,53 @@
 package org.horizonteurbano.system.controller;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Circle;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.fxml.Initializable;
+import javafx.fxml.FXML;
 import javafx.util.Duration;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class RegisterController implements Initializable {
 
     @FXML
-    private AnchorPane mainContainer;
-
+    private AnchorPane apMainContainer;
     @FXML
-    private ImageView logoImage;
-
+    private ImageView imgLogo;
+    
     private double angle = 0;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Carga la imagen de forma directa
         try {
             Image img = new Image(getClass().getResourceAsStream("/org/horizonteurbano/system/view/logoImage.png"));
-            if (logoImage != null && img != null) {
-                logoImage.setImage(img);
+            if (imgLogo != null && img != null) {
+                imgLogo.setImage(img);
             }
         } catch (Exception e) {
-            System.err.println("Error al cargar la imagen del logo: " + e.getMessage());
+            System.err.println("Error al cargar el logo: " + e.getMessage());
         }
 
-        // Recorte circular adaptable
-        aplicarRecorteCircular();
-
-        // Inicia animación suave del fondo
-        iniciarAnimacionDegradado();
+        applyCircularCrop();
+        startGradientAnimation();
     }
 
-    private void aplicarRecorteCircular() {
-        if (logoImage != null) {
-            double size = 160.0; // Dimensión cuadrada para el logo
-            logoImage.setFitWidth(size);
-            logoImage.setFitHeight(size);
+    private void applyCircularCrop() {
+        if (imgLogo != null) {
+            double size = 160.0; //Dimensión cuadrada para el logo
+            imgLogo.setFitWidth(size);
+            imgLogo.setFitHeight(size);
 
             Circle clip = new Circle(size / 2.0, size / 2.0, size / 2.0);
-            logoImage.setClip(clip);
+            imgLogo.setClip(clip);
         }
     }
 
-    private void iniciarAnimacionDegradado() {
+    private void startGradientAnimation() {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(35), e -> {
             angle = (angle + 0.4) % 360;
 
@@ -62,12 +57,12 @@ public class RegisterController implements Initializable {
             double endY = 50 - 50 * Math.sin(Math.toRadians(angle));
 
             String cssGradiente = String.format(
-                "-fx-background-color: linear-gradient(from %.1f%% %.1f%% to %.1f%% %.1f%%, #E3D8C8 0%%, #A4AD8F 50%%, #6E8354 100%%);",
-                startX, startY, endX, endY
+                    "-fx-background-color: linear-gradient(from %.1f%% %.1f%% to %.1f%% %.1f%%, #E3D8C8 0%%, #A4AD8F 50%%, #6E8354 100%%);",
+                    startX, startY, endX, endY
             );
 
-            if (mainContainer != null) {
-                mainContainer.setStyle(cssGradiente);
+            if (apMainContainer != null) {
+                apMainContainer.setStyle(cssGradiente);
             }
         }));
 

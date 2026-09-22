@@ -2,10 +2,9 @@
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
 */
-/* 
-    Created on : 21/09/2026, 15:35:52
-    Author     : pedro
-*/
+/* =========================================
+              ESTILO DASHBOARD
+   ========================================= */
 #rootPane {
     -fx-background-color: #3e3228;
 }
@@ -45,9 +44,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-text-fill: white;
 }
 
-#lblCodigo, #lblTipo, #lblArea,
-#lblDireccion, #lblEstado, #lblPrecio,
-#lblDescripcion {
+#lblCodigo, #lblTipo, #lblArea, #lblDireccion, 
+#lblEstado, #lblPrecio, #lblDescripcion {
     -fx-font-size: 11px;
     -fx-text-fill: white;
 }
