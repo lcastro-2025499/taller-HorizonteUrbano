@@ -133,4 +133,14 @@ public class Property {
     public void setIdUser(String idUser) {
         this.idUser = idUser;
     }
+
+    private String coverUrl;
+
+    public String getCoverUrl() {
+        return coverUrl;
+    }
+
+    public void setCoverUrl(String coverUrl) {
+        this.coverUrl = coverUrl;
+    }
 }

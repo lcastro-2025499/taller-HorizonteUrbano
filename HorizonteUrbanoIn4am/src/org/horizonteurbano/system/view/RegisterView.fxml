@@ -6,7 +6,9 @@
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -14,74 +16,93 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="mainContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="545.0" prefWidth="610.0" stylesheets="@../styles/RegisterStyles.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.RegisterController">
-   <children>
-      <VBox layoutX="250.0" layoutY="15.0" prefHeight="465.0" prefWidth="340.0" spacing="5.0" styleClass="glass-card" AnchorPane.topAnchor="14.0">
-         <children>
-            <Label alignment="CENTER" prefHeight="450.0" prefWidth="350.0" styleClass="title-label" text="Registro">
-               <font>
-                  <Font size="18.0" />
-               </font>
-               <VBox.margin>
-                  <Insets bottom="15.0" />
-               </VBox.margin>
-            </Label>
-            <TextField fx:id="txtName" alignment="CENTER" promptText="Ingrese su nombre" styleClass="glass-input">
-               <VBox.margin>
-                  <Insets bottom="10.0" />
-               </VBox.margin>
-            </TextField>
-            <TextField fx:id="txtLastName" alignment="CENTER" promptText="Ingrese su apellido" styleClass="glass-input">
-               <VBox.margin>
-                  <Insets bottom="10.0" />
-               </VBox.margin>
-            </TextField>
-            <TextField fx:id="txtEmail" alignment="CENTER" promptText="Ingrese su email" styleClass="glass-input">
-               <VBox.margin>
-                  <Insets bottom="10.0" />
-               </VBox.margin>
-            </TextField>
-            <PasswordField fx:id="pwdPassword" alignment="CENTER" promptText="Ingrese su contraseña" styleClass="glass-input">
-               <VBox.margin>
-                  <Insets bottom="10.0" />
-               </VBox.margin>
-            </PasswordField>
-            <PasswordField fx:id="pwdConfirmPassword" alignment="CENTER" promptText="Confirmar contraseña" styleClass="glass-input">
-               <VBox.margin>
-                  <Insets bottom="10.0" />
-               </VBox.margin>
-            </PasswordField>
-            <CheckBox fx:id="chkTerms" alignment="CENTER" mnemonicParsing="false" styleClass="glass-checkbox" text="Acepta Terminos &amp; Condiciones">
-               <VBox.margin>
-                  <Insets bottom="5.0" left="25.0" top="15.0" />
-               </VBox.margin>
-            </CheckBox>
-            <Button fx:id="btnRegister" alignment="CENTER" mnemonicParsing="false" onAction="#buttonRegister" styleClass="login-btn" text="Registrarse">
-               <VBox.margin>
-                  <Insets left="80.0" />
-               </VBox.margin>
-            </Button>
-            <HBox prefHeight="113.0" prefWidth="203.0">
-               <children>
-                  <Hyperlink fx:id="lnkLogin" alignment="CENTER" onAction="#goToLogin" styleClass="glass-link" text="¿Ya tienes cuenta? Inicia sesión">
-                     <HBox.margin>
-                        <Insets left="35.0" top="10.0" />
-                     </HBox.margin>
-                  </Hyperlink>
-               </children>
-            </HBox>
-         </children>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-         <padding>
-            <Insets bottom="100.0" />
-         </padding>
-      </VBox>
-      <ImageView fx:id="logoImage" fitHeight="200.0" fitWidth="200.0" layoutX="20.0" layoutY="140.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../resources/logoImage.png" />
-         </image>
-      </ImageView>
-   </children>
+<AnchorPane fx:id="apMainContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="545.0" prefWidth="610.0" stylesheets="@../styles/RegisterStyles.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.RegisterController">
+    <children>
+        <VBox layoutX="250.0" layoutY="15.0" prefHeight="465.0" prefWidth="340.0" spacing="5.0" styleClass="glass-card" AnchorPane.topAnchor="14.0">
+            <children>
+                <Label alignment="CENTER" prefWidth="340.0" styleClass="title-label" text="Registro">
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets bottom="15.0" />
+                    </VBox.margin>
+                </Label>
+                <TextField fx:id="txtName" alignment="CENTER" promptText="Ingrese su nombre" styleClass="glass-input">
+                    <VBox.margin>
+                        <Insets bottom="10.0" />
+                    </VBox.margin>
+                </TextField>
+                <TextField fx:id="txtLastName" alignment="CENTER" promptText="Ingrese su apellido" styleClass="glass-input">
+                    <VBox.margin>
+                        <Insets bottom="10.0" />
+                    </VBox.margin>
+                </TextField>
+                <TextField fx:id="txtEmail" alignment="CENTER" promptText="Ingrese su email" styleClass="glass-input">
+                    <VBox.margin>
+                        <Insets bottom="10.0" />
+                    </VBox.margin>
+                </TextField>
+                <PasswordField fx:id="pwdPassword" alignment="CENTER" promptText="Ingrese su contraseña" styleClass="glass-input">
+                    <VBox.margin>
+                        <Insets bottom="10.0" />
+                    </VBox.margin>
+                </PasswordField>
+                <PasswordField fx:id="pwdConfirmPassword" alignment="CENTER" promptText="Confirmar contraseña" styleClass="glass-input">
+                    <VBox.margin>
+                        <Insets bottom="10.0" />
+                    </VBox.margin>
+                </PasswordField>
+                <CheckBox fx:id="chkTerms" alignment="CENTER" mnemonicParsing="false" styleClass="glass-checkbox" text="Acepta Terminos &amp; Condiciones">
+                    <VBox.margin>
+                        <Insets bottom="5.0" left="25.0" top="15.0" />
+                    </VBox.margin>
+                </CheckBox>
+                <Button fx:id="btnRegister" alignment="CENTER" mnemonicParsing="false" onAction="#buttonRegister" styleClass="login-btn" text="Registrarse">
+                    <VBox.margin>
+                        <Insets left="80.0" />
+                    </VBox.margin>
+                </Button>
+                <HBox prefHeight="50.0" prefWidth="203.0">
+                    <children>
+                        <Hyperlink fx:id="lnkLogin" alignment="CENTER" onAction="#goToLogin" styleClass="glass-link" text="¿Ya tienes cuenta? Inicia sesión">
+                            <HBox.margin>
+                                <Insets left="35.0" top="10.0" />
+                            </HBox.margin>
+                        </Hyperlink>
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
+            </padding>
+        </VBox>
+        <ImageView fx:id="imgLogo" fitHeight="200.0" fitWidth="200.0" layoutX="27.0" layoutY="73.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@/org/horizonteurbano/system/resources/logoImage.png" />
+            </image>
+        </ImageView>
+        <VBox layoutX="15.0" layoutY="344.0" prefHeight="183.0" prefWidth="223.0" spacing="8.0" styleClass="glass-card">
+            <children>
+                <Label alignment="CENTER" prefWidth="193.0" styleClass="title-label" text="Elige tu rol">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets bottom="5.0" />
+                    </VBox.margin>
+                </Label>
+                <RadioButton fx:id="rdRole1" mnemonicParsing="false" text="Admin" textFill="WHITE">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="roleToggleGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="rdRole2" mnemonicParsing="false" text="Asesor" textFill="WHITE" toggleGroup="$roleToggleGroup" />
+                <RadioButton fx:id="rdRole3" mnemonicParsing="false" text="Gerente" textFill="WHITE" toggleGroup="$roleToggleGroup" />
+            </children>
+            <padding>
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+            </padding>
+        </VBox>
+    </children>
 </AnchorPane>

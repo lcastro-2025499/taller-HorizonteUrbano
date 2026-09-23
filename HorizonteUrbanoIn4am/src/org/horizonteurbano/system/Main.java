@@ -1,4 +1,4 @@
-package org.horizonteurbano.system.main;
+package org.horizonteurbano.system;
 
 import org.horizonteurbano.system.utils.SceneManager;
 import org.horizonteurbano.system.utils.ViewFactory;
