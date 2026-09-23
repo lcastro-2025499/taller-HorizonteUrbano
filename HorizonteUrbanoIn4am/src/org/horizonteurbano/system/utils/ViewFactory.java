@@ -32,7 +32,7 @@ public class ViewFactory {
     public void showLoginWindow() {
         try {
             Stage stage = new Stage();
-            stage.setTitle("LOGIN - Horizonte Urbano");
+            stage.setTitle("Login - Horizonte Urbano");
             stage.setResizable(false);
             Scene scene = loadFileFXML("LoginView.fxml", 600, 400);
             stage.setScene(scene);
@@ -45,13 +45,39 @@ public class ViewFactory {
     public void showDashboardWindow() {
         try {
             Stage stage = new Stage();
-            stage.setTitle("DASHBOARD - Horizonte Urbano");
+            stage.setTitle("Dashboard - Horizonte Urbano");
             stage.setResizable(true);
-            Scene scene = loadFileFXML("DashboardView.fxml", 600, 500);
+            Scene scene = loadFileFXML("DashboardView.fxml", 960, 680);
             stage.setScene(scene);
             stage.show();
         } catch (NullPointerException nullObject) {
             System.out.println("Error loading dashboard window");
+        }
+    }
+
+    public void showRegisterWindow() {
+        try {
+            Stage stage = new Stage();
+            stage.setTitle("Register - Horizonte Urbano");
+            stage.setResizable(false);
+            Scene scene = loadFileFXML("RegisterView.fxml", 610, 490);
+            stage.setScene(scene);
+            stage.show();
+        } catch (NullPointerException nullObject) {
+            System.out.println("Error loading register window");
+        }
+    }
+
+    public void showChangePasswordWindow() {
+        try {
+            Stage stage = new Stage();
+            stage.setTitle("Change password - Horizonte Urbano");
+            stage.setResizable(false);
+            Scene scene = loadFileFXML("ChangePasswordView.fxml", 450, 550);
+            stage.setScene(scene);
+            stage.show();
+        } catch (NullPointerException nullObject) {
+            System.out.println("Error loading change password window");
         }
     }
 

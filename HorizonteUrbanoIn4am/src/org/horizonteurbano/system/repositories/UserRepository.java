@@ -66,10 +66,19 @@ public class UserRepository {
         return null;
     }
 
-    // + getUserById(String idUser): User
-    // + getAllActiveUsers(): List
-    // + updateUser(User user): boolean
-    // + deleteUser(String idUser): boolean
-    // + getAllUsers(): List
-    // + resetPassword()
+    public boolean updatePasswordByEmail(String email, String newPassword) {
+        String query = "UPDATE Users SET password = ? WHERE email = ? AND active = true";
+        try (Connection connection = ConnectionDB.getInstanceConnectionDB().getConnection(); PreparedStatement preparedStmt = connection.prepareStatement(query)) {
+
+            String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt(12));
+            preparedStmt.setString(1, hashedPassword);
+            preparedStmt.setString(2, email);
+
+            return preparedStmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Error updating password: " + e.getMessage());
+            return false;
+        }
+    }
 }

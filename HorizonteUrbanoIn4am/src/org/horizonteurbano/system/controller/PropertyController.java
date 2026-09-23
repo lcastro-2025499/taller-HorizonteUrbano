@@ -1,4 +1,4 @@
-package org.horizonteurbano.system.controllers;
+package org.horizonteurbano.system.controller;
 
 import org.horizonteurbano.system.models.Property;
 import org.horizonteurbano.system.models.PropertyType;
