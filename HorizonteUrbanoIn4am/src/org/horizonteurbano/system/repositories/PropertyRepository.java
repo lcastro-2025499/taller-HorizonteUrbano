@@ -1,6 +1,8 @@
 package org.horizonteurbano.system.repositories;
 
 import org.horizonteurbano.system.models.Property;
+import org.horizonteurbano.system.models.PropertyType;
+import org.horizonteurbano.system.models.State;
 import org.horizonteurbano.system.config.ConnectionDB;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -28,30 +30,43 @@ public class PropertyRepository {
             return preparedStmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("Error al guardar la propiedad: " + e.getMessage());
+            System.err.println("Error saving property: " + e.getMessage());
             return false;
         }
     }
 
-    //Método para LEER (Llenar el TableView de la pantalla)
+    // Reads all columns of the table so the UI can display and edit every field
     public List<Property> getAllActiveProperties() {
         List<Property> properties = new ArrayList<>();
-        String query = "SELECT * FROM Properties WHERE active = true";
+        String query = "SELECT id_property, internal_code, address, area_m2, price, active, "
+                + "date_register, update_date, cover_url, id_state, id_user, id_property_type "
+                + "FROM Properties WHERE active = true";
 
         try (Connection connection = ConnectionDB.getInstanceConnectionDB().getConnection(); PreparedStatement preparedStmt = connection.prepareStatement(query); ResultSet resultSet = preparedStmt.executeQuery()) {
 
             while (resultSet.next()) {
                 Property property = new Property();
+                property.setIdProperty(resultSet.getInt("id_property"));
                 property.setInternalCode(resultSet.getString("internal_code"));
                 property.setAddress(resultSet.getString("address"));
                 property.setArea(resultSet.getDouble("area_m2"));
                 property.setPrice(resultSet.getDouble("price"));
                 property.setActive(resultSet.getBoolean("active"));
+                property.setCoverUrl(resultSet.getString("cover_url"));
+                property.setIdUser(resultSet.getString("id_user"));
+
+                State state = new State();
+                state.setIdState(resultSet.getInt("id_state"));
+                property.setState(state);
+
+                PropertyType type = new PropertyType();
+                type.setIdType(resultSet.getInt("id_property_type"));
+                property.setType(type);
 
                 properties.add(property);
             }
         } catch (SQLException e) {
-            System.err.println("Error al cargar propiedades: " + e.getMessage());
+            System.err.println("Error loading properties: " + e.getMessage());
         }
         return properties;
     }
@@ -71,7 +86,7 @@ public class PropertyRepository {
             return preparedStmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("Error al actualizar la propiedad: " + e.getMessage());
+            System.err.println("Error updating property: " + e.getMessage());
             return false;
         }
     }
@@ -83,7 +98,7 @@ public class PropertyRepository {
             return preparedStmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("Error al desactivar la propiedad: " + e.getMessage());
+            System.err.println("Error deactivating property: " + e.getMessage());
             return false;
         }
     }

@@ -20,11 +20,15 @@ import javafx.event.ActionEvent;
 import javafx.util.Duration;
 import javafx.stage.Stage;
 import javafx.scene.Node;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.UUID;
+import javafx.scene.control.RadioButton;
 
 public class RegisterController implements Initializable {
+
+    private static final String LOGO_PATH = "/org/horizonteurbano/system/resources/logoImage.png";
 
     @FXML
     private AnchorPane apMainContainer;
@@ -42,14 +46,18 @@ public class RegisterController implements Initializable {
     private PasswordField pwdConfirmPassword;
     @FXML
     private CheckBox chkTerms;
+    @FXML
+    private RadioButton rdRole1;
+    @FXML
+    private RadioButton rdRole2;
+    @FXML
+    private RadioButton rdRole3;
 
     private double angle = 0;
+    private Timeline gradientTimeline;
     private UserRepository userRepository;
     private AlertInformation alert;
     private ViewFactory viewFactory;
-
-    // TODO Luis: confirmar cuál id_role corresponde a un usuario auto-registrado
-    private static final int DEFAULT_ROLE_ID = 1;
 
     public RegisterController() {
         this.userRepository = new UserRepository();
@@ -59,22 +67,30 @@ public class RegisterController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        try {
-            Image img = new Image(getClass().getResourceAsStream("/org/horizonteurbano/system/view/logoImage.png"));
-            if (imgLogo != null && img != null) {
-                imgLogo.setImage(img);
-            }
-        } catch (Exception e) {
-            System.err.println("Error al cargar el logo: " + e.getMessage());
-        }
-
+        loadLogo();
         applyCircularCrop();
         startGradientAnimation();
+        stopTimelineOnClose();
+    }
+
+    private void loadLogo() {
+        if (imgLogo == null) {
+            return;
+        }
+        try (InputStream stream = getClass().getResourceAsStream(LOGO_PATH)) {
+            if (stream == null) {
+                System.err.println("Logo resource not found at: " + LOGO_PATH);
+                return;
+            }
+            imgLogo.setImage(new Image(stream));
+        } catch (Exception e) {
+            System.err.println("Error loading logo: " + e.getMessage());
+        }
     }
 
     private void applyCircularCrop() {
         if (imgLogo != null) {
-            double size = 160.0; //Dimensión cuadrada para el logo
+            double size = 160.0;
             imgLogo.setFitWidth(size);
             imgLogo.setFitHeight(size);
 
@@ -84,7 +100,10 @@ public class RegisterController implements Initializable {
     }
 
     private void startGradientAnimation() {
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(35), e -> {
+        if (apMainContainer == null) {
+            return;
+        }
+        gradientTimeline = new Timeline(new KeyFrame(Duration.millis(35), e -> {
             angle = (angle + 0.4) % 360;
 
             double startX = 50 + 50 * Math.cos(Math.toRadians(angle));
@@ -97,13 +116,27 @@ public class RegisterController implements Initializable {
                     startX, startY, endX, endY
             );
 
-            if (apMainContainer != null) {
-                apMainContainer.setStyle(cssGradiente);
-            }
+            apMainContainer.setStyle(cssGradiente);
         }));
 
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+        gradientTimeline.setCycleCount(Timeline.INDEFINITE);
+        gradientTimeline.play();
+    }
+
+    private void stopTimelineOnClose() {
+        if (apMainContainer == null) {
+            return;
+        }
+        apMainContainer.sceneProperty().addListener((obsScene, oldScene, newScene) -> {
+            if (newScene == null) {
+                return;
+            }
+            newScene.windowProperty().addListener((obsWindow, oldWindow, newWindow) -> {
+                if (newWindow != null && gradientTimeline != null) {
+                    newWindow.setOnCloseRequest(e -> gradientTimeline.stop());
+                }
+            });
+        });
     }
 
     @FXML
@@ -129,6 +162,12 @@ public class RegisterController implements Initializable {
             return;
         }
 
+        Integer selectedRoleId = getSelectedRoleId();
+        if (selectedRoleId == null) {
+            alert.viewAlert(2, "Rol no seleccionado", "Debes seleccionar un rol para continuar.", null);
+            return;
+        }
+
         User newUser = new User();
         newUser.setIdUser(UUID.randomUUID().toString());
         newUser.setName(name);
@@ -139,7 +178,7 @@ public class RegisterController implements Initializable {
         newUser.setActive(true);
 
         Role role = new Role();
-        role.setIdRole(DEFAULT_ROLE_ID);
+        role.setIdRole(selectedRoleId);
         newUser.setRol(role);
 
         //1 = SUCCESS
@@ -171,5 +210,16 @@ public class RegisterController implements Initializable {
     private void closeCurrentWindow(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
+    }
+
+    private Integer getSelectedRoleId() {
+        if (rdRole1.isSelected()) {
+            return 1; // Admin
+        } else if (rdRole2.isSelected()) {
+            return 2; // Asesor
+        } else if (rdRole3.isSelected()) {
+            return 3; // Gerente
+        }
+        return null;
     }
 }
