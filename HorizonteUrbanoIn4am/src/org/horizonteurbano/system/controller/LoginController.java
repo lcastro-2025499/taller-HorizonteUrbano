@@ -1,12 +1,15 @@
-package org.horizonteurbano.system.controllers;
+package org.horizonteurbano.system.controller;
 
 import org.horizonteurbano.system.models.User;
 import org.horizonteurbano.system.repositories.UserRepository;
 import org.horizonteurbano.system.utils.AlertInformation;
+import org.horizonteurbano.system.utils.ViewFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
+import javafx.stage.Stage;
+import javafx.scene.Node;
 
 public class LoginController {
 
@@ -17,10 +20,12 @@ public class LoginController {
 
     private UserRepository userRepository;
     private AlertInformation alert;
+    private ViewFactory viewFactory;
 
     public LoginController() {
         this.userRepository = new UserRepository();
         this.alert = new AlertInformation();
+        this.viewFactory = new ViewFactory();
     }
 
     @FXML
@@ -40,6 +45,8 @@ public class LoginController {
         if (loggedUser != null) {
             alert.viewAlert(1, "Login Exitoso", "¡Bienvenido a Horizonte Urbano, " + loggedUser.getName() + "!", null);
             clearFields();
+            closeCurrentWindow(event);
+            viewFactory.showDashboardWindow();
         } else {
             alert.viewAlert(3, "Acceso Denegado", "Correo o contraseña incorrectos, o cuenta inactiva.", null);
         }
@@ -48,6 +55,23 @@ public class LoginController {
     @FXML
     public void buttonLogout(ActionEvent event) {
         alert.viewAlert(1, "Sesión Cerrada", "Has cerrado sesión correctamente.", null);
+    }
+
+    @FXML
+    public void goToRegister(ActionEvent event) {
+        closeCurrentWindow(event);
+        viewFactory.showRegisterWindow();
+    }
+
+    @FXML
+    public void goToChangePassword(ActionEvent event) {
+        closeCurrentWindow(event);
+        viewFactory.showChangePasswordWindow();
+    }
+
+    private void closeCurrentWindow(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.close();
     }
 
     private void clearFields() {

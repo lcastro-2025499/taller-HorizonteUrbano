@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="mainContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="490.0" prefWidth="610.0" stylesheets="@../styles/RegisterStyles.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="mainContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="545.0" prefWidth="610.0" stylesheets="@../styles/RegisterStyles.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.RegisterController">
    <children>
       <VBox layoutX="250.0" layoutY="15.0" prefHeight="465.0" prefWidth="340.0" spacing="5.0" styleClass="glass-card" AnchorPane.topAnchor="14.0">
          <children>
@@ -26,39 +26,44 @@
                   <Insets bottom="15.0" />
                </VBox.margin>
             </Label>
-            <TextField alignment="CENTER" promptText="Ingrese su nombre" styleClass="glass-input">
+            <TextField fx:id="txtName" alignment="CENTER" promptText="Ingrese su nombre" styleClass="glass-input">
                <VBox.margin>
                   <Insets bottom="10.0" />
                </VBox.margin>
             </TextField>
-            <TextField alignment="CENTER" promptText="Ingrese su email" styleClass="glass-input">
+            <TextField fx:id="txtLastName" alignment="CENTER" promptText="Ingrese su apellido" styleClass="glass-input">
                <VBox.margin>
                   <Insets bottom="10.0" />
                </VBox.margin>
             </TextField>
-            <PasswordField alignment="CENTER" promptText="Ingrese su contraseña" styleClass="glass-input">
+            <TextField fx:id="txtEmail" alignment="CENTER" promptText="Ingrese su email" styleClass="glass-input">
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </TextField>
+            <PasswordField fx:id="pwdPassword" alignment="CENTER" promptText="Ingrese su contraseña" styleClass="glass-input">
                <VBox.margin>
                   <Insets bottom="10.0" />
                </VBox.margin>
             </PasswordField>
-            <PasswordField alignment="CENTER" promptText="Confirmar contraseña" styleClass="glass-input">
+            <PasswordField fx:id="pwdConfirmPassword" alignment="CENTER" promptText="Confirmar contraseña" styleClass="glass-input">
                <VBox.margin>
                   <Insets bottom="10.0" />
                </VBox.margin>
             </PasswordField>
-            <CheckBox alignment="CENTER" mnemonicParsing="false" styleClass="glass-checkbox" text="Acepta Terminos &amp; Condiciones">
+            <CheckBox fx:id="chkTerms" alignment="CENTER" mnemonicParsing="false" styleClass="glass-checkbox" text="Acepta Terminos &amp; Condiciones">
                <VBox.margin>
                   <Insets bottom="5.0" left="25.0" top="15.0" />
                </VBox.margin>
             </CheckBox>
-            <Button alignment="CENTER" mnemonicParsing="false" styleClass="login-btn" text="Registrarse">
+            <Button fx:id="btnRegister" alignment="CENTER" mnemonicParsing="false" onAction="#buttonRegister" styleClass="login-btn" text="Registrarse">
                <VBox.margin>
                   <Insets left="80.0" />
                </VBox.margin>
             </Button>
             <HBox prefHeight="113.0" prefWidth="203.0">
                <children>
-                  <Hyperlink alignment="CENTER" styleClass="glass-link" text="¿Ya tienes cuenta? Inicia sesión">
+                  <Hyperlink fx:id="lnkLogin" alignment="CENTER" onAction="#goToLogin" styleClass="glass-link" text="¿Ya tienes cuenta? Inicia sesión">
                      <HBox.margin>
                         <Insets left="35.0" top="10.0" />
                      </HBox.margin>

@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../styles/LoginStyles.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../styles/LoginStyles.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.LoginController">
    <children>
       <VBox alignment="TOP_CENTER" layoutX="107.0" layoutY="56.0" prefHeight="269.0" prefWidth="370.0" styleClass="glass-card">
          <children>
@@ -24,7 +24,7 @@
                   </Label>
                </children>
             </HBox>
-            <TextField alignment="CENTER" promptText="Ingrese su Email" styleClass="glass-input">
+            <TextField fx:id="txtEmail" alignment="CENTER" promptText="Ingrese su Email" styleClass="glass-input">
                <font>
                   <Font size="14.0" />
                </font>
@@ -32,7 +32,7 @@
                   <Insets top="5.0" />
                </VBox.margin>
             </TextField>
-            <PasswordField alignment="CENTER" promptText="Ingrese su contaseña" styleClass="glass-input">
+            <PasswordField fx:id="pwdPassword" alignment="CENTER" promptText="Ingrese su contaseña" styleClass="glass-input">
                <font>
                   <Font size="14.0" />
                </font>
@@ -41,7 +41,7 @@
                </VBox.margin>
             </PasswordField>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="286.0" spacing="35.0" />
-            <Button mnemonicParsing="false" prefWidth="100.0" styleClass="login-btn" text="Ingresar ">
+            <Button fx:id="btnLogin" mnemonicParsing="false" onAction="#buttonLogin" prefWidth="100.0" styleClass="login-btn" text="Ingresar ">
                <font>
                   <Font size="14.0" />
                </font>
@@ -49,14 +49,14 @@
                   <Insets bottom="20.0" top="15.0" />
                </VBox.margin>
             </Button>
-            <Hyperlink prefHeight="25.0" prefWidth="170.0" styleClass="glass-link" text="¿Olvido su contraseña?">
+            <Hyperlink fx:id="lnkForgotPassword" onAction="#goToChangePassword" prefHeight="25.0" prefWidth="170.0" styleClass="glass-link" text="¿Olvido su contraseña?">
                <font>
                   <Font size="5.0" />
                </font>
             </Hyperlink>
             <HBox prefHeight="19.0" prefWidth="198.0">
                <children>
-                  <Hyperlink alignment="CENTER" prefHeight="20.0" prefWidth="500.0" styleClass="glass-link" text="¿No tienes cuenta? Registrate" HBox.hgrow="SOMETIMES">
+                  <Hyperlink fx:id="lnkRegister" alignment="CENTER" onAction="#goToRegister" prefHeight="20.0" prefWidth="500.0" styleClass="glass-link" text="¿No tienes cuenta? Registrate" HBox.hgrow="SOMETIMES">
                      <font>
                         <Font size="5.0" />
                      </font>
