@@ -2,7 +2,7 @@ package org.horizonteurbano.system.controller;
 
 import org.horizonteurbano.system.models.Role;
 import org.horizonteurbano.system.models.User;
-import org.horizonteurbano.system.repositories.UserRepository;
+import org.horizonteurbano.system.service.UserService;
 import org.horizonteurbano.system.utils.AlertInformation;
 import org.horizonteurbano.system.utils.ViewFactory;
 import javafx.scene.control.TextField;
@@ -55,12 +55,12 @@ public class RegisterController implements Initializable {
 
     private double angle = 0;
     private Timeline gradientTimeline;
-    private UserRepository userRepository;
+    private UserService userService;
     private AlertInformation alert;
     private ViewFactory viewFactory;
 
     public RegisterController() {
-        this.userRepository = new UserRepository();
+        this.userService = new UserService();
         this.alert = new AlertInformation();
         this.viewFactory = new ViewFactory();
     }
@@ -174,7 +174,6 @@ public class RegisterController implements Initializable {
         newUser.setLastName(lastName);
         newUser.setEmail(email);
         newUser.setUserName(generateUserName(email));
-        newUser.setPassword(password);
         newUser.setActive(true);
 
         Role role = new Role();
@@ -184,7 +183,7 @@ public class RegisterController implements Initializable {
         //1 = SUCCESS
         //2 = ALERT
         //3 = ERROR
-        if (userRepository.saveUser(newUser)) {
+        if (userService.register(newUser, password)) {
             alert.viewAlert(1, "Registro Exitoso", "Cuenta creada correctamente. Ya puedes iniciar sesión.", null);
             closeCurrentWindow(event);
             viewFactory.showLoginWindow();

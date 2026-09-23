@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import java.net.URL;
 
 public class SceneManager {
+
     private static SceneManager instanceSceneManager;
     private Stage mainStage;
 
@@ -37,6 +38,19 @@ public class SceneManager {
         } catch (Exception ExceptionFather) {
             System.err.println("Error loading Search View: " + ExceptionFather.getMessage());
             ExceptionFather.printStackTrace();
+        }
+    }
+
+    public void showSearchProperty() {
+        try {
+            Stage stage = new Stage();
+            stage.setTitle("Search - Horizonte Urbano");
+            stage.setResizable(false);
+            Scene scene = loadFileFXML("SearchPropertyView.fxml", 920, 540);
+            stage.setScene(scene);
+            stage.show();
+        } catch (NullPointerException nullObject) {
+            System.out.println("Error loading change password window");
         }
     }
 

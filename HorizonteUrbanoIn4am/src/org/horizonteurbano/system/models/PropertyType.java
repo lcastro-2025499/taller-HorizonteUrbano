@@ -1,26 +1,31 @@
 package org.horizonteurbano.system.models;
 
-public class PropertyType {
+public class State {
 
-    private int idType;
-    private String nameType;
+    private int idState;
+    private String nameState;
 
-    public PropertyType() {
+    public State() {
     }
 
-    public int getIdType() {
-        return idType;
+    @Override
+    public String toString() {
+        return nameState;
     }
 
-    public void setIdType(int idType) {
-        this.idType = idType;
+    public int getIdState() {
+        return idState;
     }
 
-    public String getNameType() {
-        return nameType;
+    public void setIdState(int idState) {
+        this.idState = idState;
     }
 
-    public void setNameType(String nameType) {
-        this.nameType = nameType;
+    public String getNameState() {
+        return nameState;
+    }
+
+    public void setNameState(String nameState) {
+        this.nameState = nameState;
     }
 }

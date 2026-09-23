@@ -1,7 +1,8 @@
 package org.horizonteurbano.system.controller;
 
 import org.horizonteurbano.system.models.User;
-import org.horizonteurbano.system.repositories.UserRepository;
+import org.horizonteurbano.system.service.UserService;
+import org.horizonteurbano.system.service.UserSession;
 import org.horizonteurbano.system.utils.AlertInformation;
 import org.horizonteurbano.system.utils.ViewFactory;
 import javafx.scene.control.TextField;
@@ -18,12 +19,12 @@ public class LoginController {
     @FXML
     private PasswordField pwdPassword;
 
-    private UserRepository userRepository;
+    private UserService userService;
     private AlertInformation alert;
     private ViewFactory viewFactory;
 
     public LoginController() {
-        this.userRepository = new UserRepository();
+        this.userService = new UserService();
         this.alert = new AlertInformation();
         this.viewFactory = new ViewFactory();
     }
@@ -41,8 +42,9 @@ public class LoginController {
             return;
         }
 
-        User loggedUser = userRepository.validateLogin(email, password);
+        User loggedUser = userService.login(email, password);
         if (loggedUser != null) {
+            UserSession.getInstance().setCurrentUser(loggedUser);
             alert.viewAlert(1, "Login Exitoso", "¡Bienvenido a Horizonte Urbano, " + loggedUser.getName() + "!", null);
             clearFields();
             closeCurrentWindow(event);

@@ -428,5 +428,3 @@ BEGIN
     DELETE FROM PropertyImages WHERE id_image = id_image_p;
 END $$
 DELIMITER ;
-
-select * from Users;
