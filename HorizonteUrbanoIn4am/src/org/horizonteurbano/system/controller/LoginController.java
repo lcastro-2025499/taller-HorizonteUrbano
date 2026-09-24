@@ -9,8 +9,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
-import javafx.stage.Stage;
-import javafx.scene.Node;
 
 public class LoginController {
 
@@ -26,7 +24,7 @@ public class LoginController {
     public LoginController() {
         this.userService = new UserService();
         this.alert = new AlertInformation();
-        this.viewFactory = new ViewFactory();
+        this.viewFactory = ViewFactory.getInstance();
     }
 
     @FXML
@@ -34,46 +32,55 @@ public class LoginController {
         String email = txtEmail.getText();
         String password = pwdPassword.getText();
 
-        //1 = SUCCESS
-        //2 = ALERT
-        //3 = DENIED
         if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
             alert.viewAlert(2, "Campos Vacíos", "Por favor, ingresa tu correo y contraseña.", null);
             return;
         }
 
         User loggedUser = userService.login(email, password);
-        if (loggedUser != null) {
-            UserSession.getInstance().setCurrentUser(loggedUser);
-            alert.viewAlert(1, "Login Exitoso", "¡Bienvenido a Horizonte Urbano, " + loggedUser.getName() + "!", null);
-            clearFields();
-            closeCurrentWindow(event);
-            viewFactory.showDashboardWindow();
-        } else {
+        if (loggedUser == null) {
             alert.viewAlert(3, "Acceso Denegado", "Correo o contraseña incorrectos, o cuenta inactiva.", null);
+            return;
+        }
+
+        UserSession.getInstance().setCurrentUser(loggedUser);
+        alert.viewAlert(1, "Login Exitoso", "¡Bienvenido a Horizonte Urbano, " + loggedUser.getName() + "!", null);
+        clearFields();
+        redirectByRole(loggedUser);
+    }
+
+    private void redirectByRole(User user) {
+        int roleId = user.getRol() != null ? user.getRol().getIdRole() : -1;
+        switch (roleId) {
+            case UserSession.ROLE_ADMIN:
+                viewFactory.showDashboardWindow();
+                break;
+            case UserSession.ROLE_ASESOR:
+                viewFactory.showMainViewWindow();
+                break;
+            case UserSession.ROLE_GERENTE:
+                viewFactory.showSearchPropertyWindow();
+                break;
+            default:
+                alert.viewAlert(3, "Error", "Rol desconocido. Contacta al administrador.", null);
+                break;
         }
     }
 
     @FXML
     public void buttonLogout(ActionEvent event) {
-        alert.viewAlert(1, "Sesión Cerrada", "Has cerrado sesión correctamente.", null);
+        UserSession.getInstance().logout();
+        viewFactory.showMainViewWindow();
     }
 
     @FXML
     public void goToRegister(ActionEvent event) {
-        closeCurrentWindow(event);
         viewFactory.showRegisterWindow();
     }
 
     @FXML
     public void goToChangePassword(ActionEvent event) {
-        closeCurrentWindow(event);
         viewFactory.showChangePasswordWindow();
-    }
-
-    private void closeCurrentWindow(ActionEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.close();
     }
 
     private void clearFields() {

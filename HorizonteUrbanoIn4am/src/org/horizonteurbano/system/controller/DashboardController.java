@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 
 import org.horizonteurbano.system.models.Property;
@@ -23,11 +24,14 @@ import org.horizonteurbano.system.repositories.PropertyTypeRepository;
 import org.horizonteurbano.system.repositories.StateRepository;
 import org.horizonteurbano.system.service.UserSession;
 import org.horizonteurbano.system.utils.AlertInformation;
+import org.horizonteurbano.system.utils.ViewFactory;
 
 public class DashboardController implements Initializable {
 
     @FXML
     private Label lblUser;
+    @FXML
+    private VBox formPanel;
     @FXML
     private TextField txtCode;
     @FXML
@@ -49,6 +53,8 @@ public class DashboardController implements Initializable {
     @FXML
     private Button btnSave;
     @FXML
+    private Button btnGoSearch;
+    @FXML
     private ListView<String> listRecords;
 
     private PropertyRepository propertyRepository;
@@ -56,6 +62,7 @@ public class DashboardController implements Initializable {
     private StateRepository stateRepository;
     private AlertInformation alerta;
     private UserSession session;
+    private ViewFactory viewFactory;
 
     public DashboardController() {
         this.propertyRepository = new PropertyRepository();
@@ -63,6 +70,7 @@ public class DashboardController implements Initializable {
         this.stateRepository = new StateRepository();
         this.alerta = new AlertInformation();
         this.session = UserSession.getInstance();
+        this.viewFactory = ViewFactory.getInstance();
     }
 
     @Override
@@ -71,9 +79,9 @@ public class DashboardController implements Initializable {
         cargarTipos();
         cargarEstados();
         loadCurrentUser();
+        applyRolePermissions();
     }
 
-    // Displays the logged-in user's name in the header
     private void loadCurrentUser() {
         User currentUser = session.getCurrentUser();
         if (currentUser == null) {
@@ -83,7 +91,30 @@ public class DashboardController implements Initializable {
         lblUser.setText("Usuario: " + currentUser.getName());
     }
 
-    // Keeps the real object inside the combo box while showing only the name
+    // Hides the property registration form from users who cannot create properties
+    private void applyRolePermissions() {
+        if (!session.isLoggedIn()) {
+            hideForm();
+            return;
+        }
+        // Only Admin (role 1) can create/edit/delete properties
+        if (session.isAdmin()) {
+            showForm();
+        } else {
+            hideForm();
+        }
+    }
+
+    private void showForm() {
+        formPanel.setVisible(true);
+        formPanel.setManaged(true);
+    }
+
+    private void hideForm() {
+        formPanel.setVisible(false);
+        formPanel.setManaged(false);
+    }
+
     private void configureComboConverters() {
         cmbType.setConverter(new StringConverter<PropertyType>() {
             @Override
@@ -122,6 +153,12 @@ public class DashboardController implements Initializable {
 
     @FXML
     public void actionSaveProperty(ActionEvent event) {
+        // Defensive check: only Admin can save, regardless of UI state
+        if (!session.isAdmin()) {
+            alerta.viewAlert(3, "Permiso Denegado", "No tienes permisos para registrar propiedades.", null);
+            return;
+        }
+
         if (txtCode.getText().isEmpty() || txtAddress.getText().isEmpty()
                 || txtArea.getText().isEmpty() || txtPrice.getText().isEmpty()
                 || cmbType.getSelectionModel().getSelectedItem() == null
@@ -145,7 +182,6 @@ public class DashboardController implements Initializable {
             newProperty.setType(cmbType.getSelectionModel().getSelectedItem());
             newProperty.setState(cmbStatus.getSelectionModel().getSelectedItem());
             newProperty.setActive(true);
-            // Uses the real logged-in user id (FK-safe)
             newProperty.setIdUser(currentUser.getIdUser());
 
             if (propertyRepository.saveProperty(newProperty)) {
@@ -176,5 +212,15 @@ public class DashboardController implements Initializable {
     public void actionCancel(ActionEvent event) {
         actionClear(event);
         alerta.viewAlert(1, "Cancelado", "Se han limpiado los datos del formulario.", null);
+    }
+
+    @FXML
+    public void goToSearch(ActionEvent event) {
+        viewFactory.showSearchPropertyWindow();
+    }
+
+    @FXML
+    public void goToMainMenu(ActionEvent event) {
+        viewFactory.showMainViewWindow();
     }
 }

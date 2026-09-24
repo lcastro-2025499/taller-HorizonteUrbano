@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
@@ -15,7 +14,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="rootPane" prefHeight="680.0" prefWidth="960.0" stylesheets="@../styles/DashboardViewStyles.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.DashboardController">
+<AnchorPane fx:id="rootPane" prefHeight="680.0" prefWidth="960.0" stylesheets="@../styles/DashboardViewStyles.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.DashboardController">
 
     <VBox fx:id="mainPanel" spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
         <padding>
@@ -36,7 +35,8 @@
             <Label fx:id="lblTitle" text="Horizonte Urbano" />
 
             <Region HBox.hgrow="ALWAYS" />
-            <Hyperlink text="Menu" />
+            <Button fx:id="btnGoMenu" mnemonicParsing="false" onAction="#goToMainMenu" text="Menú" />
+            <Button fx:id="btnGoSearch" mnemonicParsing="false" onAction="#goToSearch" text="Buscar Propiedades" />
 
             <ImageView fx:id="imgProfile" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <HBox.margin>
@@ -52,7 +52,7 @@
                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
             </padding>
 
-            <Label fx:id="lblFormTitle" alignment="CENTER" maxWidth="Infinity" text="Formulario de Ingreso de Datos - Nueva Propiedad" />
+            <Label fx:id="lblFormTitle" alignment="CENTER" maxWidth="Infinity" text="Formulario para Nueva Propiedad" />
 
             <HBox fx:id="formColumns" spacing="40.0">
 
@@ -88,8 +88,8 @@
             </VBox>
 
             <HBox fx:id="buttonsBox" alignment="CENTER_RIGHT" spacing="10.0">
-                <Button fx:id="btnClear" mnemonicParsing="false" onAction="#actionClear" prefWidth="110.0" text="Limpiar" />
                 <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#actionCancel" prefWidth="110.0" text="Cancelar" />
+                <Button fx:id="btnClear" mnemonicParsing="false" onAction="#actionClear" prefWidth="110.0" text="Limpiar" />
                 <Button fx:id="btnSave" mnemonicParsing="false" onAction="#actionSaveProperty" prefHeight="33.0" prefWidth="161.0" text="Guardar Propiedad" />
             </HBox>
         </VBox>
@@ -112,3 +112,4 @@
 
     </VBox>
 </AnchorPane>
+    

@@ -1,31 +1,35 @@
 package org.horizonteurbano.system.models;
 
-public class State {
+public class PropertyType {
 
-    private int idState;
-    private String nameState;
+    private int idType;
+    private String nameType;
+    private boolean active;
 
-    public State() {
+    public PropertyType() {
     }
 
-    @Override
-    public String toString() {
-        return nameState;
+    public int getIdType() {
+        return idType;
     }
 
-    public int getIdState() {
-        return idState;
+    public void setIdType(int idType) {
+        this.idType = idType;
     }
 
-    public void setIdState(int idState) {
-        this.idState = idState;
+    public String getNameType() {
+        return nameType;
     }
 
-    public String getNameState() {
-        return nameState;
+    public void setNameType(String nameType) {
+        this.nameType = nameType;
     }
 
-    public void setNameState(String nameState) {
-        this.nameState = nameState;
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

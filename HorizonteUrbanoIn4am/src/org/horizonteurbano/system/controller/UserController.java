@@ -2,8 +2,8 @@ package org.horizonteurbano.system.controller;
 
 import org.horizonteurbano.system.models.User;
 import org.horizonteurbano.system.models.Role;
-import org.horizonteurbano.system.repositories.UserRepository;
 import org.horizonteurbano.system.repositories.RoleRepository;
+import org.horizonteurbano.system.service.UserService;
 import org.horizonteurbano.system.utils.AlertInformation;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
@@ -32,12 +32,12 @@ public class UserController implements Initializable {
     @FXML
     private ComboBox<Role> cmbRole;
 
-    private UserRepository userRepository;
+    private UserService userService;
     private RoleRepository roleRepository;
     private AlertInformation alert;
 
     public UserController() {
-        this.userRepository = new UserRepository();
+        this.userService = new UserService();
         this.roleRepository = new RoleRepository();
         this.alert = new AlertInformation();
     }
@@ -48,7 +48,6 @@ public class UserController implements Initializable {
         loadRoles();
     }
 
-    // Displays the role name in the combo box while keeping the Role object as the value
     private void configureRoleCombo() {
         cmbRole.setConverter(new StringConverter<Role>() {
             @Override
@@ -79,20 +78,19 @@ public class UserController implements Initializable {
 
         try {
             User newUser = new User();
-            // ID is generated automatically, same as in self-registration
             newUser.setIdUser(UUID.randomUUID().toString());
             newUser.setName(txtName.getText());
             newUser.setLastName(txtLastName.getText());
             newUser.setEmail(txtEmail.getText());
             newUser.setUserName(generateUserName(txtEmail.getText()));
-            newUser.setPassword(pwdPassword.getText());
             newUser.setActive(true);
             newUser.setRol(cmbRole.getSelectionModel().getSelectedItem());
+            // No se setea la contraseña aquí: UserService.register() la hashea
 
             //1 = SUCCESS
             //2 = ALERT
             //3 = ERROR
-            if (userRepository.saveUser(newUser)) {
+            if (userService.register(newUser, pwdPassword.getText())) {
                 alert.viewAlert(1, "Éxito", "Usuario registrado correctamente en el sistema.", null);
                 clearFields();
             } else {

@@ -1,99 +1,74 @@
 use HorizonteUrbano_in4am;
 
------------------------------------------------------------------
-#  ROLES 
+-- =====================================================================
+-- TESTEO DE DATOS
+-- =====================================================================
+select * from Role;
+select * from State;
+select * from PropertyType;
+select * from Users;
+select * from PropertyImages;
 
-# CREATE ROLE
-call sp_create_role(1, '');
-call sp_create_role(2, '');
-call sp_create_role(3, '');
+-- =====================================================================
+-- DATOS SEMILLA
+-- =====================================================================
+-- ---------------------------------------------------------------------
+-- PROPERTY TYPES
+-- ---------------------------------------------------------------------
+INSERT INTO PropertyType (name_type) VALUES
+    ('Casa'),
+    ('Apartamento'),
+    ('Terreno'),
+    ('Local Comercial'),
+    ('Bodega');
+    
+-- ---------------------------------------------------------------------
+-- ROLES
+-- ---------------------------------------------------------------------
+INSERT INTO Role (name_role) VALUES
+    ('Administrador'),  -- id_role = 1
+    ('Asesor'),         -- id_role = 2
+    ('Gerente');        -- id_role = 3
 
-# READ ROLES
-call sp_read_roles();
+-- ---------------------------------------------------------------------
+-- STATES
+-- ---------------------------------------------------------------------
 
-# UPDATE ROLE
-call sp_update_role(1, '');
+INSERT INTO State (name_state) VALUES
+    ('Disponible'),
+    ('Reservado'),
+    ('Vendido'),
+    ('Rentado');
 
-# DELETE ROLE
-call sp_delete_role(3);
+-- ---------------------------------------------------------------------
+-- USERS (Con contraseña hasheada)
+-- ---------------------------------------------------------------------
+set @hashed_password = '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy';
 
------------------------------------------------------------------
-# STATES 
+call sp_create_user('admin', '123', @hashed_password, 'admin123@gmail.com', 'admin', true, 1);
+call sp_create_user('asesor', '456', @hashed_password, 'asesor456@gmail.com', 'asesor', true, 2);
+call sp_create_user('gerente', '789', @hashed_password, 'gerente789@gmail.com', 'gerente', true, 3);
 
-# CREATE STATE
-call sp_create_state(1, '');
-call sp_create_state(2, '');
-call sp_create_state(3, '');
-call sp_create_state(4, '');
+-- ---------------------------------------------------------------------
+-- PROPERTIES
+-- ---------------------------------------------------------------------
+set @admin = (select id_user from Users where user_name = 'admin' limit 1);
 
-# READ STATES
-call sp_read_states();
+call sp_create_property('HU-001', '15 Avenida 12-34 Zona 10', 120.5, 850000.00, true, null, 1, @admin, 1);
+call sp_create_property('HU-002', '5 Calle 3-45 Zona 14', 85.0, 620000.00, true, null, 1, @admin, 2);
+call sp_create_property('HU-003', 'Boulevard Los Próceres Km 15', 500.0, 1500000.00, true, null, 1, @admin, 3);
+call sp_create_property('HU-004', '7 Avenida 8-90 Zona 4', 200.0, 950000.00, true, null, 2, @admin, 4);
 
-# UPDATE STATE
-call sp_update_state(1, '');
+-- ---------------------------------------------------------------------
+-- PROPERTY IMAGES
+-- ---------------------------------------------------------------------
+set @prop1 = (select id_property from Properties where internal_code = 'HU-001' limit 1);
+set @prop2 = (select id_property from Properties where internal_code = 'HU-002' limit 1);
 
-# DELETE STATE
-call sp_delete_state(4);
+call sp_create_property_image(@prop1, 'https://example.com/hu-001-a.jpg');
+call sp_create_property_image(@prop1, 'https://example.com/hu-001-b.jpg');
+call sp_create_property_image(@prop2, 'https://example.com/hu-002-a.jpg');
 
------------------------------------------------------------------
-# PROPERTY TYPES
 
-# CREATE PROPERTY TYPE
-call sp_create_propertytype(1, '');
-call sp_create_propertytype(2, '');
-call sp_create_propertytype(3, '');
-call sp_create_propertytype(4, '');
 
-# READ PROPERTY TYPES
-call sp_read_propertytypes();
 
-# UPDATE PROPERTY TYPE
-call sp_update_propertytype(1, '');
-
-# DELETE PROPERTY TYPE
-call sp_delete_propertytype(4);
-
------------------------------------------------------------------
-# USERS
-
-# CREATE USER
-call sp_create_user('', '', '', '', '', true, 1);
-call sp_create_user('', '', '', '', '', true, 2);
-
-# READ USERS
-call sp_read_users();
-
-# READ USER BY ID
-set @user1 = (select id_user from Users where id_role = 1 limit 1);
-call sp_read_userid(@user1);
-
-# UPDATE USER
-call sp_update_user(@user1, '', '', '', '', '', true, 1);
-
-# LOGIN USER
-call sp_login_user('', '');
-
-# DELETE USER
-call sp_delete_user(@user1);
-
------------------------------------------------------------------
-# PROPERTIES
-
-# Obtener un usuario activo para las propiedades
-set @user2 = (select id_user from Users limit 1);
-
-# CREATE PROPERTY
-call sp_create_property(1, '', '', 1.00, 1.00, true, now(), now(), '', 1, @user2, 1);
-call sp_create_property(2, '', '', 1.00, 1.00, true, now(), now(), '', 1, @user2, 2);
-
-# READ PROPERTIES
-call sp_read_properties();
-
-# READ PROPERTY BY ID
-call sp_read_propertyid(1);
-
-# UPDATE PROPERTY
-call sp_update_property(1, '', '', 1.00, 1.00, true, now(), now(), '', 1, @user2, 1);
-
-# DELETE PROPERTY 
-call sp_delete_property(2);

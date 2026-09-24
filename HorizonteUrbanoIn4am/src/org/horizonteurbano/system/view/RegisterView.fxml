@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="apMainContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="545.0" prefWidth="610.0" stylesheets="@../styles/RegisterStyles.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.RegisterController">
+<AnchorPane fx:id="apMainContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="545.0" prefWidth="610.0" stylesheets="@../styles/RegisterStyles.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.RegisterController">
     <children>
         <VBox layoutX="250.0" layoutY="15.0" prefHeight="465.0" prefWidth="340.0" spacing="5.0" styleClass="glass-card" AnchorPane.topAnchor="14.0">
             <children>
@@ -79,7 +79,7 @@
         </VBox>
         <ImageView fx:id="imgLogo" fitHeight="200.0" fitWidth="200.0" layoutX="27.0" layoutY="73.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@/org/horizonteurbano/system/resources/logoImage.png" />
+                <Image url="@../resources/logoImage.png" />
             </image>
         </ImageView>
         <VBox layoutX="15.0" layoutY="344.0" prefHeight="183.0" prefWidth="223.0" spacing="8.0" styleClass="glass-card">
