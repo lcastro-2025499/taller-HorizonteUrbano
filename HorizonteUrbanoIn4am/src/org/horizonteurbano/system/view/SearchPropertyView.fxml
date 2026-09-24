@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -15,89 +14,90 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="rootPane" prefHeight="540.0" prefWidth="920.0" stylesheets="@../styles/SearchPropertyStyles.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="rootPane" prefHeight="540.0" prefWidth="920.0" stylesheets="@../styles/SearchPropertyStyles.css" xmlns="http://javafx.com/javafx/21.0.9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.SearchPropertyController">
 
-   <VBox fx:id="mainPanel" spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
-      <padding>
-         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-      </padding>
-
-      <HBox fx:id="headerBox" alignment="CENTER_LEFT" spacing="10.0">
-         <padding>
-            <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
-         </padding>
-
-         <ImageView fx:id="imgLogo" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
-            <image>
-               <Image url="@../resources/logoImage.png" />
-            </image>
-         </ImageView>
-
-         <Label fx:id="lblTitle" text="Horizonte Urbano" />
-
-         <Region prefHeight="60.0" prefWidth="160.0" HBox.hgrow="ALWAYS" />
-         <Hyperlink text="Menu" />
-
-         <ImageView fx:id="imgProfile" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-            <HBox.margin>
-               <Insets left="30.0" />
-            </HBox.margin></ImageView>
-
-         <Label fx:id="lblAgent" text="Agente: AGENTE" />
-      </HBox>
-
-      <VBox fx:id="filterPanel" spacing="12.0">
-         <padding>
+    <VBox fx:id="mainPanel" spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+        <padding>
             <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-         </padding>
+        </padding>
 
-         <HBox fx:id="searchRow" spacing="10.0">
-            <TextField fx:id="txtSearch" prefWidth="400.0" promptText="Código o Dirección..." />
-         </HBox>
+        <HBox fx:id="headerBox" alignment="CENTER_LEFT" spacing="10.0">
+            <padding>
+                <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
+            </padding>
 
-         <HBox fx:id="filterRow" alignment="CENTER_LEFT" spacing="20.0">
+            <ImageView fx:id="imgLogo" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../resources/logoImage.png" />
+                </image>
+            </ImageView>
 
-            <VBox spacing="5.0">
-               <Label fx:id="lblType" text="Tipo de Inmueble" />
-               <ComboBox fx:id="cmbType" prefWidth="150.0" />
-            </VBox>
+            <Label fx:id="lblTitle" text="Horizonte Urbano" />
 
-            <VBox spacing="5.0">
-               <Label fx:id="lblStatus" text="Estado" />
-               <ComboBox fx:id="cmbStatus" prefWidth="150.0" />
-            </VBox>
+            <Region prefHeight="60.0" prefWidth="160.0" HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnBack" mnemonicParsing="false" onAction="#goBack" text="Volver" />
+            <Button fx:id="btnGoMenu" mnemonicParsing="false" onAction="#goToMainMenu" text="Menú" />
 
-            <VBox spacing="5.0">
-               <Label fx:id="lblPrice" text="Rango de Precio" />
-               <HBox spacing="10.0">
-                  <TextField fx:id="txtPriceMin" prefWidth="100.0" promptText="Min" />
-                  <TextField fx:id="txtPriceMax" prefWidth="100.0" promptText="Max" />
-               </HBox>
-            </VBox>
+            <ImageView fx:id="imgProfile" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                <HBox.margin>
+                    <Insets left="30.0" />
+                </HBox.margin>
+            </ImageView>
 
+            <Label fx:id="lblAgent" text="Agente: AGENTE" />
+        </HBox>
+
+        <VBox fx:id="filterPanel" spacing="12.0">
+            <padding>
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+            </padding>
+
+            <HBox fx:id="searchRow" spacing="10.0">
+                <TextField fx:id="txtSearch" prefWidth="400.0" promptText="Código o Dirección..." />
+            </HBox>
+
+            <HBox fx:id="filterRow" alignment="CENTER_LEFT" spacing="20.0">
+
+                <VBox spacing="5.0">
+                    <Label fx:id="lblType" text="Tipo de Inmueble" />
+                    <ComboBox fx:id="cmbType" prefWidth="150.0" />
+                </VBox>
+
+                <VBox spacing="5.0">
+                    <Label fx:id="lblStatus" text="Estado" />
+                    <ComboBox fx:id="cmbStatus" prefWidth="150.0" />
+                </VBox>
+
+                <VBox spacing="5.0">
+                    <Label fx:id="lblPrice" text="Rango de Precio" />
+                    <HBox spacing="10.0">
+                        <TextField fx:id="txtPriceMin" prefWidth="100.0" promptText="Min" />
+                        <TextField fx:id="txtPriceMax" prefWidth="100.0" promptText="Max" />
+                    </HBox>
+                </VBox>
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#handleSearch" prefWidth="120.0" text="Buscar" />
+            </HBox>
+        </VBox>
+
+        <TableView fx:id="tblProperties" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colCode" prefWidth="120.0" text="Código Interno" />
+                <TableColumn fx:id="colAddress" prefWidth="250.0" text="Dirección Exacta" />
+                <TableColumn fx:id="colType" prefWidth="120.0" text="Tipo" />
+                <TableColumn fx:id="colArea" prefWidth="120.0" text="Área (m²)" />
+                <TableColumn fx:id="colPrice" prefWidth="130.0" text="Precio (Oferta)" />
+                <TableColumn fx:id="colStatus" prefWidth="120.0" text="Estado" />
+            </columns>
+        </TableView>
+
+        <HBox fx:id="footerBox" alignment="CENTER_LEFT" spacing="10.0">
+            <Label fx:id="lblResults" text="Resultados: " />
             <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnViewDetails" mnemonicParsing="false" onAction="#handleViewDetails" prefWidth="160.0" text="Ver Ficha Detallada" />
+        </HBox>
 
-            <!-- Search Button -->
-            <Button fx:id="btnSearch" mnemonicParsing="false" prefWidth="120.0" text="Buscar" />
-         </HBox>
-      </VBox>
-
-      <TableView fx:id="tblProperties" VBox.vgrow="ALWAYS">
-         <columns>
-            <TableColumn fx:id="colCode" prefWidth="120.0" text="Código Interno" />
-            <TableColumn fx:id="colAddress" prefWidth="250.0" text="Dirección Exacta" />
-            <TableColumn fx:id="colType" prefWidth="120.0" text="Tipo" />
-            <TableColumn fx:id="colArea" prefWidth="120.0" text="Área (m²)" />
-            <TableColumn fx:id="colPrice" prefWidth="130.0" text="Precio (Oferta)" />
-            <TableColumn fx:id="colStatus" prefWidth="120.0" text="Estado" />
-         </columns>
-      </TableView>
-
-      <HBox fx:id="footerBox" alignment="CENTER_LEFT" spacing="10.0">
-         <Label fx:id="lblResults" text="Resultados: " />
-         <Region HBox.hgrow="ALWAYS" />
-         <Button fx:id="btnViewDetails" mnemonicParsing="false" prefWidth="160.0" text="Ver Ficha Detallada" />
-      </HBox>
-
-   </VBox>
+    </VBox>
 </AnchorPane>

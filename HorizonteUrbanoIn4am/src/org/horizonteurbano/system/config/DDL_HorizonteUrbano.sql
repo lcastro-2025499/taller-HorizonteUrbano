@@ -1,32 +1,31 @@
 drop database if exists HorizonteUrbano_in4am;
 create database HorizonteUrbano_in4am;
 use HorizonteUrbano_in4am;
-
--- ---------------------------------------------------------------------
+ 
+-- =====================================================================
 -- TABLAS
--- ---------------------------------------------------------------------
-
+-- =====================================================================
 create table Role(
     id_role INT NOT NULL AUTO_INCREMENT,
     name_role VARCHAR(40) NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_role PRIMARY KEY (id_role)
 );
-
+ 
 create table PropertyType(
     id_type INT NOT NULL AUTO_INCREMENT,
     name_type VARCHAR(20) NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_property_type PRIMARY KEY (id_type)
 );
-
+ 
 create table State(
     id_state INT NOT NULL AUTO_INCREMENT,
     name_state VARCHAR(20) NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_state PRIMARY KEY (id_state)
 );
-
+ 
 create table Users(
     id_user VARCHAR(36) NOT NULL,
     name VARCHAR(40) NOT NULL,
@@ -42,7 +41,7 @@ create table Users(
     CONSTRAINT fk_users_role FOREIGN KEY (id_role)
         REFERENCES Role(id_role) ON DELETE RESTRICT ON UPDATE CASCADE
 );
-
+ 
 create table Properties(
     id_property INT NOT NULL AUTO_INCREMENT,
     internal_code VARCHAR(20) NOT NULL,
@@ -65,7 +64,7 @@ create table Properties(
     CONSTRAINT fk_properties_type FOREIGN KEY (id_property_type)
         REFERENCES PropertyType(id_type) ON DELETE RESTRICT ON UPDATE CASCADE
 );
-
+ 
 create table PropertyImages(
     id_image INT NOT NULL AUTO_INCREMENT,
     id_property INT NOT NULL,
@@ -74,31 +73,7 @@ create table PropertyImages(
     CONSTRAINT fk_property_images_property FOREIGN KEY (id_property)
         REFERENCES Properties(id_property) ON DELETE RESTRICT ON UPDATE CASCADE
 );
-
--- ---------------------------------------------------------------------
--- DATOS SEMILLA (necesarios para que Users/Properties puedan crearse,
--- ya que dependen de estas tablas por FK). Ajusta los nombres si el
--- equipo definio otros en el DPP.
--- ---------------------------------------------------------------------
-
-INSERT INTO Role (name_role) VALUES
-    ('Administrador'),  -- id_role = 1
-    ('Asesor'),          -- id_role = 2
-    ('Gerente');         -- id_role = 3
-
-INSERT INTO PropertyType (name_type) VALUES
-    ('Casa'),
-    ('Apartamento'),
-    ('Terreno'),
-    ('Local Comercial'),
-    ('Bodega');
-
-INSERT INTO State (name_state) VALUES
-    ('Disponible'),
-    ('Reservado'),
-    ('Vendido'),
-    ('Rentado');
-
+ 
 -- =====================================================================
 -- STORED PROCEDURES
 -- =====================================================================
@@ -119,7 +94,7 @@ BEGIN
     VALUES (uuid(), name_p, last_name_p, password_p, email_p, user_name_p, active_p, id_role_p);
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_read_users()
 BEGIN
@@ -128,7 +103,7 @@ BEGIN
     WHERE active = true;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_read_userid(IN id_user_p VARCHAR(36))
 BEGIN
@@ -137,7 +112,7 @@ BEGIN
     WHERE id_user = id_user_p;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_update_user(IN id_user_p VARCHAR(36),
                                  IN name_p VARCHAR(40),
@@ -158,7 +133,7 @@ BEGIN
     WHERE id_user = id_user_p;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_update_user_password(IN id_user_p VARCHAR(36),
                                           IN password_p VARCHAR(80))
@@ -166,14 +141,14 @@ BEGIN
     UPDATE Users SET password = password_p WHERE id_user = id_user_p;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_delete_user(IN id_user_p VARCHAR(36))
 BEGIN
     UPDATE Users SET active = false WHERE id_user = id_user_p;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_login_user(IN identifier_p VARCHAR(40),
                                 IN password_p VARCHAR(80))
@@ -184,7 +159,7 @@ BEGIN
       AND active = true;
 END $$
 DELIMITER ;
-
+ 
 -- ---------------------------------------------------------------------
 -- PROPERTIES
 -- ---------------------------------------------------------------------
@@ -207,21 +182,21 @@ BEGIN
         cover_url_p, id_state_p, id_user_p, id_property_type_p);
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_read_properties()
 BEGIN
     SELECT * FROM Properties WHERE active = true;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_read_propertyid(IN id_property_p INT)
 BEGIN
     SELECT * FROM Properties WHERE id_property = id_property_p;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_update_property(IN id_property_p INT,
                                      IN internal_code_p VARCHAR(20),
@@ -248,21 +223,21 @@ BEGIN
     WHERE id_property = id_property_p;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_change_property_state(IN id_property_p INT, IN id_state_p INT)
 BEGIN
     UPDATE Properties SET id_state = id_state_p WHERE id_property = id_property_p;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_delete_property(IN id_property_p INT)
 BEGIN
     UPDATE Properties SET active = false WHERE id_property = id_property_p;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_search_properties(IN search_text VARCHAR(50),
                                        IN min_price DECIMAL(10,2),
@@ -285,7 +260,7 @@ BEGIN
       AND (p_id_property_type IS NULL OR id_property_type = p_id_property_type);
 END $$
 DELIMITER ;
-
+ 
 -- ---------------------------------------------------------------------
 -- ROLE
 -- ---------------------------------------------------------------------
@@ -295,28 +270,28 @@ BEGIN
     INSERT INTO Role (name_role) VALUES (name_role_p);
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_read_roles()
 BEGIN
     SELECT * FROM Role WHERE active = true;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_update_role(IN id_role_p INT, IN name_role_p VARCHAR(40))
 BEGIN
     UPDATE Role SET name_role = name_role_p WHERE id_role = id_role_p;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_delete_role(IN id_role_p INT)
 BEGIN
     UPDATE Role SET active = false WHERE id_role = id_role_p;
 END $$
 DELIMITER ;
-
+ 
 -- ---------------------------------------------------------------------
 -- PROPERTY TYPE
 -- ---------------------------------------------------------------------
@@ -326,28 +301,28 @@ BEGIN
     INSERT INTO PropertyType (name_type) VALUES (name_type_p);
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_read_propertytypes()
 BEGIN
     SELECT * FROM PropertyType WHERE active = true;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_update_propertytype(IN id_type_p INT, IN name_type_p VARCHAR(20))
 BEGIN
     UPDATE PropertyType SET name_type = name_type_p WHERE id_type = id_type_p;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_delete_propertytype(IN id_type_p INT)
 BEGIN
     UPDATE PropertyType SET active = false WHERE id_type = id_type_p;
 END $$
 DELIMITER ;
-
+ 
 -- ---------------------------------------------------------------------
 -- STATE
 -- ---------------------------------------------------------------------
@@ -357,28 +332,28 @@ BEGIN
     INSERT INTO State (name_state) VALUES (name_state_p);
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_read_states()
 BEGIN
     SELECT * FROM State WHERE active = true;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_update_state(IN id_state_p INT, IN name_state_p VARCHAR(20))
 BEGIN
     UPDATE State SET name_state = name_state_p WHERE id_state = id_state_p;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_delete_state(IN id_state_p INT)
 BEGIN
     UPDATE State SET active = false WHERE id_state = id_state_p;
 END $$
 DELIMITER ;
-
+ 
 -- ---------------------------------------------------------------------
 -- PROPERTY IMAGES
 -- ---------------------------------------------------------------------
@@ -390,7 +365,7 @@ BEGIN
     VALUES (id_property_p, images_url_p);
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_read_property_images(IN id_property_p INT)
 BEGIN
@@ -399,7 +374,7 @@ BEGIN
     WHERE id_property = id_property_p;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_read_property_image_by_id(IN id_image_p INT)
 BEGIN
@@ -408,7 +383,7 @@ BEGIN
     WHERE id_image = id_image_p;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_update_property_image(IN id_image_p INT,
                                            IN id_property_p INT,
@@ -421,12 +396,10 @@ BEGIN
     WHERE id_image = id_image_p;
 END $$
 DELIMITER ;
-
+ 
 DELIMITER $$
 CREATE PROCEDURE sp_delete_property_image(IN id_image_p INT)
 BEGIN
     DELETE FROM PropertyImages WHERE id_image = id_image_p;
 END $$
 DELIMITER ;
-
-select * from Users;

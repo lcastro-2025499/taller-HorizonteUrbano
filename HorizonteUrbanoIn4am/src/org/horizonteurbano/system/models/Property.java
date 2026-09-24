@@ -14,7 +14,7 @@ public class Property {
     private boolean active;
     private LocalDateTime dateRegister;
     private LocalDateTime updateDate;
-    private String imageUrl;
+    private String coverUrl;
     private String idUser;
 
     public Property() {
@@ -22,7 +22,7 @@ public class Property {
 
     public Property(int idProperty, String internalCode, PropertyType type, String address,
             State state, double area, double price, boolean active, LocalDateTime dateRegister,
-            LocalDateTime updateDate, String imageUrl, String idUser) {
+            LocalDateTime updateDate, String coverUrl, String idUser) {
 
         this.idProperty = idProperty;
         this.internalCode = internalCode;
@@ -34,7 +34,7 @@ public class Property {
         this.active = active;
         this.dateRegister = dateRegister;
         this.updateDate = updateDate;
-        this.imageUrl = imageUrl;
+        this.coverUrl = coverUrl;
         this.idUser = idUser;
     }
 
@@ -118,12 +118,12 @@ public class Property {
         this.updateDate = updateDate;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getCoverUrl() {
+        return coverUrl;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setCoverUrl(String coverUrl) {
+        this.coverUrl = coverUrl;
     }
 
     public String getIdUser() {
@@ -132,15 +132,5 @@ public class Property {
 
     public void setIdUser(String idUser) {
         this.idUser = idUser;
-    }
-
-    private String coverUrl;
-
-    public String getCoverUrl() {
-        return coverUrl;
-    }
-
-    public void setCoverUrl(String coverUrl) {
-        this.coverUrl = coverUrl;
     }
 }

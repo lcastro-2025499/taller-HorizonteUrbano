@@ -1,0 +1,300 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Sep 23, 2026, 10:31:35 AM
+    Author     : informatica
+*/
+/* ============================================ */
+/* 1. FONDO RAÍZ (Degradado oscuro café)        */
+/* ============================================ */
+#rootPane {
+    -fx-background-color: linear-gradient(to bottom right, #2a1813, #472820);
+}
+
+/* ============================================ */
+/* 2. HEADER (Barra superior)                   */
+/* ============================================ */
+#headerBox {
+    -fx-background-color: rgba(71, 40, 32, 0.6);
+    -fx-background-radius: 15 15 0 0;
+    -fx-border-color: rgba(232, 220, 200, 0.3);
+    -fx-border-width: 0 0 1.5 0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.1, 0, 3);
+}
+
+#imgLogo {
+    -fx-background-color: rgba(232, 220, 200, 0.9);
+    -fx-background-radius: 20;
+    -fx-padding: 3;
+}
+
+#lblTitle {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* ============================================ */
+/* 3. CONTENIDO CENTRAL                         */
+/* ============================================ */
+#centerBox {
+    -fx-background-color: transparent;
+}
+
+/* ============================================ */
+/* 4. BARRA DE BÚSQUEDA Y FILTROS               */
+/* ============================================ */
+#searchBox {
+    -fx-background-color: rgba(71, 40, 32, 0.4);
+    -fx-background-radius: 15;
+    -fx-border-color: rgba(232, 220, 200, 0.3);
+    -fx-border-radius: 15;
+    -fx-border-width: 1.5;
+    -fx-padding: 15 20;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.1, 0, 3);
+}
+
+#txtSearch {
+    -fx-background-color: rgba(255, 255, 255, 0.85);
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(71, 40, 32, 0.4);
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-text-fill: #472820;
+    -fx-padding: 8 12;
+    -fx-font-size: 13px;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+#txtSearch:focused {
+    -fx-border-color: #349626;
+    -fx-border-width: 2;
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+}
+
+#txtSearch .prompt-text {
+    -fx-fill: #8a7a6a;
+}
+
+#cmbType {
+    -fx-background-color: rgba(255, 255, 255, 0.85);
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(71, 40, 32, 0.4);
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 5 10;
+}
+
+#cmbType:focused {
+    -fx-border-color: #349626;
+    -fx-border-width: 2;
+}
+
+#cmbType .list-cell {
+    -fx-text-fill: #472820;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+#cmbType .arrow-button {
+    -fx-background-color: rgba(71, 40, 32, 0.2);
+    -fx-background-radius: 0 7 7 0;
+}
+
+/* ============================================ */
+/* 5. SCROLL PANE Y GRID                        */
+/* ============================================ */
+#scrollPane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 5;
+}
+
+#scrollPane .viewport {
+    -fx-background-color: transparent;
+}
+
+#scrollPane .scroll-bar:vertical,
+#scrollPane .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+#scrollPane .scroll-bar .track {
+    -fx-background-color: rgba(232, 220, 200, 0.1);
+    -fx-background-radius: 5;
+}
+
+#scrollPane .scroll-bar .thumb {
+    -fx-background-color: rgba(232, 220, 200, 0.4);
+    -fx-background-radius: 5;
+}
+
+#scrollPane .scroll-bar .thumb:hover {
+    -fx-background-color: #349626;
+}
+
+#gridCards {
+    -fx-background-color: transparent;
+}
+
+/* ============================================ */
+/* 6. TARJETAS DE PROPIEDADES                   */
+/* ============================================ */
+#card1, #card2, #card3, #card4 {
+    -fx-background-color: rgba(232, 220, 200, 0.15);
+    -fx-background-radius: 15;
+    -fx-border-color: rgba(232, 220, 200, 0.3);
+    -fx-border-radius: 15;
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 12, 0.1, 0, 4);
+}
+
+#card1:hover, #card2:hover, #card3:hover, #card4:hover {
+    -fx-background-color: rgba(232, 220, 200, 0.22);
+    -fx-border-color: rgba(232, 220, 200, 0.5);
+    -fx-effect: dropshadow(gaussian, rgba(52, 150, 38, 0.3), 15, 0.2, 0, 6);
+}
+
+#imgProp1, #imgProp2, #imgProp3, #imgProp4 {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(232, 220, 200, 0.2);
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+}
+
+#lblTitle1, #lblTitle2, #lblTitle3, #lblTitle4 {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+#lblDesc1, #lblDesc2, #lblDesc3, #lblDesc4 {
+    -fx-font-size: 12px;
+    -fx-text-fill: #E8DCC8;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-opacity: 0.85;
+}
+
+/* ============================================ */
+/* 7. BOTONES (Claro → Oscuro, sin bordes)      */
+/* ============================================ */
+#btnLogin, #btnRegister, #btnSearch,
+#btnDetails1, #btnDetails2, #btnDetails3, #btnDetails4 {
+    -fx-background-color: rgba(232, 220, 200, 0.8);
+    -fx-text-fill: #472820;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-padding: 8 18;
+    -fx-cursor: hand;
+}
+
+#btnLogin:hover, #btnRegister:hover, #btnSearch:hover,
+#btnDetails1:hover, #btnDetails2:hover, #btnDetails3:hover, #btnDetails4:hover {
+    -fx-background-color: #E8DCC8;
+    -fx-effect: dropshadow(gaussian, rgba(232, 220, 200, 0.5), 10, 0, 0, 0);
+}
+
+#btnLogin:pressed, #btnRegister:pressed, #btnSearch:pressed,
+#btnDetails1:pressed, #btnDetails2:pressed, #btnDetails3:pressed, #btnDetails4:pressed {
+    -fx-background-color: rgba(232, 220, 200, 0.6);
+}
+
+/* Botón de búsqueda destacado (verde) */
+#btnSearch {
+    -fx-background-color: rgba(52, 150, 38, 0.85);
+    -fx-text-fill: #E8DCC8;
+}
+
+#btnSearch:hover {
+    -fx-background-color: rgba(52, 150, 38, 1.0);
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(52, 150, 38, 0.5), 10, 0, 0, 0);
+}
+
+#btnSearch:pressed {
+    -fx-background-color: rgba(40, 120, 28, 1.0);
+}
+
+/* Botones de detalles en verde (acción principal de la tarjeta) */
+#btnDetails1, #btnDetails2, #btnDetails3, #btnDetails4 {
+    -fx-background-color: rgba(52, 150, 38, 0.85);
+    -fx-text-fill: #E8DCC8;
+    -fx-padding: 10 20;
+    -fx-font-size: 13px;
+}
+
+#btnDetails1:hover, #btnDetails2:hover, #btnDetails3:hover, #btnDetails4:hover {
+    -fx-background-color: rgba(52, 150, 38, 1.0);
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(52, 150, 38, 0.5), 10, 0, 0, 0);
+}
+
+#btnDetails1:pressed, #btnDetails2:pressed, #btnDetails3:pressed, #btnDetails4:pressed {
+    -fx-background-color: rgba(40, 120, 28, 1.0);
+}
+
+/* Botones del header con estilo secundario (transparentes) */
+#btnLogin {
+    -fx-background-color: transparent;
+    -fx-text-fill: #E8DCC8;
+    -fx-border-color: rgba(232, 220, 200, 0.5);
+    -fx-border-radius: 8;
+    -fx-border-width: 1.5;
+}
+
+#btnLogin:hover {
+    -fx-background-color: rgba(232, 220, 200, 0.15);
+    -fx-text-fill: white;
+    -fx-border-color: #E8DCC8;
+}
+
+#btnRegister {
+    -fx-background-color: rgba(232, 220, 200, 0.8);
+    -fx-text-fill: #472820;
+}
+
+#btnRegister:hover {
+    -fx-background-color: #E8DCC8;
+}
+
+/* ============================================ */
+/* 8. FOOTER                                    */
+/* ============================================ */
+#footerBox {
+    -fx-background-color: rgba(71, 40, 32, 0.4);
+    -fx-border-color: rgba(232, 220, 200, 0.3) transparent transparent transparent;
+    -fx-border-width: 1.5 0 0 0;
+    -fx-padding: 12 20;
+}
+
+#lblResults {
+    -fx-font-size: 12px;
+    -fx-text-fill: #E8DCC8;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-opacity: 0.8;
+}
+
+/* ============================================ */
+/* 9. ESTILOS GENERALES                         */
+/* ============================================ */
+.label {
+    -fx-text-fill: #E8DCC8;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.button {
+    -fx-cursor: hand;
+}
+
+/* ============================================ */
+/* 10. PLACEHOLDER PARA IMÁGENES VACÍAS         */
+/* ============================================ */
+.image-view {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+}

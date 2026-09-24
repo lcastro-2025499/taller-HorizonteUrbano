@@ -1,14 +1,12 @@
 package org.horizonteurbano.system.controller;
 
-import org.horizonteurbano.system.repositories.UserRepository;
+import org.horizonteurbano.system.service.UserService;
 import org.horizonteurbano.system.utils.AlertInformation;
 import org.horizonteurbano.system.utils.ViewFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
-import javafx.stage.Stage;
-import javafx.scene.Node;
 
 public class ChangePasswordController {
 
@@ -19,14 +17,14 @@ public class ChangePasswordController {
     @FXML
     private PasswordField pwdConfirmPassword;
 
-    private UserRepository userRepository;
+    private UserService userService;
     private AlertInformation alert;
     private ViewFactory viewFactory;
 
     public ChangePasswordController() {
-        this.userRepository = new UserRepository();
+        this.userService = new UserService();
         this.alert = new AlertInformation();
-        this.viewFactory = new ViewFactory();
+        this.viewFactory = ViewFactory.getInstance();
     }
 
     @FXML
@@ -39,7 +37,6 @@ public class ChangePasswordController {
             alert.viewAlert(2, "Campos Vacíos", "Completa todos los campos.", null);
             return;
         }
-
         if (!newPassword.equals(confirmPassword)) {
             alert.viewAlert(2, "Contraseñas no coinciden", "La nueva contraseña y su confirmación deben ser iguales.", null);
             return;
@@ -48,21 +45,20 @@ public class ChangePasswordController {
         //1 = SUCCESS
         //2 = ALERT
         //3 = ERROR
-        if (userRepository.updatePasswordByEmail(email, newPassword)) {
+        if (userService.changePassword(email, newPassword)) {
             alert.viewAlert(1, "Contraseña Actualizada", "Tu contraseña fue cambiada correctamente. Ya puedes iniciar sesión.", null);
-            closeCurrentWindow(event);
             viewFactory.showLoginWindow();
         } else {
             alert.viewAlert(3, "Error", "No se encontró ninguna cuenta activa con ese correo.", null);
         }
     }
 
-    private boolean isEmpty(String value) {
-        return value == null || value.trim().isEmpty();
+    @FXML
+    public void buttonCancel(ActionEvent event) {
+        viewFactory.showLoginWindow();
     }
 
-    private void closeCurrentWindow(ActionEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.close();
+    private boolean isEmpty(String value) {
+        return value == null || value.trim().isEmpty();
     }
 }
