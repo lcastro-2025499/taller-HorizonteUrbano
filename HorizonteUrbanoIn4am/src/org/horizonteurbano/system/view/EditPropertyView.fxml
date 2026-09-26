@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@../styles/MainStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.EditPropertyController">
+    <VBox spacing="15.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+        
+        <Label text="Editar Datos de la Propiedad" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+        
+        <HBox spacing="15.0">
+            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                <!-- Solución al Bug Latente: Este campo está deshabilitado desde el controlador -->
+                <Label text="Código Interno (Bloqueado)"/>
+                <TextField fx:id="txtCode" disable="true" style="-fx-background-color: #e9ecef;"/>
+            </VBox>
+            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                <Label text="Tipo de Inmueble"/>
+                <ComboBox fx:id="cmbType" prefWidth="300.0"/>
+            </VBox>
+        </HBox>
+
+        <VBox spacing="5.0">
+            <Label text="Dirección Exacta"/>
+            <TextField fx:id="txtAddress"/>
+        </VBox>
+
+        <HBox spacing="15.0">
+            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                <Label text="Área (m²)"/>
+                <TextField fx:id="txtArea"/>
+            </VBox>
+            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                <Label text="Precio de Oferta"/>
+                <TextField fx:id="txtPrice"/>
+            </VBox>
+            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                <Label text="Estado Comercial"/>
+                <ComboBox fx:id="cmbStatus" prefWidth="200.0"/>
+            </VBox>
+        </HBox>
+
+        <Region VBox.vgrow="ALWAYS"/>
+
+        <!-- Botones de Acción -->
+        <HBox alignment="CENTER_RIGHT" spacing="15.0">
+            <Button mnemonicParsing="false" onAction="#actionCancel" text="Cancelar Edición" styleClass="btn-secondary"/>
+            <Button mnemonicParsing="false" onAction="#actionUpdateProperty" text="Guardar Cambios" styleClass="btn-primary"/>
+        </HBox>
+        
+    </VBox>
+</AnchorPane>

@@ -54,7 +54,7 @@ public class RegisterController implements Initializable {
     public RegisterController() {
         this.userRepository = new UserRepository();
         this.alert = new AlertInformation();
-        this.viewFactory = new ViewFactory();
+        this.viewFactory = ViewFactory.getInstance();
     }
 
     @Override

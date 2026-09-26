@@ -12,88 +12,77 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 
 import org.horizonteurbano.system.models.Property;
 import org.horizonteurbano.system.models.PropertyType;
 import org.horizonteurbano.system.models.State;
+import org.horizonteurbano.system.models.User;
 import org.horizonteurbano.system.repositories.PropertyRepository;
 import org.horizonteurbano.system.repositories.PropertyTypeRepository;
 import org.horizonteurbano.system.repositories.StateRepository;
+import org.horizonteurbano.system.service.UserSession;
 import org.horizonteurbano.system.utils.AlertInformation;
-import org.horizonteurbano.system.utils.ViewFactory; // Injected utility for navigation
+import org.horizonteurbano.system.utils.ViewFactory;
 
 public class DashboardController implements Initializable {
 
-    @FXML private AnchorPane rootPane;
-    @FXML private VBox mainPanel;
-    @FXML private HBox headerBox;
-    @FXML private ImageView imgLogo;
-    @FXML private Label lblTitle;
-    @FXML private ImageView imgProfile;
     @FXML private Label lblUser;
     
-    @FXML private VBox formPanel;
-    @FXML private Label lblFormTitle;
-    @FXML private HBox formColumns;
-    @FXML private VBox colLeft;
-    @FXML private Label lblCode;
     @FXML private TextField txtCode;
-    @FXML private Label lblType;
     @FXML private ComboBox<String> cmbType;
-    @FXML private Label lblArea;
     @FXML private TextField txtArea;
     
-    @FXML private VBox colRight;
-    @FXML private Label lblAddress;
     @FXML private TextField txtAddress;
-    @FXML private Label lblStatus;
     @FXML private ComboBox<String> cmbStatus;
-    @FXML private Label lblPrice;
     @FXML private TextField txtPrice;
     
-    @FXML private VBox descriptionSection;
-    @FXML private Label lblDescription;
     @FXML private TextArea txtDescription;
     
-    @FXML private HBox buttonsBox;
     @FXML private Button btnClear;
     @FXML private Button btnCancel;
     @FXML private Button btnSave;
+    @FXML private Button btnManageUsers;
     
-    @FXML private VBox recordsPanel;
-    @FXML private Label lblRecords;
     @FXML private ListView<String> listRecords;
-    
-    @FXML private HBox footerBox;
-    @FXML private Label lblFooterStatus;
-    @FXML private ImageView imgClock;
 
     private PropertyRepository propertyRepository;
     private PropertyTypeRepository propertyTypeRepository;
     private StateRepository stateRepository;
     private AlertInformation alertInformation;
     private ViewFactory viewFactory;
+    private UserSession session;
 
     public DashboardController() {
         this.propertyRepository = new PropertyRepository();
         this.propertyTypeRepository = new PropertyTypeRepository();
         this.stateRepository = new StateRepository();
-        this.alertInformation = new AlertInformation();
-        this.viewFactory = new ViewFactory(); // Initialization for screen routing[cite: 6]
+        this.alertInformation = new AlertInformation(); 
+        this.viewFactory = ViewFactory.getInstance();
+        this.session = UserSession.getInstance();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        loadPropertyTypes();
-        loadPropertyStates();
-        setupButtonActions();
+        cargarTiposDePropiedad();
+        cargarEstadosDePropiedad();
+        cargarDatosUsuario();
+    }
+    
+    private void cargarDatosUsuario() {
+        if (session.isLoggedIn()) {
+            User loggedUser = session.getLoggedUser();
+            lblUser.setText("Usuario: " + loggedUser.getName() + " " + loggedUser.getLastName());
+            
+            if (loggedUser.getRol() == null || loggedUser.getRol().getIdRole() != 1) {
+                if (btnManageUsers != null) {
+                    btnManageUsers.setVisible(false);
+                    btnManageUsers.setManaged(false);
+                }
+            }
+        }
     }
 
-    private void loadPropertyTypes() {
+    private void cargarTiposDePropiedad() {
         cmbType.getItems().clear();
         List<PropertyType> types = propertyTypeRepository.getAllPropertyTypes();
         for (PropertyType type : types) {
@@ -101,7 +90,7 @@ public class DashboardController implements Initializable {
         }
     }
 
-    private void loadPropertyStates() {
+    private void cargarEstadosDePropiedad() {
         cmbStatus.getItems().clear();
         List<State> states = stateRepository.getAllStates();
         for (State state : states) {
@@ -109,13 +98,8 @@ public class DashboardController implements Initializable {
         }
     }
 
-    private void setupButtonActions() {
-        btnSave.setOnAction(this::saveProperty);
-        btnClear.setOnAction(this::clearForm);
-        btnCancel.setOnAction(this::cancelAction);
-    }
-
-    private void saveProperty(ActionEvent event) {
+    @FXML
+    public void actionSaveProperty(ActionEvent event) {
         try {
             if (txtCode.getText().isEmpty() || txtAddress.getText().isEmpty() || 
                 txtArea.getText().isEmpty() || txtPrice.getText().isEmpty() || 
@@ -140,12 +124,17 @@ public class DashboardController implements Initializable {
             newProperty.setState(state);
             
             newProperty.setActive(true);
-            newProperty.setIdUser("CURRENT_USER_ID"); 
+            
+            if (session.isLoggedIn()) {
+                newProperty.setIdUser(session.getLoggedUser().getIdUser());
+            } else {
+                newProperty.setIdUser("SISTEMA"); 
+            }
 
             if (propertyRepository.saveProperty(newProperty)) {
                 alertInformation.viewAlert(1, "Guardado Exitoso", "La propiedad se ha registrado correctamente en el inventario.", null);
-                listRecords.getItems().add(0, "Guardado: " + newProperty.getInternalCode() + " - " + newProperty.getAddress());
-                clearForm(null);
+                listRecords.getItems().add(0, "✅ Guardado: " + newProperty.getInternalCode() + " - " + newProperty.getAddress());
+                actionClear(null);
             } else {
                 alertInformation.viewAlert(3, "Error de Registro", "Ocurrió un problema al guardar en la base de datos.", null);
             }
@@ -155,7 +144,8 @@ public class DashboardController implements Initializable {
         }
     }
 
-    private void clearForm(ActionEvent event) {
+    @FXML
+    public void actionClear(ActionEvent event) {
         txtCode.clear();
         txtAddress.clear();
         txtArea.clear();
@@ -165,13 +155,14 @@ public class DashboardController implements Initializable {
         cmbStatus.getSelectionModel().clearSelection();
     }
 
-    private void cancelAction(ActionEvent event) {
-        clearForm(event);
-        
-        // Notification and dynamic routing via ViewFactory[cite: 6]
-        alertInformation.viewAlert(1, "Cancelado", "Operación cancelada. Redirigiendo al inventario de búsqueda...", null);
-        
-        // Note: Change 'showSearchPropertyView()' to the exact method name mapped in your ViewFactory class
-        // viewFactory.showSearchPropertyView(); 
+    @FXML
+    public void actionCancel(ActionEvent event) {
+        actionClear(event);
+        alertInformation.viewAlert(1, "Cancelado", "Operación cancelada. El formulario ha sido limpiado.", null);
+    }
+    
+    @FXML
+    public void actionManageUsers(ActionEvent event) {
+        viewFactory.showUsersWindow();
     }
 }

@@ -26,7 +26,7 @@ public class ChangePasswordController {
     public ChangePasswordController() {
         this.userRepository = new UserRepository();
         this.alert = new AlertInformation();
-        this.viewFactory = new ViewFactory();
+        this.viewFactory = ViewFactory.getInstance();
     }
 
     @FXML

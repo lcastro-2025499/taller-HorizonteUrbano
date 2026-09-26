@@ -36,6 +36,7 @@
          <Label fx:id="lblTitle" text="Horizonte Urbano" />
 
          <Region HBox.hgrow="ALWAYS" />
+         <Button fx:id="btnManageUsers" text="Gestionar Personal" onAction="#actionManageUsers" styleClass="btn-primary"/>
          <Hyperlink text="Menu" />
 
          <ImageView fx:id="imgProfile" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">

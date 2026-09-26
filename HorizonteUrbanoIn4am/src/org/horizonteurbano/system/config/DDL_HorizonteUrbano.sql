@@ -1,6 +1,6 @@
-drop database if exists HorizonteUrbano_in4am;
-create database HorizonteUrbano_in4am;
-use HorizonteUrbano_in4am;
+drop database if exists HorizonteUrbano_in4am_root;
+create database HorizonteUrbano_in4am_root;
+use HorizonteUrbano_in4am_root;
 
 create table Role(
     id_role INT NOT NULL,

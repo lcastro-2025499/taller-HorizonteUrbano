@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class UserRepository {
@@ -78,6 +80,47 @@ public class UserRepository {
 
         } catch (SQLException e) {
             System.err.println("Error updating password: " + e.getMessage());
+            return false;
+        }
+    }
+    public List<User> getAllActiveUsers() {
+        List<User> list = new ArrayList<>();
+        String query = "SELECT * FROM users WHERE active = 1";
+        
+        try (java.sql.Connection conn = org.horizonteurbano.system.config.ConnectionDB.getInstanceConnectionDB().getConnection();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(query);
+             java.sql.ResultSet rs = pstmt.executeQuery()) {
+            
+            while (rs.next()) {
+                User user = new User();
+                user.setIdUser(rs.getString("id_user"));
+                user.setName(rs.getString("name"));
+                user.setLastName(rs.getString("last_name"));
+                user.setEmail(rs.getString("email"));
+                
+                Role role = new Role();
+                role.setIdRole(rs.getInt("id_role"));
+                user.setRol(role);
+                
+                list.add(user);
+            }
+        } catch (Exception e) {
+            System.err.println("Error listando usuarios activos: " + e.getMessage());
+        }
+        return list;
+    }
+
+    public boolean deleteUser(String idUser) {
+        String query = "UPDATE users SET active = 0 WHERE id_user = ?";
+        
+        try (java.sql.Connection conn = org.horizonteurbano.system.config.ConnectionDB.getInstanceConnectionDB().getConnection();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(query)) {
+            
+            pstmt.setString(1, idUser);
+            return pstmt.executeUpdate() > 0;
+            
+        } catch (Exception e) {
+            System.err.println("Error desactivando usuario: " + e.getMessage());
             return false;
         }
     }

@@ -96,7 +96,12 @@
       <HBox fx:id="footerBox" alignment="CENTER_LEFT" spacing="10.0">
          <Label fx:id="lblResults" text="Resultados: " />
          <Region HBox.hgrow="ALWAYS" />
-         <Button fx:id="btnViewDetails" mnemonicParsing="false" prefWidth="160.0" text="Ver Ficha Detallada" />
+         
+         <Button fx:id="btnChangeStatus" mnemonicParsing="false" onAction="#actionChangeStatus" styleClass="btn-secondary" text="Cambiar Estado"/>
+         <Button fx:id="btnEdit" mnemonicParsing="false" onAction="#actionEdit" styleClass="btn-primary" text="Editar Propiedad"/>
+         <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#actionDelete" styleClass="btn-danger" text="Dar de Baja"/>
+         
+        <Button fx:id="btnViewDetails" mnemonicParsing="false" onAction="#actionExportPDF" prefWidth="160.0" text="Ver Ficha Detallada" styleClass="btn-primary"/>
       </HBox>
 
    </VBox>

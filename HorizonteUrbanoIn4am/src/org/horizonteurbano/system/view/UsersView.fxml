@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane prefHeight="650.0" prefWidth="1000.0" stylesheets="@../styles/MainStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.UserController">
+    <VBox spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+        
+        <HBox alignment="CENTER_LEFT">
+            <Label text="Gestión de Personal" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <!-- Este botón asume que tienes el método actionGoBack en tu UserController para volver al Dashboard -->
+            <Button text="Volver al Dashboard" onAction="#actionGoBack" styleClass="btn-secondary"/>
+        </HBox>
+
+        <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+            <!-- Formulario de Registro -->
+            <VBox spacing="10.0" prefWidth="300.0" styleClass="glass-panel" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8px;">
+                <Label text="Datos del Empleado" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="txtIdUser" promptText="ID de Empleado (Ej. USR-01)"/>
+                <TextField fx:id="txtName" promptText="Nombres"/>
+                <TextField fx:id="txtLastName" promptText="Apellidos"/>
+                <TextField fx:id="txtEmail" promptText="Correo Electrónico"/>
+                <TextField fx:id="txtPhone" promptText="Teléfono"/>
+                <PasswordField fx:id="pwdPassword" promptText="Contraseña de Acceso"/>
+                
+                <!-- CORRECCIÓN: Se cambió "MAX_VALUE" por "300.0" para evitar el crash en Scene Builder -->
+                <ComboBox fx:id="cmbRole" promptText="Seleccionar Rol" prefWidth="300.0"/>
+                
+                <Region VBox.vgrow="ALWAYS"/>
+                <Button text="Registrar Empleado" onAction="#createUser" prefWidth="300.0" styleClass="btn-primary"/>
+                <Button text="Desactivar Seleccionado" onAction="#deactivateUser" prefWidth="300.0" styleClass="btn-danger"/>
+            </VBox>
+
+            <!-- Tabla de Usuarios -->
+            <TableView fx:id="tblUsers" HBox.hgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colId" text="ID Empleado" prefWidth="100"/>
+                    <TableColumn fx:id="colName" text="Nombres" prefWidth="180"/>
+                    <TableColumn fx:id="colEmail" text="Correo" prefWidth="200"/>
+                    <TableColumn fx:id="colRole" text="Rol Asignado" prefWidth="150"/>
+                </columns>
+            </TableView>
+        </HBox>
+    </VBox>
+</AnchorPane>

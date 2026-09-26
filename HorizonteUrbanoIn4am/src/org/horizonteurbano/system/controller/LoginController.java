@@ -1,31 +1,33 @@
 package org.horizonteurbano.system.controller;
 
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+
 import org.horizonteurbano.system.models.User;
-import org.horizonteurbano.system.repositories.UserRepository;
+import org.horizonteurbano.system.service.UserService;
+import org.horizonteurbano.system.service.UserSession;
 import org.horizonteurbano.system.utils.AlertInformation;
 import org.horizonteurbano.system.utils.ViewFactory;
-import javafx.scene.control.TextField;
-import javafx.scene.control.PasswordField;
-import javafx.fxml.FXML;
-import javafx.event.ActionEvent;
-import javafx.stage.Stage;
-import javafx.scene.Node;
 
 public class LoginController {
 
-    @FXML
-    private TextField txtEmail;
-    @FXML
-    private PasswordField pwdPassword;
+    @FXML private TextField txtEmail;
+    @FXML private PasswordField pwdPassword;
 
-    private UserRepository userRepository;
+    private UserService userService;
     private AlertInformation alert;
     private ViewFactory viewFactory;
+    private UserSession session;
 
     public LoginController() {
-        this.userRepository = new UserRepository();
+        this.userService = new UserService();
         this.alert = new AlertInformation();
-        this.viewFactory = new ViewFactory();
+        this.viewFactory = ViewFactory.getInstance();
+        this.session = UserSession.getInstance();
     }
 
     @FXML
@@ -33,20 +35,35 @@ public class LoginController {
         String email = txtEmail.getText();
         String password = pwdPassword.getText();
 
-        //1 = SUCCESS
-        //2 = ALERT
-        //3 = DENIED
         if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
             alert.viewAlert(2, "Campos Vacíos", "Por favor, ingresa tu correo y contraseña.", null);
             return;
         }
 
-        User loggedUser = userRepository.validateLogin(email, password);
+        User loggedUser = userService.login(email.trim(), password.trim());
+
         if (loggedUser != null) {
             alert.viewAlert(1, "Login Exitoso", "¡Bienvenido a Horizonte Urbano, " + loggedUser.getName() + "!", null);
             clearFields();
+            
+            session.login(loggedUser);
             closeCurrentWindow(event);
-            viewFactory.showDashboardWindow();
+
+            int roleId = loggedUser.getRol().getIdRole();
+            switch (roleId) {
+                case 1: // Administrador -> Va al Dashboard Gerencial / Registro de Propiedades
+                    viewFactory.showDashboardWindow();
+                    break;
+                case 2: // Asesor -> Va al catálogo público principal
+                    viewFactory.showMainViewWindow();
+                    break;
+                case 3: // Gerente -> Va a la vista de métricas y reportes
+                    viewFactory.showReportsWindow();
+                    break;
+                default:
+                    viewFactory.showDashboardWindow();
+                    break;
+            }
         } else {
             alert.viewAlert(3, "Acceso Denegado", "Correo o contraseña incorrectos, o cuenta inactiva.", null);
         }
@@ -54,6 +71,7 @@ public class LoginController {
 
     @FXML
     public void buttonLogout(ActionEvent event) {
+        session.logout();
         alert.viewAlert(1, "Sesión Cerrada", "Has cerrado sesión correctamente.", null);
     }
 
@@ -71,7 +89,7 @@ public class LoginController {
 
     private void closeCurrentWindow(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.close();
+        viewFactory.closeStage(stage);
     }
 
     private void clearFields() {
