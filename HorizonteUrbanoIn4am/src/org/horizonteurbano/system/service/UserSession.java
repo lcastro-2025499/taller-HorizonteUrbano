@@ -63,4 +63,8 @@ public class UserSession {
     public void logout() {
         this.currentUser = null;
     }
+
+    public void login(User loggedUser) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="rootPane" prefHeight="680.0" prefWidth="960.0" stylesheets="@../styles/DashboardViewStyles.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.DashboardController">
+<AnchorPane fx:id="rootPane" prefHeight="680.0" prefWidth="960.0" stylesheets="@../styles/DashboardViewStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.DashboardController">
 
     <VBox fx:id="mainPanel" spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
         <padding>
@@ -35,8 +35,11 @@
             <Label fx:id="lblTitle" text="Horizonte Urbano" />
 
             <Region HBox.hgrow="ALWAYS" />
-            <Button fx:id="btnGoMenu" mnemonicParsing="false" onAction="#goToMainMenu" text="Menú" />
+            
+            <!-- Botones fusionados de tu rama local y develop -->
+            <Button fx:id="btnManageUsers" text="Gestionar Personal" onAction="#actionManageUsers" styleClass="btn-primary"/>
             <Button fx:id="btnGoSearch" mnemonicParsing="false" onAction="#goToSearch" text="Buscar Propiedades" />
+            <Button mnemonicParsing="false" onAction="#goToMainMenu" text="Menú Principal" />
 
             <ImageView fx:id="imgProfile" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <HBox.margin>
@@ -112,4 +115,3 @@
 
     </VBox>
 </AnchorPane>
-    

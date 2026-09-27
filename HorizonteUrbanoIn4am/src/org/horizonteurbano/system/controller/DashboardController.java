@@ -28,41 +28,30 @@ import org.horizonteurbano.system.utils.ViewFactory;
 
 public class DashboardController implements Initializable {
 
-    @FXML
-    private Label lblUser;
-    @FXML
-    private VBox formPanel;
-    @FXML
-    private TextField txtCode;
-    @FXML
-    private ComboBox<PropertyType> cmbType;
-    @FXML
-    private TextField txtArea;
-    @FXML
-    private TextField txtAddress;
-    @FXML
-    private ComboBox<State> cmbStatus;
-    @FXML
-    private TextField txtPrice;
-    @FXML
-    private TextArea txtDescription;
-    @FXML
-    private Button btnClear;
-    @FXML
-    private Button btnCancel;
-    @FXML
-    private Button btnSave;
-    @FXML
-    private Button btnGoSearch;
-    @FXML
-    private ListView<String> listRecords;
+    @FXML private Label lblUser;
+    @FXML private VBox formPanel;
+    @FXML private TextField txtCode;
+    @FXML private ComboBox<PropertyType> cmbType;
+    @FXML private TextField txtArea;
+    @FXML private TextField txtAddress;
+    @FXML private ComboBox<State> cmbStatus;
+    @FXML private TextField txtPrice;
+    @FXML private TextArea txtDescription;
+    
+    @FXML private Button btnClear;
+    @FXML private Button btnCancel;
+    @FXML private Button btnSave;
+    @FXML private Button btnGoSearch;
+    @FXML private Button btnManageUsers;
+    
+    @FXML private ListView<String> listRecords;
 
     private PropertyRepository propertyRepository;
     private PropertyTypeRepository propertyTypeRepository;
     private StateRepository stateRepository;
     private AlertInformation alerta;
-    private UserSession session;
     private ViewFactory viewFactory;
+    private UserSession session;
 
     public DashboardController() {
         this.propertyRepository = new PropertyRepository();
@@ -83,36 +72,51 @@ public class DashboardController implements Initializable {
     }
 
     private void loadCurrentUser() {
-        User currentUser = session.getCurrentUser();
-        if (currentUser == null) {
+        if (session.isLoggedIn()) {
+            User currentUser = session.getCurrentUser();
+            lblUser.setText("Usuario: " + currentUser.getName() + " " + currentUser.getLastName());
+        } else {
             lblUser.setText("Usuario: Invitado");
-            return;
         }
-        lblUser.setText("Usuario: " + currentUser.getName());
     }
 
-    // Hides the property registration form from users who cannot create properties
     private void applyRolePermissions() {
         if (!session.isLoggedIn()) {
             hideForm();
+            if (btnManageUsers != null) {
+                btnManageUsers.setVisible(false);
+                btnManageUsers.setManaged(false);
+            }
             return;
         }
-        // Only Admin (role 1) can create/edit/delete properties
+        
         if (session.isAdmin()) {
             showForm();
+            if (btnManageUsers != null) {
+                btnManageUsers.setVisible(true);
+                btnManageUsers.setManaged(true);
+            }
         } else {
             hideForm();
+            if (btnManageUsers != null) {
+                btnManageUsers.setVisible(false);
+                btnManageUsers.setManaged(false);
+            }
         }
     }
 
     private void showForm() {
-        formPanel.setVisible(true);
-        formPanel.setManaged(true);
+        if (formPanel != null) {
+            formPanel.setVisible(true);
+            formPanel.setManaged(true);
+        }
     }
 
     private void hideForm() {
-        formPanel.setVisible(false);
-        formPanel.setManaged(false);
+        if (formPanel != null) {
+            formPanel.setVisible(false);
+            formPanel.setManaged(false);
+        }
     }
 
     private void configureComboConverters() {
@@ -153,7 +157,6 @@ public class DashboardController implements Initializable {
 
     @FXML
     public void actionSaveProperty(ActionEvent event) {
-        // Defensive check: only Admin can save, regardless of UI state
         if (!session.isAdmin()) {
             alerta.viewAlert(3, "Permiso Denegado", "No tienes permisos para registrar propiedades.", null);
             return;
@@ -163,13 +166,7 @@ public class DashboardController implements Initializable {
                 || txtArea.getText().isEmpty() || txtPrice.getText().isEmpty()
                 || cmbType.getSelectionModel().getSelectedItem() == null
                 || cmbStatus.getSelectionModel().getSelectedItem() == null) {
-            alerta.viewAlert(2, "Datos Incompletos", "Por favor, llena todos los campos obligatorios del formulario.", null);
-            return;
-        }
-
-        User currentUser = session.getCurrentUser();
-        if (currentUser == null) {
-            alerta.viewAlert(3, "Sesión no válida", "Debes iniciar sesión para registrar propiedades.", null);
+            alerta.viewAlert(2, "Datos Incompletos", "Por favor, llena todos los campos obligatorios.", null);
             return;
         }
 
@@ -182,10 +179,15 @@ public class DashboardController implements Initializable {
             newProperty.setType(cmbType.getSelectionModel().getSelectedItem());
             newProperty.setState(cmbStatus.getSelectionModel().getSelectedItem());
             newProperty.setActive(true);
-            newProperty.setIdUser(currentUser.getIdUser());
+            
+            if (session.isLoggedIn()) {
+                newProperty.setIdUser(session.getCurrentUser().getIdUser());
+            } else {
+                newProperty.setIdUser("SISTEMA"); 
+            }
 
             if (propertyRepository.saveProperty(newProperty)) {
-                alerta.viewAlert(1, "Guardado Exitoso", "La propiedad se ha registrado correctamente en el inventario.", null);
+                alerta.viewAlert(1, "Guardado Exitoso", "La propiedad se ha registrado correctamente.", null);
                 listRecords.getItems().add(0, "✅ Agregado: " + newProperty.getInternalCode() + " - " + newProperty.getAddress());
                 actionClear(null);
             } else {
@@ -193,7 +195,7 @@ public class DashboardController implements Initializable {
             }
 
         } catch (NumberFormatException e) {
-            alerta.viewAlert(2, "Error de Formato", "El Área y el Precio deben contener únicamente números, sin letras ni símbolos especiales.", null);
+            alerta.viewAlert(2, "Error de Formato", "El Área y el Precio deben contener únicamente números.", null);
         }
     }
 
@@ -212,6 +214,11 @@ public class DashboardController implements Initializable {
     public void actionCancel(ActionEvent event) {
         actionClear(event);
         alerta.viewAlert(1, "Cancelado", "Se han limpiado los datos del formulario.", null);
+    }
+    
+    @FXML
+    public void actionManageUsers(ActionEvent event) {
+        viewFactory.showUsersWindow();
     }
 
     @FXML

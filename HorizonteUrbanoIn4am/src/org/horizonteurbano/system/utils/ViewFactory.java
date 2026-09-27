@@ -1,5 +1,8 @@
 package org.horizonteurbano.system.utils;
 
+import org.horizonteurbano.system.models.Property;
+import org.horizonteurbano.system.controller.EditPropertyController;
+
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Scene;
@@ -49,7 +52,7 @@ public class ViewFactory {
         }
     }
 
-    // Replaces the scene in the single main stage
+    // Reemplaza la escena en la ventana principal (Arquitectura de develop)
     private void showView(String title, String fxml, int width, int height) {
         if (mainStage == null) {
             throw new IllegalStateException("Main stage not set. Call setMainStage() first.");
@@ -87,5 +90,44 @@ public class ViewFactory {
 
     public void showMainViewWindow() {
         showView("Catalog - Horizonte Urbano", "MainView.fxml", 900, 600);
+    }
+
+    // Rutas exclusivas de tu rama local
+    public void showReportsWindow() {
+        showView("Reportes Gerenciales - Horizonte Urbano", "ReportsView.fxml", 920, 540);
+    }
+
+    public void showUsersWindow() {
+        showView("Gestión de Personal - Horizonte Urbano", "UsersView.fxml", 1000, 650);
+    }
+
+    // Este se mantiene como Pop-up independiente (inyecta los datos al controlador)
+    public void showEditPropertyWindow(Property property) {
+        try {
+            Stage stage = new Stage();
+            stage.setTitle("Editar Propiedad - Horizonte Urbano");
+            stage.setResizable(false);
+
+            String pathOfFile = PATH_VIEWS + "EditPropertyView.fxml";
+            
+            // CORRECCIÓN DEL ERROR: Usamos ViewFactory.class en lugar de Main.class
+            FXMLLoader loader = new FXMLLoader(ViewFactory.class.getResource(pathOfFile));
+            Scene scene = new Scene(loader.load());
+
+            EditPropertyController controller = loader.getController();
+            controller.setPropertyData(property);
+
+            stage.setScene(scene);
+            stage.show();
+        } catch (Exception e) {
+            System.err.println("Error loading edit property window: " + e.getMessage());
+        }
+    }
+
+    // Utilidad para cerrar ventanas modales
+    public void closeStage(Stage stage) {
+        if (stage != null) {
+            stage.close();
+        }
     }
 }

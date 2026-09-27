@@ -12,7 +12,7 @@ import java.util.List;
 
 public class UserRepository {
 
-    // Stores the user as-is; the password must already be hashed by UserService
+    // Guarda el usuario (la contraseña ya viene encriptada por UserService)
     public boolean saveUser(User user) {
         String query = "INSERT INTO Users (id_user, name, last_name, password, email, user_name, active, id_role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -35,7 +35,7 @@ public class UserRepository {
         }
     }
 
-    // Returns the user (with hashed password) matching email OR user_name
+    // Devuelve el usuario (con contraseña hasheada) buscando por email o user_name
     public User getUserByIdentifier(String identifier) {
         String query = "SELECT id_user, name, last_name, password, email, user_name, active, id_role FROM Users WHERE (email = ? OR user_name = ?) AND active = true";
 
@@ -127,7 +127,6 @@ public class UserRepository {
         }
     }
 
-    // Password must already be hashed by UserService
     public boolean updatePassword(String idUser, String hashedPassword) {
         String query = "UPDATE Users SET password = ? WHERE id_user = ?";
 
@@ -144,6 +143,7 @@ public class UserRepository {
         }
     }
 
+    // Borrado lógico equivalente a tu active = 0
     public boolean deleteUser(String idUser) {
         String query = "UPDATE Users SET active = false WHERE id_user = ?";
 

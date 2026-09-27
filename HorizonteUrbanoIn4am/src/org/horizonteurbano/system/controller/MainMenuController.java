@@ -11,6 +11,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.FlowPane;
+import javafx.geometry.Insets;
 
 import org.horizonteurbano.system.models.Property;
 import org.horizonteurbano.system.repositories.PropertyRepository;
@@ -20,56 +22,20 @@ import org.horizonteurbano.system.utils.ViewFactory;
 
 public class MainMenuController implements Initializable {
 
-    @FXML
-    private Button btnGoSearch;
-    @FXML
-    private Button btnLogin;
-    @FXML
-    private Button btnRegister;
-    @FXML
-    private Button btnLogout;
+    @FXML private Button btnGoSearch;
+    @FXML private Button btnLogin;
+    @FXML private Button btnRegister;
+    @FXML private Button btnLogout;
 
-    @FXML
-    private TextField txtSearch;
-    @FXML
-    private Button btnSearch;
-
-    @FXML
-    private VBox card1;
-    @FXML
-    private VBox card2;
-    @FXML
-    private VBox card3;
-    @FXML
-    private VBox card4;
-
-    @FXML
-    private Label lblTitle1;
-    @FXML
-    private Label lblTitle2;
-    @FXML
-    private Label lblTitle3;
-    @FXML
-    private Label lblTitle4;
-
-    @FXML
-    private Label lblDesc1;
-    @FXML
-    private Label lblDesc2;
-    @FXML
-    private Label lblDesc3;
-    @FXML
-    private Label lblDesc4;
-
-    @FXML
-    private Label lblResults;
+    @FXML private TextField txtSearch;
+    @FXML private Button btnSearch;
+    @FXML private FlowPane flowPanePropertyCatalog;
+    @FXML private Label lblResults;
 
     private PropertyRepository propertyRepository;
     private AlertInformation alert;
     private ViewFactory viewFactory;
     private UserSession session;
-
-    private List<Property> displayedProperties;
 
     public MainMenuController() {
         this.propertyRepository = new PropertyRepository();
@@ -81,16 +47,30 @@ public class MainMenuController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         updateHeaderForSession();
-        loadFeaturedProperties();
+        cargarCatalogo(""); 
     }
 
-    // Shows/hides header buttons depending on whether a user is logged in
     private void updateHeaderForSession() {
         boolean loggedIn = session.isLoggedIn();
+
+        // 1. Visitantes (No logueados): Ven Login y Registro. Si están logueados, desaparecen.
         setVisible(btnLogin, !loggedIn);
         setVisible(btnRegister, !loggedIn);
+
+        // 2. Usuarios Logueados: Ven el botón de Cerrar Sesión.
         setVisible(btnLogout, loggedIn);
-        setVisible(btnGoSearch, loggedIn);
+
+        // 3. Permiso estricto para Buscar Propiedades (Solo roles 1, 2 y 3)
+        boolean puedeBuscar = false;
+        
+        if (loggedIn && session.getCurrentUser() != null && session.getCurrentUser().getRol() != null) {
+            int roleId = session.getCurrentUser().getRol().getIdRole();
+            if (roleId == 1 || roleId == 2 || roleId == 3) {
+                puedeBuscar = true;
+            }
+        }
+        
+        setVisible(btnGoSearch, puedeBuscar);
     }
 
     private void setVisible(Node node, boolean visible) {
@@ -100,26 +80,71 @@ public class MainMenuController implements Initializable {
         }
     }
 
-    private void loadFeaturedProperties() {
-        displayedProperties = propertyRepository.getAllActiveProperties();
-        fillCard(card1, lblTitle1, lblDesc1, 0);
-        fillCard(card2, lblTitle2, lblDesc2, 1);
-        fillCard(card3, lblTitle3, lblDesc3, 2);
-        fillCard(card4, lblTitle4, lblDesc4, 3);
+    private void cargarCatalogo(String filtro) {
+        if (flowPanePropertyCatalog == null) return;
+        
+        flowPanePropertyCatalog.getChildren().clear();
+        List<Property> propiedades = propertyRepository.getAllActiveProperties();
+        int coincidencias = 0;
 
-        int count = Math.min(displayedProperties.size(), 4);
-        lblResults.setText("Mostrando " + count + " de " + displayedProperties.size() + " propiedades");
+        for (Property p : propiedades) {
+            boolean coincideFiltro = filtro.isEmpty() || 
+                                     p.getAddress().toLowerCase().contains(filtro.toLowerCase()) || 
+                                     p.getInternalCode().toLowerCase().contains(filtro.toLowerCase());
+            
+            if (coincideFiltro) {
+                flowPanePropertyCatalog.getChildren().add(crearTarjeta(p));
+                coincidencias++;
+            }
+        }
+        
+        if (coincidencias == 0) {
+            Label lblVacio = new Label("No se encontraron propiedades con la búsqueda: " + filtro);
+            lblVacio.setStyle("-fx-font-size: 16px; -fx-text-fill: white;");
+            flowPanePropertyCatalog.getChildren().add(lblVacio);
+        }
+        
+        if (lblResults != null) {
+            lblResults.setText("Mostrando " + coincidencias + " propiedades");
+        }
     }
 
-    private void fillCard(VBox card, Label titleLabel, Label descLabel, int index) {
-        if (index >= displayedProperties.size()) {
-            card.setVisible(false);
-            card.setManaged(false);
+    private VBox crearTarjeta(Property p) {
+        VBox card = new VBox(10);
+        card.setPadding(new Insets(20));
+        card.setStyle("-fx-background-color: white; -fx-background-radius: 12px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 5);");
+        card.setPrefWidth(320);
+
+        Label lblTitulo = new Label("Código: " + p.getInternalCode());
+        lblTitulo.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2a3b4c;");
+        
+        Label lblDireccion = new Label(p.getAddress());
+        lblDireccion.setStyle("-fx-text-fill: #666666;");
+        lblDireccion.setWrapText(true);
+        
+        Label lblAreaPrecio = new Label("Área: " + p.getArea() + " m² | Precio: Q" + p.getPrice());
+        lblAreaPrecio.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #349626;");
+
+        Button btnDetalle = new Button("Solicitar Información");
+        btnDetalle.setMaxWidth(Double.MAX_VALUE);
+        btnDetalle.setStyle("-fx-background-color: #472820; -fx-text-fill: white; -fx-border-radius: 20;");
+        
+        btnDetalle.setOnAction(e -> alert.viewAlert(1, "Detalles de la Propiedad", 
+            "Inmueble: " + p.getInternalCode() + "\nUbicación: " + p.getAddress() + "\n\nUn asesor se pondrá en contacto pronto.", null));
+
+        card.getChildren().addAll(lblTitulo, lblDireccion, lblAreaPrecio, btnDetalle);
+        return card;
+    }
+
+    @FXML
+    public void actionSearchProperty(ActionEvent event) {
+        String query = txtSearch.getText();
+        if (query == null || query.trim().isEmpty()) {
+            alert.viewAlert(2, "Búsqueda Vacía", "Por favor, ingresa una zona o palabra clave para buscar.", null);
+            cargarCatalogo(""); 
             return;
         }
-        Property p = displayedProperties.get(index);
-        titleLabel.setText(p.getInternalCode() + " — " + p.getAddress());
-        descLabel.setText("Área: " + p.getArea() + " m²   |   Precio: Q" + p.getPrice());
+        cargarCatalogo(query.trim()); 
     }
 
     @FXML
@@ -140,47 +165,7 @@ public class MainMenuController implements Initializable {
     @FXML
     public void actionLogout(ActionEvent event) {
         session.logout();
-        viewFactory.showMainViewWindow();
-    }
-
-    @FXML
-    public void actionSearchProperty(ActionEvent event) {
-        String query = txtSearch.getText();
-        if (query == null || query.trim().isEmpty()) {
-            alert.viewAlert(2, "Búsqueda Vacía", "Por favor, ingresa una zona o palabra clave para buscar.", null);
-            return;
-        }
-        // TODO: filter cards by query in a future iteration
-        alert.viewAlert(1, "Búsqueda", "Buscando: " + query, null);
-    }
-
-    @FXML
-    public void actionDetails1(ActionEvent event) {
-        openDetails(0);
-    }
-
-    @FXML
-    public void actionDetails2(ActionEvent event) {
-        openDetails(1);
-    }
-
-    @FXML
-    public void actionDetails3(ActionEvent event) {
-        openDetails(2);
-    }
-
-    @FXML
-    public void actionDetails4(ActionEvent event) {
-        openDetails(3);
-    }
-
-    private void openDetails(int index) {
-        if (displayedProperties == null || index >= displayedProperties.size()) {
-            return;
-        }
-        Property p = displayedProperties.get(index);
-        alert.viewAlert(1, "Detalles de la propiedad",
-                p.getInternalCode() + "\n" + p.getAddress() + "\nÁrea: " + p.getArea() + " m²\nPrecio: Q" + p.getPrice(),
-                null);
+        updateHeaderForSession();
+        alert.viewAlert(1, "Sesión Cerrada", "Has cerrado sesión correctamente.", null);
     }
 }

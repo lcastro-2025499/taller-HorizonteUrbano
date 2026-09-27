@@ -72,3 +72,5 @@ call sp_create_property_image(@prop2, 'https://example.com/hu-002-a.jpg');
 
 
 
+
+

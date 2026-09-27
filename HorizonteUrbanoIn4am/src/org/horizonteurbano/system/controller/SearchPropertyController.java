@@ -1,23 +1,5 @@
 package org.horizonteurbano.system.controller;
 
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import org.horizonteurbano.system.config.ConnectionDB;
-import org.horizonteurbano.system.models.Property;
-import org.horizonteurbano.system.models.PropertyType;
-import org.horizonteurbano.system.models.State;
-import org.horizonteurbano.system.utils.AlertInformation;
-
 import java.net.URL;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -25,8 +7,40 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
+
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
+
+import org.horizonteurbano.system.config.ConnectionDB;
+import org.horizonteurbano.system.models.Property;
+import org.horizonteurbano.system.models.PropertyType;
+import org.horizonteurbano.system.models.State;
+import org.horizonteurbano.system.repositories.PropertyRepository;
+import org.horizonteurbano.system.repositories.StateRepository;
+import org.horizonteurbano.system.service.BrochureService;
 import org.horizonteurbano.system.service.UserSession;
+import org.horizonteurbano.system.utils.AlertInformation;
 import org.horizonteurbano.system.utils.ViewFactory;
 
 public class SearchPropertyController implements Initializable {
@@ -46,6 +60,9 @@ public class SearchPropertyController implements Initializable {
     @FXML
     private Button btnBack;
     @FXML
+    private Button btnViewDetails;
+
+    @FXML
     private TableView<Property> tblProperties;
     @FXML
     private TableColumn<Property, String> colCode;
@@ -62,18 +79,23 @@ public class SearchPropertyController implements Initializable {
 
     @FXML
     private Label lblResults;
-    @FXML
-    private Button btnViewDetails;
 
     private final ObservableList<Property> propertyList = FXCollections.observableArrayList();
     private final AlertInformation alert = new AlertInformation();
     private final ViewFactory viewFactory = ViewFactory.getInstance();
+    private PropertyRepository propertyRepository;
+    private StateRepository stateRepository;
+
+    public SearchPropertyController() {
+        this.propertyRepository = new PropertyRepository();
+        this.stateRepository = new StateRepository();
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setupTableColumns();
         loadComboBoxes();
-        loadProperties();
+        handleSearch();
     }
 
     private void setupTableColumns() {
@@ -97,14 +119,6 @@ public class SearchPropertyController implements Initializable {
             }
             return new SimpleStringProperty("N/A");
         });
-    }
-
-    private void loadProperties() {
-        try {
-            loadProperties(null, null, null, null, null, null, null);
-        } catch (SQLException e) {
-            alert.viewAlert(3, "Error al cargar propiedades", e.getMessage(), null);
-        }
     }
 
     private void loadComboBoxes() {
@@ -149,7 +163,7 @@ public class SearchPropertyController implements Initializable {
     }
 
     @FXML
-    private void handleSearch() {
+    public void handleSearch() {
         try {
             String searchText = txtSearch.getText().trim().isEmpty() ? null : txtSearch.getText().trim();
             Double minPrice = txtPriceMin.getText().trim().isEmpty() ? null : Double.parseDouble(txtPriceMin.getText().trim());
@@ -163,7 +177,7 @@ public class SearchPropertyController implements Initializable {
 
             loadProperties(searchText, minPrice, maxPrice, null, null, stateId, typeId);
         } catch (NumberFormatException e) {
-            alert.viewAlert(2, "Error de Formato", "Por favor, ingresa números válidos en los campos de precio (Min y Max).", null);
+            alert.viewAlert(2, "Error de Formato", "Por favor, ingresa números válidos en los campos de precio.", null);
         } catch (SQLException e) {
             alert.viewAlert(3, "Error de Búsqueda", e.getMessage(), null);
         }
@@ -232,10 +246,24 @@ public class SearchPropertyController implements Initializable {
 
                     PropertyType type = new PropertyType();
                     type.setIdType(rs.getInt("id_property_type"));
+
+                    for (PropertyType pt : cmbType.getItems()) {
+                        if (pt.getIdType() == type.getIdType()) {
+                            type.setNameType(pt.getNameType());
+                            break;
+                        }
+                    }
                     prop.setType(type);
 
                     State state = new State();
                     state.setIdState(rs.getInt("id_state"));
+
+                    for (State st : cmbStatus.getItems()) {
+                        if (st.getIdState() == state.getIdState()) {
+                            state.setNameState(st.getNameState());
+                            break;
+                        }
+                    }
                     prop.setState(state);
 
                     propertyList.add(prop);
@@ -248,13 +276,108 @@ public class SearchPropertyController implements Initializable {
     }
 
     @FXML
+    public void actionChangeStatus(ActionEvent event) {
+        Property selectedProperty = tblProperties.getSelectionModel().getSelectedItem();
+        if (selectedProperty == null) {
+            alert.viewAlert(2, "Selección Requerida", "Por favor, selecciona una propiedad de la tabla primero.", null);
+            return;
+        }
+
+        List<State> states = stateRepository.getAllStates();
+        List<String> stateNames = new ArrayList<>();
+        Map<String, Integer> stateMap = new HashMap<>();
+
+        for (State state : states) {
+            stateNames.add(state.getNameState());
+            stateMap.put(state.getNameState(), state.getIdState());
+        }
+
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(stateNames.get(0), stateNames);
+        dialog.setTitle("Cambiar Estado");
+        dialog.setHeaderText("Propiedad seleccionada: " + selectedProperty.getInternalCode());
+        dialog.setContentText("Selecciona el nuevo estado comercial:");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            int newIdState = stateMap.get(result.get());
+            if (propertyRepository.changeStatus(selectedProperty.getInternalCode(), newIdState)) {
+                alert.viewAlert(1, "Éxito", "El estado se actualizó correctamente.", null);
+                handleSearch();
+            } else {
+                alert.viewAlert(3, "Error", "No se pudo actualizar el estado en la base de datos.", null);
+            }
+        }
+    }
+
+    @FXML
+    public void actionDelete(ActionEvent event) {
+        Property selectedProperty = tblProperties.getSelectionModel().getSelectedItem();
+        if (selectedProperty == null) {
+            alert.viewAlert(2, "Selección Requerida", "Por favor, selecciona una propiedad de la tabla.", null);
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirmar Baja");
+        confirm.setHeaderText(null);
+        confirm.setContentText("¿Estás seguro de que deseas dar de baja " + selectedProperty.getInternalCode() + "? (Borrado lógico)");
+
+        Optional<ButtonType> result = confirm.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            if (propertyRepository.deactivateProperty(selectedProperty.getInternalCode())) {
+                alert.viewAlert(1, "Éxito", "Propiedad dada de baja.", null);
+                handleSearch();
+            } else {
+                alert.viewAlert(3, "Error", "No se pudo dar de baja la propiedad.", null);
+            }
+        }
+    }
+
+    @FXML
+    public void actionEdit(ActionEvent event) {
+        Property selectedProperty = tblProperties.getSelectionModel().getSelectedItem();
+        if (selectedProperty == null) {
+            alert.viewAlert(2, "Selección Requerida", "Por favor, selecciona una propiedad para editar.", null);
+            return;
+        }
+        ViewFactory.getInstance().showEditPropertyWindow(selectedProperty);
+    }
+
+    @FXML
+    public void actionExportPDF(ActionEvent event) {
+        Property selectedProperty = tblProperties.getSelectionModel().getSelectedItem();
+        if (selectedProperty == null) {
+            alert.viewAlert(2, "Selección Requerida", "Por favor, selecciona una propiedad de la tabla para exportar su ficha.", null);
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar Brochure PDF");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Documento PDF (*.pdf)", "*.pdf"));
+        fileChooser.setInitialFileName("Ficha_" + selectedProperty.getInternalCode() + ".pdf");
+
+        java.io.File file = fileChooser.showSaveDialog(tblProperties.getScene().getWindow());
+
+        if (file != null) {
+            BrochureService brochureService = new BrochureService();
+            if (brochureService.exportBrochure(selectedProperty, file)) {
+                alert.viewAlert(1, "Exportación Exitosa", "El PDF se generó correctamente en tu equipo.", null);
+            } else {
+                alert.viewAlert(3, "Error", "No se pudo generar el archivo PDF.", null);
+            }
+        }
+    }
+
+    @FXML
     private void handleViewDetails() {
         Property selected = tblProperties.getSelectionModel().getSelectedItem();
         if (selected == null) {
             alert.viewAlert(2, "Selección requerida", "Por favor, selecciona una propiedad de la tabla antes de ver los detalles.", null);
             return;
         }
-        System.out.println("Opening details for property ID: " + selected.getIdProperty());
+        alert.viewAlert(1, "Detalles de la propiedad",
+                selected.getInternalCode() + "\n" + selected.getAddress() + "\nÁrea: " + selected.getArea() + " m²\nPrecio: Q" + selected.getPrice(),
+                null);
     }
 
     @FXML
