@@ -46,26 +46,36 @@ public class LoginController {
             alert.viewAlert(1, "Login Exitoso", "¡Bienvenido a Horizonte Urbano, " + loggedUser.getName() + "!", null);
             clearFields();
             
-            session.login(loggedUser);
+            // Registramos la sesión globalmente
+            session.setCurrentUser(loggedUser);
+            
+            // Cerramos la ventana de login actual antes de abrir la nueva
             closeCurrentWindow(event);
-
-            int roleId = loggedUser.getRol().getIdRole();
-            switch (roleId) {
-                case 1: // Administrador -> Va al Dashboard Gerencial / Registro de Propiedades
-                    viewFactory.showDashboardWindow();
-                    break;
-                case 2: // Asesor -> Va al catálogo público principal
-                    viewFactory.showMainViewWindow();
-                    break;
-                case 3: // Gerente -> Va a la vista de métricas y reportes
-                    viewFactory.showReportsWindow();
-                    break;
-                default:
-                    viewFactory.showDashboardWindow();
-                    break;
-            }
+            
+            // Redirigimos según la lógica de develop
+            redirectByRole(loggedUser);
         } else {
             alert.viewAlert(3, "Acceso Denegado", "Correo o contraseña incorrectos, o cuenta inactiva.", null);
+        }
+    }
+
+    private void redirectByRole(User user) {
+        int roleId = user.getRol() != null ? user.getRol().getIdRole() : -1;
+        
+        switch (roleId) {
+            case UserSession.ROLE_ADMIN:
+                viewFactory.showDashboardWindow();
+                break;
+            case UserSession.ROLE_ASESOR:
+                viewFactory.showMainViewWindow();
+                break;
+            case UserSession.ROLE_GERENTE:
+                viewFactory.showSearchPropertyWindow();
+                break;
+            default:
+                alert.viewAlert(3, "Error", "Rol desconocido. Contacta al administrador.", null);
+                viewFactory.showDashboardWindow();
+                break;
         }
     }
 
@@ -73,6 +83,9 @@ public class LoginController {
     public void buttonLogout(ActionEvent event) {
         session.logout();
         alert.viewAlert(1, "Sesión Cerrada", "Has cerrado sesión correctamente.", null);
+        
+        closeCurrentWindow(event);
+        viewFactory.showMainViewWindow();
     }
 
     @FXML

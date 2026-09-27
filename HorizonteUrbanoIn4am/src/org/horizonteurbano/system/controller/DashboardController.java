@@ -12,6 +12,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 
 import org.horizonteurbano.system.models.Property;
 import org.horizonteurbano.system.models.PropertyType;
@@ -27,20 +29,19 @@ import org.horizonteurbano.system.utils.ViewFactory;
 public class DashboardController implements Initializable {
 
     @FXML private Label lblUser;
-    
+    @FXML private VBox formPanel;
     @FXML private TextField txtCode;
-    @FXML private ComboBox<String> cmbType;
+    @FXML private ComboBox<PropertyType> cmbType;
     @FXML private TextField txtArea;
-    
     @FXML private TextField txtAddress;
-    @FXML private ComboBox<String> cmbStatus;
+    @FXML private ComboBox<State> cmbStatus;
     @FXML private TextField txtPrice;
-    
     @FXML private TextArea txtDescription;
     
     @FXML private Button btnClear;
     @FXML private Button btnCancel;
     @FXML private Button btnSave;
+    @FXML private Button btnGoSearch;
     @FXML private Button btnManageUsers;
     
     @FXML private ListView<String> listRecords;
@@ -48,7 +49,7 @@ public class DashboardController implements Initializable {
     private PropertyRepository propertyRepository;
     private PropertyTypeRepository propertyTypeRepository;
     private StateRepository stateRepository;
-    private AlertInformation alertInformation;
+    private AlertInformation alerta;
     private ViewFactory viewFactory;
     private UserSession session;
 
@@ -56,91 +57,145 @@ public class DashboardController implements Initializable {
         this.propertyRepository = new PropertyRepository();
         this.propertyTypeRepository = new PropertyTypeRepository();
         this.stateRepository = new StateRepository();
-        this.alertInformation = new AlertInformation(); 
-        this.viewFactory = ViewFactory.getInstance();
+        this.alerta = new AlertInformation();
         this.session = UserSession.getInstance();
+        this.viewFactory = ViewFactory.getInstance();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        cargarTiposDePropiedad();
-        cargarEstadosDePropiedad();
-        cargarDatosUsuario();
+        configureComboConverters();
+        cargarTipos();
+        cargarEstados();
+        loadCurrentUser();
+        applyRolePermissions();
     }
-    
-    private void cargarDatosUsuario() {
+
+    private void loadCurrentUser() {
         if (session.isLoggedIn()) {
-            User loggedUser = session.getLoggedUser();
-            lblUser.setText("Usuario: " + loggedUser.getName() + " " + loggedUser.getLastName());
-            
-            if (loggedUser.getRol() == null || loggedUser.getRol().getIdRole() != 1) {
-                if (btnManageUsers != null) {
-                    btnManageUsers.setVisible(false);
-                    btnManageUsers.setManaged(false);
-                }
+            User currentUser = session.getCurrentUser();
+            lblUser.setText("Usuario: " + currentUser.getName() + " " + currentUser.getLastName());
+        } else {
+            lblUser.setText("Usuario: Invitado");
+        }
+    }
+
+    private void applyRolePermissions() {
+        if (!session.isLoggedIn()) {
+            hideForm();
+            if (btnManageUsers != null) {
+                btnManageUsers.setVisible(false);
+                btnManageUsers.setManaged(false);
+            }
+            return;
+        }
+        
+        if (session.isAdmin()) {
+            showForm();
+            if (btnManageUsers != null) {
+                btnManageUsers.setVisible(true);
+                btnManageUsers.setManaged(true);
+            }
+        } else {
+            hideForm();
+            if (btnManageUsers != null) {
+                btnManageUsers.setVisible(false);
+                btnManageUsers.setManaged(false);
             }
         }
     }
 
-    private void cargarTiposDePropiedad() {
-        cmbType.getItems().clear();
-        List<PropertyType> types = propertyTypeRepository.getAllPropertyTypes();
-        for (PropertyType type : types) {
-            cmbType.getItems().add(type.getNameType());
+    private void showForm() {
+        if (formPanel != null) {
+            formPanel.setVisible(true);
+            formPanel.setManaged(true);
         }
     }
 
-    private void cargarEstadosDePropiedad() {
-        cmbStatus.getItems().clear();
-        List<State> states = stateRepository.getAllStates();
-        for (State state : states) {
-            cmbStatus.getItems().add(state.getNameState());
+    private void hideForm() {
+        if (formPanel != null) {
+            formPanel.setVisible(false);
+            formPanel.setManaged(false);
         }
+    }
+
+    private void configureComboConverters() {
+        cmbType.setConverter(new StringConverter<PropertyType>() {
+            @Override
+            public String toString(PropertyType type) {
+                return type == null ? "" : type.getNameType();
+            }
+
+            @Override
+            public PropertyType fromString(String string) {
+                return null;
+            }
+        });
+
+        cmbStatus.setConverter(new StringConverter<State>() {
+            @Override
+            public String toString(State state) {
+                return state == null ? "" : state.getNameState();
+            }
+
+            @Override
+            public State fromString(String string) {
+                return null;
+            }
+        });
+    }
+
+    private void cargarTipos() {
+        List<PropertyType> tipos = propertyTypeRepository.getAllPropertyTypes();
+        cmbType.getItems().setAll(tipos);
+    }
+
+    private void cargarEstados() {
+        List<State> estados = stateRepository.getAllStates();
+        cmbStatus.getItems().setAll(estados);
     }
 
     @FXML
     public void actionSaveProperty(ActionEvent event) {
-        try {
-            if (txtCode.getText().isEmpty() || txtAddress.getText().isEmpty() || 
-                txtArea.getText().isEmpty() || txtPrice.getText().isEmpty() || 
-                cmbType.getSelectionModel().isEmpty() || cmbStatus.getSelectionModel().isEmpty()) {
-                
-                alertInformation.viewAlert(2, "Datos Incompletos", "Por favor, llena todos los campos obligatorios del formulario.", null);
-                return;
-            }
+        if (!session.isAdmin()) {
+            alerta.viewAlert(3, "Permiso Denegado", "No tienes permisos para registrar propiedades.", null);
+            return;
+        }
 
+        if (txtCode.getText().isEmpty() || txtAddress.getText().isEmpty()
+                || txtArea.getText().isEmpty() || txtPrice.getText().isEmpty()
+                || cmbType.getSelectionModel().getSelectedItem() == null
+                || cmbStatus.getSelectionModel().getSelectedItem() == null) {
+            alerta.viewAlert(2, "Datos Incompletos", "Por favor, llena todos los campos obligatorios.", null);
+            return;
+        }
+
+        try {
             Property newProperty = new Property();
             newProperty.setInternalCode(txtCode.getText());
             newProperty.setAddress(txtAddress.getText());
             newProperty.setArea(Double.parseDouble(txtArea.getText()));
             newProperty.setPrice(Double.parseDouble(txtPrice.getText()));
-
-            PropertyType type = new PropertyType();
-            type.setIdType(cmbType.getSelectionModel().getSelectedIndex() + 1); 
-            newProperty.setType(type);
-            
-            State state = new State();
-            state.setIdState(cmbStatus.getSelectionModel().getSelectedIndex() + 1);
-            newProperty.setState(state);
-            
+            newProperty.setType(cmbType.getSelectionModel().getSelectedItem());
+            newProperty.setState(cmbStatus.getSelectionModel().getSelectedItem());
             newProperty.setActive(true);
             
             if (session.isLoggedIn()) {
-                newProperty.setIdUser(session.getLoggedUser().getIdUser());
+                newProperty.setIdUser(session.getCurrentUser().getIdUser());
             } else {
                 newProperty.setIdUser("SISTEMA"); 
             }
 
             if (propertyRepository.saveProperty(newProperty)) {
-                alertInformation.viewAlert(1, "Guardado Exitoso", "La propiedad se ha registrado correctamente en el inventario.", null);
-                listRecords.getItems().add(0, "✅ Guardado: " + newProperty.getInternalCode() + " - " + newProperty.getAddress());
+                alerta.viewAlert(1, "Guardado Exitoso", "La propiedad se ha registrado correctamente.", null);
+                listRecords.getItems().add(0, "✅ Agregado: " + newProperty.getInternalCode() + " - " + newProperty.getAddress());
                 actionClear(null);
             } else {
-                alertInformation.viewAlert(3, "Error de Registro", "Ocurrió un problema al guardar en la base de datos.", null);
+                alerta.viewAlert(3, "Error de Registro", "Ocurrió un problema al guardar en la base de datos.", null);
             }
 
         } catch (NumberFormatException e) {
-            alertInformation.viewAlert(2, "Error de Formato", "El Área y el Precio deben contener únicamente números.", null);
+            alerta.viewAlert(2, "Error de Formato", "El Área y el Precio deben contener únicamente números.", null);
         }
     }
 
@@ -158,11 +213,21 @@ public class DashboardController implements Initializable {
     @FXML
     public void actionCancel(ActionEvent event) {
         actionClear(event);
-        alertInformation.viewAlert(1, "Cancelado", "Operación cancelada. El formulario ha sido limpiado.", null);
+        alerta.viewAlert(1, "Cancelado", "Se han limpiado los datos del formulario.", null);
     }
     
     @FXML
     public void actionManageUsers(ActionEvent event) {
         viewFactory.showUsersWindow();
+    }
+
+    @FXML
+    public void goToSearch(ActionEvent event) {
+        viewFactory.showSearchPropertyWindow();
+    }
+
+    @FXML
+    public void goToMainMenu(ActionEvent event) {
+        viewFactory.showMainViewWindow();
     }
 }

@@ -263,6 +263,29 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-background-color: #E8DCC8;
 }
 
+#btnGoSearch{
+    -fx-background-color: transparent;
+    -fx-text-fill: #E8DCC8;
+    -fx-border-color: rgba(232, 220, 200, 0.5);
+    -fx-border-radius: 8;
+    -fx-border-width: 1.5;
+}
+
+#btnGoSearch:hover{
+     -fx-background-color: rgba(232, 220, 200, 0.15);
+    -fx-text-fill: white;
+    -fx-border-color: #E8DCC8;
+}
+#btnLogout{
+     -fx-background-color: rgba(232, 220, 200, 0.8);
+    -fx-text-fill: #472820;
+}
+
+#btnLogout:hover{
+       -fx-background-color: #E8DCC8;
+}
+
+
 /* ============================================ */
 /* 8. FOOTER                                    */
 /* ============================================ */
@@ -298,3 +321,4 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
 .image-view {
     -fx-background-color: rgba(255, 255, 255, 0.05);
 }
+

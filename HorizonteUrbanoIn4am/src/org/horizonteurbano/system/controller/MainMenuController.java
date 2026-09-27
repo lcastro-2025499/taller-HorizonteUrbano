@@ -22,13 +22,11 @@ import org.horizonteurbano.system.utils.ViewFactory;
 
 public class MainMenuController implements Initializable {
 
-    // Controles de Sesión y Navegación
     @FXML private Button btnGoSearch;
     @FXML private Button btnLogin;
     @FXML private Button btnRegister;
     @FXML private Button btnLogout;
-    
-    // Controles de Búsqueda y Catálogo
+
     @FXML private TextField txtSearch;
     @FXML private Button btnSearch;
     @FXML private FlowPane flowPanePropertyCatalog;
@@ -52,13 +50,27 @@ public class MainMenuController implements Initializable {
         cargarCatalogo(""); 
     }
 
-    
     private void updateHeaderForSession() {
         boolean loggedIn = session.isLoggedIn();
+
+        // 1. Visitantes (No logueados): Ven Login y Registro. Si están logueados, desaparecen.
         setVisible(btnLogin, !loggedIn);
         setVisible(btnRegister, !loggedIn);
+
+        // 2. Usuarios Logueados: Ven el botón de Cerrar Sesión.
         setVisible(btnLogout, loggedIn);
-        setVisible(btnGoSearch, loggedIn);
+
+        // 3. Permiso estricto para Buscar Propiedades (Solo roles 1, 2 y 3)
+        boolean puedeBuscar = false;
+        
+        if (loggedIn && session.getCurrentUser() != null && session.getCurrentUser().getRol() != null) {
+            int roleId = session.getCurrentUser().getRol().getIdRole();
+            if (roleId == 1 || roleId == 2 || roleId == 3) {
+                puedeBuscar = true;
+            }
+        }
+        
+        setVisible(btnGoSearch, puedeBuscar);
     }
 
     private void setVisible(Node node, boolean visible) {
@@ -68,8 +80,9 @@ public class MainMenuController implements Initializable {
         }
     }
 
-
     private void cargarCatalogo(String filtro) {
+        if (flowPanePropertyCatalog == null) return;
+        
         flowPanePropertyCatalog.getChildren().clear();
         List<Property> propiedades = propertyRepository.getAllActiveProperties();
         int coincidencias = 0;
@@ -133,7 +146,6 @@ public class MainMenuController implements Initializable {
         }
         cargarCatalogo(query.trim()); 
     }
-
 
     @FXML
     public void actionGoToSearch(ActionEvent event) {
