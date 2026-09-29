@@ -17,7 +17,6 @@
             <!-- Formulario de Registro -->
             <VBox spacing="10.0" prefWidth="300.0" styleClass="glass-panel" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8px;">
                 <Label text="Datos del Empleado" style="-fx-font-weight: bold;"/>
-                <TextField fx:id="txtIdUser" promptText="ID de Empleado (Ej. USR-01)"/>
                 <TextField fx:id="txtName" promptText="Nombres"/>
                 <TextField fx:id="txtLastName" promptText="Apellidos"/>
                 <TextField fx:id="txtEmail" promptText="Correo Electrónico"/>
@@ -31,7 +30,7 @@
                 <Button text="Registrar Empleado" onAction="#createUser" prefWidth="300.0" styleClass="btn-primary"/>
                 <Button text="Desactivar Seleccionado" onAction="#deactivateUser" prefWidth="300.0" styleClass="btn-danger"/>
             </VBox>
-
+            <CheckBox fx:id="chkShowInactive" text="Mostrar usuarios inactivos" onAction="#listUsers"/>
             <!-- Tabla de Usuarios -->
             <TableView fx:id="tblUsers" HBox.hgrow="ALWAYS">
                 <columns>

@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
@@ -32,7 +33,7 @@ import org.horizonteurbano.system.utils.ViewFactory;
 public class UserController implements Initializable {
 
     @FXML
-    private TextField txtIdUser;
+    private CheckBox chkShowInactive;
     @FXML
     private TextField txtName;
     @FXML
@@ -128,11 +129,7 @@ public class UserController implements Initializable {
         try {
             User newUser = new User();
 
-            if (txtIdUser != null && !txtIdUser.getText().trim().isEmpty()) {
-                newUser.setIdUser(txtIdUser.getText().trim());
-            } else {
-                newUser.setIdUser(UUID.randomUUID().toString());
-            }
+            newUser.setIdUser(UUID.randomUUID().toString());
 
             newUser.setName(txtName.getText());
             newUser.setLastName(txtLastName.getText());
@@ -193,15 +190,14 @@ public class UserController implements Initializable {
     @FXML
     public void listUsers(ActionEvent event) {
         if (tblUsers != null && userRepository != null) {
-            List<User> usuarios = userRepository.getAllActiveUsers();
+            List<User> usuarios = (chkShowInactive != null && chkShowInactive.isSelected())
+                    ? userRepository.getAllUsers()
+                    : userRepository.getAllActiveUsers();
             tblUsers.setItems(FXCollections.observableArrayList(usuarios));
         }
     }
 
     private void clearFields() {
-        if (txtIdUser != null) {
-            txtIdUser.clear();
-        }
         if (txtName != null) {
             txtName.clear();
         }
