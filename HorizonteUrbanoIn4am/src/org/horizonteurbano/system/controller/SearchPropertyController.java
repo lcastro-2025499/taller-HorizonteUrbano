@@ -88,9 +88,12 @@ public class SearchPropertyController implements Initializable {
     private TableColumn<Property, Double> colPrice;
     @FXML
     private TableColumn<Property, String> colStatus;
-
     @FXML
     private Label lblResults;
+    @FXML
+    private TextField txtAreaMin;
+    @FXML
+    private TextField txtAreaMax;
 
     private final ObservableList<Property> propertyList = FXCollections.observableArrayList();
     private final AlertInformation alert = new AlertInformation();
@@ -191,6 +194,8 @@ public class SearchPropertyController implements Initializable {
             String searchText = txtSearch.getText().trim().isEmpty() ? null : txtSearch.getText().trim();
             Double minPrice = txtPriceMin.getText().trim().isEmpty() ? null : Double.parseDouble(txtPriceMin.getText().trim());
             Double maxPrice = txtPriceMax.getText().trim().isEmpty() ? null : Double.parseDouble(txtPriceMax.getText().trim());
+            Double minArea = txtAreaMin.getText().trim().isEmpty() ? null : Double.parseDouble(txtAreaMin.getText().trim());
+            Double maxArea = txtAreaMax.getText().trim().isEmpty() ? null : Double.parseDouble(txtAreaMax.getText().trim());
 
             PropertyType selectedType = cmbType.getSelectionModel().getSelectedItem();
             Integer typeId = (selectedType != null && selectedType.getIdType() != 0) ? selectedType.getIdType() : null;
@@ -198,7 +203,7 @@ public class SearchPropertyController implements Initializable {
             State selectedState = cmbStatus.getSelectionModel().getSelectedItem();
             Integer stateId = (selectedState != null && selectedState.getIdState() != 0) ? selectedState.getIdState() : null;
 
-            loadProperties(searchText, minPrice, maxPrice, null, null, stateId, typeId);
+            loadProperties(searchText, minPrice, maxPrice, minArea, maxArea, stateId, typeId);
         } catch (NumberFormatException e) {
             alert.viewAlert(2, "Error de Formato", "Por favor, ingresa números válidos en los campos de precio.", null);
         } catch (SQLException e) {

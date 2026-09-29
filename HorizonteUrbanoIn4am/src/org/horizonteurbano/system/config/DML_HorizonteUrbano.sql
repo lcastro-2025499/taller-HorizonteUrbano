@@ -38,7 +38,7 @@ INSERT INTO State (name_state) VALUES
     ('Disponible'),
     ('Reservado'),
     ('Vendido'),
-    ('Rentado');
+    ('Alquilado');
 
 -- ---------------------------------------------------------------------
 -- USERS (Con contraseña hasheada)

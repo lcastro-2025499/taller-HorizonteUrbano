@@ -403,3 +403,7 @@ BEGIN
     DELETE FROM PropertyImages WHERE id_image = id_image_p;
 END $$
 DELIMITER ;
+
+ALTER TABLE Properties
+    ADD COLUMN inactive_reason VARCHAR(150) NULL,
+    ADD COLUMN inactive_date DATETIME NULL;
