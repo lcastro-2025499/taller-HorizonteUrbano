@@ -14,6 +14,14 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
+import javafx.stage.FileChooser;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 import org.horizonteurbano.system.models.Property;
 import org.horizonteurbano.system.models.PropertyType;
@@ -28,24 +36,44 @@ import org.horizonteurbano.system.utils.ViewFactory;
 
 public class DashboardController implements Initializable {
 
-    @FXML private Label lblUser;
-    @FXML private VBox formPanel;
-    @FXML private TextField txtCode;
-    @FXML private ComboBox<PropertyType> cmbType;
-    @FXML private TextField txtArea;
-    @FXML private TextField txtAddress;
-    @FXML private ComboBox<State> cmbStatus;
-    @FXML private TextField txtPrice;
-    @FXML private TextArea txtDescription;
-    
-    @FXML private Button btnClear;
-    @FXML private Button btnCancel;
-    @FXML private Button btnSave;
-    @FXML private Button btnGoSearch;
-    @FXML private Button btnManageUsers;
-    
-    @FXML private ListView<String> listRecords;
+    @FXML
+    private Label lblUser;
+    @FXML
+    private VBox formPanel;
+    @FXML
+    private TextField txtCode;
+    @FXML
+    private ComboBox<PropertyType> cmbType;
+    @FXML
+    private TextField txtArea;
+    @FXML
+    private TextField txtAddress;
+    @FXML
+    private ComboBox<State> cmbStatus;
+    @FXML
+    private TextField txtPrice;
+    @FXML
+    private TextArea txtDescription;
 
+    @FXML
+    private Button btnClear;
+    @FXML
+    private Button btnCancel;
+    @FXML
+    private Button btnSave;
+    @FXML
+    private Button btnGoSearch;
+    @FXML
+    private Button btnManageUsers;
+    @FXML
+    private ListView<String> listRecords;
+    @FXML
+    private Button btnSelectImage;
+    @FXML
+    private Label lblImagePath;
+
+    private static final String UPLOAD_DIR = "uploads/properties/";
+    private String selectedImagePath;
     private PropertyRepository propertyRepository;
     private PropertyTypeRepository propertyTypeRepository;
     private StateRepository stateRepository;
@@ -89,7 +117,7 @@ public class DashboardController implements Initializable {
             }
             return;
         }
-        
+
         if (session.isAdmin()) {
             showForm();
             if (btnManageUsers != null) {
@@ -178,12 +206,13 @@ public class DashboardController implements Initializable {
             newProperty.setPrice(Double.parseDouble(txtPrice.getText()));
             newProperty.setType(cmbType.getSelectionModel().getSelectedItem());
             newProperty.setState(cmbStatus.getSelectionModel().getSelectedItem());
+            newProperty.setCoverUrl(selectedImagePath);
             newProperty.setActive(true);
-            
+
             if (session.isLoggedIn()) {
                 newProperty.setIdUser(session.getCurrentUser().getIdUser());
             } else {
-                newProperty.setIdUser("SISTEMA"); 
+                newProperty.setIdUser("SISTEMA");
             }
 
             if (propertyRepository.saveProperty(newProperty)) {
@@ -208,6 +237,8 @@ public class DashboardController implements Initializable {
         txtDescription.clear();
         cmbType.getSelectionModel().clearSelection();
         cmbStatus.getSelectionModel().clearSelection();
+        selectedImagePath = null;
+        lblImagePath.setText("Ningún archivo seleccionado");
     }
 
     @FXML
@@ -215,7 +246,7 @@ public class DashboardController implements Initializable {
         actionClear(event);
         alerta.viewAlert(1, "Cancelado", "Se han limpiado los datos del formulario.", null);
     }
-    
+
     @FXML
     public void actionManageUsers(ActionEvent event) {
         viewFactory.showUsersWindow();
@@ -229,5 +260,37 @@ public class DashboardController implements Initializable {
     @FXML
     public void goToMainMenu(ActionEvent event) {
         viewFactory.showMainViewWindow();
+    }
+
+    @FXML
+    public void actionSelectImage(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Seleccionar Imagen de Portada");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Imagenes (*.png, *.jpg, *.jpeg)", "*.png", "*.jpg", "*.jpeg"));
+
+        File selectedFile = fileChooser.showOpenDialog(btnSelectImage.getScene().getWindow());
+        if (selectedFile == null) {
+            return;
+        }
+
+        try {
+            Path uploadPath = Paths.get(UPLOAD_DIR);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            String extension = selectedFile.getName().substring(selectedFile.getName().lastIndexOf('.'));
+            String newFileName = UUID.randomUUID().toString() + extension;
+            Path destination = uploadPath.resolve(newFileName);
+
+            Files.copy(selectedFile.toPath(), destination, StandardCopyOption.REPLACE_EXISTING);
+
+            selectedImagePath = destination.toString();
+            lblImagePath.setText(selectedFile.getName());
+        } catch (IOException e) {
+            alerta.viewAlert(3, "Error", "No se pudo guardar la imagen seleccionada.", null);
+            System.err.println("Error copying image: " + e.getMessage());
+        }
     }
 }

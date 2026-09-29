@@ -38,6 +38,13 @@
                 <Label text="Estado Comercial"/>
                 <ComboBox fx:id="cmbStatus" prefWidth="200.0"/>
             </VBox>
+            <VBox spacing="5.0">
+                <Label text="Foto de Portada"/>
+                <HBox spacing="10.0">
+                    <Button fx:id="btnSelectImage" text="Seleccionar Imagen" onAction="#actionSelectImage"/>
+                    <Label fx:id="lblImagePath" text="Ningún archivo seleccionado"/>
+                </HBox>
+            </VBox>
         </HBox>
 
         <Region VBox.vgrow="ALWAYS"/>

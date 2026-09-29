@@ -17,6 +17,5 @@ public class Main extends Application {
         primaryStage.setResizable(true);
         ViewFactory.getInstance().setMainStage(primaryStage);
         ViewFactory.getInstance().showMainViewWindow();
-
     }
 }
