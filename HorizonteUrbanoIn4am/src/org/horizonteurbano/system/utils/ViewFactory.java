@@ -52,7 +52,6 @@ public class ViewFactory {
         }
     }
 
-    // Reemplaza la escena en la ventana principal (Arquitectura de develop)
     private void showView(String title, String fxml, int width, int height) {
         if (mainStage == null) {
             throw new IllegalStateException("Main stage not set. Call setMainStage() first.");
@@ -60,8 +59,7 @@ public class ViewFactory {
         Scene scene = loadFileFXML(fxml, width, height);
         mainStage.setTitle(title);
         mainStage.setScene(scene);
-        mainStage.setWidth(width);
-        mainStage.setHeight(height);
+        mainStage.sizeToScene();
         mainStage.centerOnScreen();
         if (!mainStage.isShowing()) {
             mainStage.show();
@@ -73,7 +71,7 @@ public class ViewFactory {
     }
 
     public void showDashboardWindow() {
-        showView("Dashboard - Horizonte Urbano", "DashboardView.fxml", 960, 680);
+        showView("Dashboard - Horizonte Urbano", "DashboardView.fxml", 1100, 680);
     }
 
     public void showRegisterWindow() {
@@ -81,7 +79,7 @@ public class ViewFactory {
     }
 
     public void showChangePasswordWindow() {
-        showView("Change Password - Horizonte Urbano", "ChangePasswordView.fxml", 450, 550);
+        showView("Change Password - Horizonte Urbano", "ChangePasswordView.fxml", 450, 580);
     }
 
     public void showSearchPropertyWindow() {
@@ -89,7 +87,7 @@ public class ViewFactory {
     }
 
     public void showMainViewWindow() {
-        showView("Catalog - Horizonte Urbano", "MainView.fxml", 900, 600);
+        showView("Catalog - Horizonte Urbano", "MainView.fxml", 915, 600);
     }
 
     // Rutas exclusivas de tu rama local
@@ -109,7 +107,7 @@ public class ViewFactory {
             stage.setResizable(false);
 
             String pathOfFile = PATH_VIEWS + "EditPropertyView.fxml";
-            
+
             // CORRECCIÓN DEL ERROR: Usamos ViewFactory.class en lugar de Main.class
             FXMLLoader loader = new FXMLLoader(ViewFactory.class.getResource(pathOfFile));
             Scene scene = new Scene(loader.load());
