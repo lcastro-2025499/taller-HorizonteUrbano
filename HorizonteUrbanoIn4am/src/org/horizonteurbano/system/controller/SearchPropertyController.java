@@ -31,6 +31,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
+import javafx.util.StringConverter;
 
 import org.horizonteurbano.system.config.ConnectionDB;
 import org.horizonteurbano.system.models.Property;
@@ -93,6 +94,7 @@ public class SearchPropertyController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        configureComboConverters();
         setupTableColumns();
         loadComboBoxes();
         handleSearch();
@@ -392,5 +394,31 @@ public class SearchPropertyController implements Initializable {
     @FXML
     public void goToMainMenu() {
         viewFactory.showMainViewWindow();
+    }
+
+    private void configureComboConverters() {
+        cmbType.setConverter(new StringConverter<PropertyType>() {
+            @Override
+            public String toString(PropertyType type) {
+                return type == null ? "" : type.getNameType();
+            }
+
+            @Override
+            public PropertyType fromString(String string) {
+                return null;
+            }
+        });
+
+        cmbStatus.setConverter(new StringConverter<State>() {
+            @Override
+            public String toString(State state) {
+                return state == null ? "" : state.getNameState();
+            }
+
+            @Override
+            public State fromString(String string) {
+                return null;
+            }
+        });
     }
 }

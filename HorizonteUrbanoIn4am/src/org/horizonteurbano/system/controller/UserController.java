@@ -27,22 +27,35 @@ import org.horizonteurbano.system.repositories.RoleRepository;
 import org.horizonteurbano.system.repositories.UserRepository;
 import org.horizonteurbano.system.service.UserService;
 import org.horizonteurbano.system.utils.AlertInformation;
+import org.horizonteurbano.system.utils.ViewFactory;
 
 public class UserController implements Initializable {
 
-    @FXML private TextField txtIdUser;
-    @FXML private TextField txtName;
-    @FXML private TextField txtLastName;
-    @FXML private TextField txtEmail;
-    @FXML private TextField txtPhone;
-    @FXML private PasswordField pwdPassword;
-    @FXML private ComboBox<Role> cmbRole;
+    @FXML
+    private TextField txtIdUser;
+    @FXML
+    private TextField txtName;
+    @FXML
+    private TextField txtLastName;
+    @FXML
+    private TextField txtEmail;
+    @FXML
+    private TextField txtPhone;
+    @FXML
+    private PasswordField pwdPassword;
+    @FXML
+    private ComboBox<Role> cmbRole;
 
-    @FXML private TableView<User> tblUsers;
-    @FXML private TableColumn<User, String> colId;
-    @FXML private TableColumn<User, String> colName;
-    @FXML private TableColumn<User, String> colEmail;
-    @FXML private TableColumn<User, String> colRole;
+    @FXML
+    private TableView<User> tblUsers;
+    @FXML
+    private TableColumn<User, String> colId;
+    @FXML
+    private TableColumn<User, String> colName;
+    @FXML
+    private TableColumn<User, String> colEmail;
+    @FXML
+    private TableColumn<User, String> colRole;
 
     private UserService userService;
     private UserRepository userRepository;
@@ -84,11 +97,19 @@ public class UserController implements Initializable {
     }
 
     private void configurarTabla() {
-        if (colId != null) colId.setCellValueFactory(new PropertyValueFactory<>("idUser"));
-        if (colName != null) colName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        if (colEmail != null) colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-        if (colRole != null) colRole.setCellValueFactory(cellData -> 
-            new SimpleStringProperty(cellData.getValue().getRol() != null ? cellData.getValue().getRol().getNameRole() : ""));
+        if (colId != null) {
+            colId.setCellValueFactory(new PropertyValueFactory<>("idUser"));
+        }
+        if (colName != null) {
+            colName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        }
+        if (colEmail != null) {
+            colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+        }
+        if (colRole != null) {
+            colRole.setCellValueFactory(cellData
+                    -> new SimpleStringProperty(cellData.getValue().getRol() != null ? cellData.getValue().getRol().getNameRole() : ""));
+        }
     }
 
     @FXML
@@ -99,21 +120,27 @@ public class UserController implements Initializable {
             alert.viewAlert(2, "Campos Vacíos", "Por favor, completa todos los campos obligatorios.", null);
             return;
         }
+        if (!userService.isValidEmail(txtEmail.getText())) {
+            alert.viewAlert(2, "Correo Inválido", "Ingresa un correo electrónico válido (máximo 40 caracteres).", null);
+            return;
+        }
 
         try {
             User newUser = new User();
-            
+
             if (txtIdUser != null && !txtIdUser.getText().trim().isEmpty()) {
                 newUser.setIdUser(txtIdUser.getText().trim());
             } else {
                 newUser.setIdUser(UUID.randomUUID().toString());
             }
-            
+
             newUser.setName(txtName.getText());
             newUser.setLastName(txtLastName.getText());
             newUser.setEmail(txtEmail.getText());
-            if (txtPhone != null) newUser.setPhone(txtPhone.getText());
-            
+            if (txtPhone != null) {
+                newUser.setPhone(txtPhone.getText());
+            }
+
             newUser.setUserName(generateUserName(txtEmail.getText()));
             newUser.setActive(true);
             newUser.setRol(cmbRole.getSelectionModel().getSelectedItem());
@@ -172,15 +199,39 @@ public class UserController implements Initializable {
     }
 
     private void clearFields() {
-        if (txtIdUser != null) txtIdUser.clear();
-        if (txtName != null) txtName.clear();
-        if (txtLastName != null) txtLastName.clear();
-        if (txtEmail != null) txtEmail.clear();
-        if (txtPhone != null) txtPhone.clear();
-        if (pwdPassword != null) pwdPassword.clear();
-        if (cmbRole != null) cmbRole.getSelectionModel().clearSelection();
+        if (txtIdUser != null) {
+            txtIdUser.clear();
+        }
+        if (txtName != null) {
+            txtName.clear();
+        }
+        if (txtLastName != null) {
+            txtLastName.clear();
+        }
+        if (txtEmail != null) {
+            txtEmail.clear();
+        }
+        if (txtPhone != null) {
+            txtPhone.clear();
+        }
+        if (pwdPassword != null) {
+            pwdPassword.clear();
+        }
+        if (cmbRole != null) {
+            cmbRole.getSelectionModel().clearSelection();
+        }
     }
 
-    @FXML public void updateUser(ActionEvent event) {}
-    @FXML public void updateProfile(ActionEvent event) {}
+    @FXML
+    public void updateUser(ActionEvent event) {
+    }
+
+    @FXML
+    public void updateProfile(ActionEvent event) {
+    }
+
+    @FXML
+    public void actionGoBack(ActionEvent event) {
+        ViewFactory.getInstance().showDashboardWindow();
+    }
 }
