@@ -44,6 +44,7 @@ import org.horizonteurbano.system.service.UserSession;
 import org.horizonteurbano.system.utils.AlertInformation;
 import org.horizonteurbano.system.utils.ViewFactory;
 import org.horizonteurbano.system.service.UserSession;
+import org.horizonteurbano.system.service.UserSession;
 
 public class SearchPropertyController implements Initializable {
 
@@ -65,6 +66,12 @@ public class SearchPropertyController implements Initializable {
     private Button btnViewDetails;
     @FXML
     private Button btnReports;
+    @FXML
+    private Button btnChangeStatus;
+    @FXML
+    private Button btnEdit;
+    @FXML
+    private Button btnDelete;
 
     @FXML
     private TableView<Property> tblProperties;
@@ -104,6 +111,13 @@ public class SearchPropertyController implements Initializable {
         boolean isGerente = UserSession.getInstance().isGerente();
         btnReports.setVisible(isGerente);
         btnReports.setManaged(isGerente);
+        boolean isAdmin = UserSession.getInstance().isAdmin();
+        btnChangeStatus.setVisible(isAdmin);
+        btnChangeStatus.setManaged(isAdmin);
+        btnEdit.setVisible(isAdmin);
+        btnEdit.setManaged(isAdmin);
+        btnDelete.setVisible(isAdmin);
+        btnDelete.setManaged(isAdmin);
     }
 
     private void setupTableColumns() {
