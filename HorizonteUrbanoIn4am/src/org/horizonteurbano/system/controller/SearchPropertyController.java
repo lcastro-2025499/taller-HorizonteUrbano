@@ -43,6 +43,7 @@ import org.horizonteurbano.system.service.BrochureService;
 import org.horizonteurbano.system.service.UserSession;
 import org.horizonteurbano.system.utils.AlertInformation;
 import org.horizonteurbano.system.utils.ViewFactory;
+import org.horizonteurbano.system.service.UserSession;
 
 public class SearchPropertyController implements Initializable {
 
@@ -62,6 +63,8 @@ public class SearchPropertyController implements Initializable {
     private Button btnBack;
     @FXML
     private Button btnViewDetails;
+    @FXML
+    private Button btnReports;
 
     @FXML
     private TableView<Property> tblProperties;
@@ -98,6 +101,9 @@ public class SearchPropertyController implements Initializable {
         setupTableColumns();
         loadComboBoxes();
         handleSearch();
+        boolean isGerente = UserSession.getInstance().isGerente();
+        btnReports.setVisible(isGerente);
+        btnReports.setManaged(isGerente);
     }
 
     private void setupTableColumns() {
@@ -394,6 +400,11 @@ public class SearchPropertyController implements Initializable {
     @FXML
     public void goToMainMenu() {
         viewFactory.showMainViewWindow();
+    }
+
+    @FXML
+    public void goToReports(ActionEvent event) {
+        ViewFactory.getInstance().showReportsWindow();
     }
 
     private void configureComboConverters() {

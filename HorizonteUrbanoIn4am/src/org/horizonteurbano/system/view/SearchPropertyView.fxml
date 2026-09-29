@@ -37,6 +37,7 @@
             <Region prefHeight="60.0" prefWidth="160.0" HBox.hgrow="ALWAYS" />
             <Button fx:id="btnBack" mnemonicParsing="false" onAction="#goBack" text="Volver" />
             <Button fx:id="btnGoMenu" mnemonicParsing="false" onAction="#goToMainMenu" text="Menú" />
+            <Button fx:id="btnReports" mnemonicParsing="false" onAction="#goToReports" text="Reportes" visible="false" managed="false"/>
 
             <ImageView fx:id="imgProfile" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <HBox.margin>

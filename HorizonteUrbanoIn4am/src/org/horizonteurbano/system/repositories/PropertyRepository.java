@@ -163,4 +163,21 @@ public class PropertyRepository {
         }
         return stats;
     }
+
+    public Map<String, Integer> countByType() {
+        Map<String, Integer> stats = new HashMap<>();
+        String query = "SELECT t.name_type, COUNT(p.id_property) "
+                + "FROM Properties p "
+                + "JOIN PropertyType t ON p.id_type = t.id_type "
+                + "WHERE p.active = 1 "
+                + "GROUP BY t.name_type";
+        try (Connection conn = ConnectionDB.getInstanceConnectionDB().getConnection(); PreparedStatement pstmt = conn.prepareStatement(query); ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                stats.put(rs.getString(1), rs.getInt(2));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error agrupando por tipo: " + e.getMessage());
+        }
+        return stats;
+    }
 }

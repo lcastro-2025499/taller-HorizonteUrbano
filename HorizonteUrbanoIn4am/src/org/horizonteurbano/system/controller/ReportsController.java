@@ -14,9 +14,14 @@ import org.horizonteurbano.system.utils.ViewFactory;
 
 public class ReportsController implements Initializable {
 
-    @FXML private Label lblTotalProperties;
-    @FXML private Label lblTotalValue;
-    @FXML private ListView<String> listStateStats;
+    @FXML
+    private Label lblTotalProperties;
+    @FXML
+    private Label lblTotalValue;
+    @FXML
+    private ListView<String> listStateStats;
+    @FXML
+    private ListView<String> listTypeStats;
 
     private PropertyRepository propertyRepository;
 
@@ -34,17 +39,23 @@ public class ReportsController implements Initializable {
         lblTotalProperties.setText(String.valueOf(total));
 
         double value = propertyRepository.getTotalInventoryValue();
-        lblTotalValue.setText(String.format("$ %,.2f", value));
+        lblTotalValue.setText(String.format("Q %,.2f", value));
 
         Map<String, Integer> states = propertyRepository.countByState();
         listStateStats.getItems().clear();
         for (Map.Entry<String, Integer> entry : states.entrySet()) {
             listStateStats.getItems().add(entry.getKey() + ": " + entry.getValue() + " propiedades registradas");
         }
+
+        Map<String, Integer> types = propertyRepository.countByType();
+        listTypeStats.getItems().clear();
+        for (Map.Entry<String, Integer> entry : types.entrySet()) {
+            listTypeStats.getItems().add(entry.getKey() + ": " + entry.getValue() + " propiedades registradas");
+        }
     }
 
     @FXML
     public void actionGoBack(ActionEvent event) {
-        ViewFactory.getInstance().showSearchPropertyWindow(); 
+        ViewFactory.getInstance().showSearchPropertyWindow();
     }
 }

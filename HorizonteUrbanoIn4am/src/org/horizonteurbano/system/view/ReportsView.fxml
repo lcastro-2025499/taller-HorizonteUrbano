@@ -23,7 +23,7 @@
             <VBox spacing="10.0" style="-fx-background-color: #349626; -fx-padding: 20; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                 <Label text="Valor Total del Inventario" style="-fx-text-fill: white; -fx-font-size: 16px;"/>
                 <!-- SOLUCIÓN: Se quitó el $ del placeholder para que JavaFX no intente parsearlo como variable -->
-                <Label fx:id="lblTotalValue" text="0.00" style="-fx-text-fill: white; -fx-font-size: 36px; -fx-font-weight: bold;"/>
+                <Label fx:id="lblTotalValue" text="Q 0.00" style="-fx-text-fill: white; -fx-font-size: 36px; -fx-font-weight: bold;"/>
             </VBox>
         </HBox>
         
@@ -32,5 +32,9 @@
             <ListView fx:id="listStateStats" prefHeight="200.0" VBox.vgrow="ALWAYS"/>
         </VBox>
         
+        <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+            <Label text="Desglose por Tipo de Inmueble" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+            <ListView fx:id="listTypeStats" prefHeight="200.0" VBox.vgrow="ALWAYS"/>
+        </VBox>
     </VBox>
 </AnchorPane>
