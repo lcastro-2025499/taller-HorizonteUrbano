@@ -95,10 +95,11 @@ public class PropertyRepository {
         }
     }
 
-    public boolean deactivateProperty(String internalCode) {
-        String query = "UPDATE Properties SET active = false WHERE internal_code = ?";
+    public boolean deactivateProperty(String internalCode, String reason) {
+        String query = "UPDATE Properties SET active = false, inactive_reason = ?, inactive_date = NOW() WHERE internal_code = ?";
         try (Connection connection = ConnectionDB.getInstanceConnectionDB().getConnection(); PreparedStatement preparedStmt = connection.prepareStatement(query)) {
-            preparedStmt.setString(1, internalCode);
+            preparedStmt.setString(1, reason);
+            preparedStmt.setString(2, internalCode);
             return preparedStmt.executeUpdate() > 0;
 
         } catch (SQLException e) {

@@ -30,6 +30,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 
@@ -339,6 +340,17 @@ public class SearchPropertyController implements Initializable {
             return;
         }
 
+        TextInputDialog reasonDialog = new TextInputDialog();
+        reasonDialog.setTitle("Motivo de Baja");
+        reasonDialog.setHeaderText("Dar de baja " + selectedProperty.getInternalCode());
+        reasonDialog.setContentText("Motivo (ej. Vendida, Retirada por el propietario):");
+
+        Optional<String> reasonResult = reasonDialog.showAndWait();
+        if (reasonResult.isEmpty() || reasonResult.get().trim().isEmpty()) {
+            alert.viewAlert(2, "Motivo Requerido", "Debes ingresar un motivo para dar de baja la propiedad.", null);
+            return;
+        }
+
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Confirmar Baja");
         confirm.setHeaderText(null);
@@ -346,7 +358,7 @@ public class SearchPropertyController implements Initializable {
 
         Optional<ButtonType> result = confirm.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            if (propertyRepository.deactivateProperty(selectedProperty.getInternalCode())) {
+            if (propertyRepository.deactivateProperty(selectedProperty.getInternalCode(), reasonResult.get().trim())) {
                 alert.viewAlert(1, "Éxito", "Propiedad dada de baja.", null);
                 handleSearch();
             } else {
