@@ -65,4 +65,11 @@ public class UserService {
     private boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
     }
+
+    private static final java.util.regex.Pattern EMAIL_PATTERN
+            = java.util.regex.Pattern.compile("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$");
+
+    public boolean isValidEmail(String email) {
+        return email != null && email.trim().length() <= 40 && EMAIL_PATTERN.matcher(email.trim()).matches();
+    }
 }
