@@ -169,7 +169,7 @@ public class PropertyRepository {
         Map<String, Integer> stats = new HashMap<>();
         String query = "SELECT t.name_type, COUNT(p.id_property) "
                 + "FROM Properties p "
-                + "JOIN PropertyType t ON p.id_type = t.id_type "
+                + "JOIN PropertyType t ON p.id_property_type = t.id_type "
                 + "WHERE p.active = 1 "
                 + "GROUP BY t.name_type";
         try (Connection conn = ConnectionDB.getInstanceConnectionDB().getConnection(); PreparedStatement pstmt = conn.prepareStatement(query); ResultSet rs = pstmt.executeQuery()) {

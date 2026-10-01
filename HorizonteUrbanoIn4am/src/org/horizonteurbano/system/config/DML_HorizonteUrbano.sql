@@ -13,6 +13,14 @@ select * from PropertyImages;
 -- DATOS SEMILLA
 -- =====================================================================
 -- ---------------------------------------------------------------------
+-- ROLES
+-- ---------------------------------------------------------------------
+INSERT INTO Role (name_role) VALUES
+    ('Administrador'),  -- id_role = 1
+    ('Asesor'),         -- id_role = 2
+    ('Gerente');        -- id_role = 3
+    
+-- ---------------------------------------------------------------------
 -- PROPERTY TYPES
 -- ---------------------------------------------------------------------
 INSERT INTO PropertyType (name_type) VALUES
@@ -21,19 +29,10 @@ INSERT INTO PropertyType (name_type) VALUES
     ('Terreno'),
     ('Local Comercial'),
     ('Bodega');
-    
--- ---------------------------------------------------------------------
--- ROLES
--- ---------------------------------------------------------------------
-INSERT INTO Role (name_role) VALUES
-    ('Administrador'),  -- id_role = 1
-    ('Asesor'),         -- id_role = 2
-    ('Gerente');        -- id_role = 3
 
 -- ---------------------------------------------------------------------
 -- STATES
 -- ---------------------------------------------------------------------
-
 INSERT INTO State (name_state) VALUES
     ('Disponible'),
     ('Reservado'),
