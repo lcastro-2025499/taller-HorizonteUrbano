@@ -16,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 import org.horizonteurbano.system.models.*;
 import org.horizonteurbano.system.repositories.*;
@@ -26,13 +27,13 @@ public class EditPropertyController implements Initializable {
     @FXML
     private TextField txtCode;
     @FXML
-    private ComboBox<String> cmbType;
+    private ComboBox<PropertyType> cmbType;
     @FXML
     private TextField txtArea;
     @FXML
     private TextField txtAddress;
     @FXML
-    private ComboBox<String> cmbStatus;
+    private ComboBox<State> cmbStatus;
     @FXML
     private TextField txtPrice;
     @FXML
@@ -56,24 +57,47 @@ public class EditPropertyController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        configureComboConverters();
         cargarTipos();
         cargarEstados();
 
         txtCode.setDisable(true);
     }
 
+    private void configureComboConverters() {
+        cmbType.setConverter(new StringConverter<PropertyType>() {
+            @Override
+            public String toString(PropertyType type) {
+                return type == null ? "" : type.getNameType();
+            }
+
+            @Override
+            public PropertyType fromString(String string) {
+                return null;
+            }
+        });
+
+        cmbStatus.setConverter(new StringConverter<State>() {
+            @Override
+            public String toString(State state) {
+                return state == null ? "" : state.getNameState();
+            }
+
+            @Override
+            public State fromString(String string) {
+                return null;
+            }
+        });
+    }
+
     private void cargarTipos() {
         List<PropertyType> types = propertyTypeRepository.getAllPropertyTypes();
-        for (PropertyType type : types) {
-            cmbType.getItems().add(type.getNameType());
-        }
+        cmbType.getItems().setAll(types);
     }
 
     private void cargarEstados() {
         List<State> states = stateRepository.getAllStates();
-        for (State state : states) {
-            cmbStatus.getItems().add(state.getNameState());
-        }
+        cmbStatus.getItems().setAll(states);
     }
 
     public void setPropertyData(Property property) {
@@ -83,10 +107,20 @@ public class EditPropertyController implements Initializable {
         txtPrice.setText(String.valueOf(property.getPrice()));
 
         if (property.getType() != null) {
-            cmbType.getSelectionModel().select(property.getType().getNameType());
+            for (PropertyType t : cmbType.getItems()) {
+                if (t.getIdType() == property.getType().getIdType()) {
+                    cmbType.getSelectionModel().select(t);
+                    break;
+                }
+            }
         }
         if (property.getState() != null) {
-            cmbStatus.getSelectionModel().select(property.getState().getNameState());
+            for (State s : cmbStatus.getItems()) {
+                if (s.getIdState() == property.getState().getIdState()) {
+                    cmbStatus.getSelectionModel().select(s);
+                    break;
+                }
+            }
         }
         selectedImagePath = property.getCoverUrl();
         lblImagePath.setText(selectedImagePath != null ? new File(selectedImagePath).getName() : "Ningún archivo seleccionado");
@@ -95,9 +129,12 @@ public class EditPropertyController implements Initializable {
     @FXML
     public void actionUpdateProperty(ActionEvent event) {
         try {
+            PropertyType selectedType = cmbType.getSelectionModel().getSelectedItem();
+            State selectedState = cmbStatus.getSelectionModel().getSelectedItem();
+
             if (txtAddress.getText().isEmpty() || txtArea.getText().isEmpty()
-                    || txtPrice.getText().isEmpty() || cmbType.getSelectionModel().isEmpty()
-                    || cmbStatus.getSelectionModel().isEmpty()) {
+                    || txtPrice.getText().isEmpty() || selectedType == null
+                    || selectedState == null) {
 
                 alertInformation.viewAlert(2, "Datos Incompletos", "Por favor, llena todos los campos.", null);
                 return;
@@ -108,14 +145,8 @@ public class EditPropertyController implements Initializable {
             updated.setAddress(txtAddress.getText());
             updated.setArea(Double.parseDouble(txtArea.getText()));
             updated.setPrice(Double.parseDouble(txtPrice.getText()));
-
-            PropertyType type = new PropertyType();
-            type.setIdType(cmbType.getSelectionModel().getSelectedIndex() + 1);
-            updated.setType(type);
-
-            State state = new State();
-            state.setIdState(cmbStatus.getSelectionModel().getSelectedIndex() + 1);
-            updated.setState(state);
+            updated.setType(selectedType);
+            updated.setState(selectedState);
             updated.setCoverUrl(selectedImagePath);
 
             if (propertyRepository.updateProperty(updated)) {
