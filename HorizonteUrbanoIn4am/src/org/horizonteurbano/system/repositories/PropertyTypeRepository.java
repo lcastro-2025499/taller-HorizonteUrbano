@@ -13,15 +13,13 @@ public class PropertyTypeRepository {
 
     public List<PropertyType> getAllPropertyTypes() {
         List<PropertyType> types = new ArrayList<>();
-        String query = "SELECT * FROM PropertyType";
-        
-        try (Connection conn = ConnectionDB.getInstanceConnectionDB().getConnection();
-             PreparedStatement preparedStmt = conn.prepareStatement(query);
-             ResultSet resultSet = preparedStmt.executeQuery()) {
-            
+        String query = "SELECT * FROM PropertyType WHERE active = true";
+
+        try (Connection conn = ConnectionDB.getInstanceConnectionDB().getConnection(); PreparedStatement preparedStmt = conn.prepareStatement(query); ResultSet resultSet = preparedStmt.executeQuery()) {
+
             while (resultSet.next()) {
                 PropertyType type = new PropertyType();
-                type.setIdType(resultSet.getInt("id_type")); 
+                type.setIdType(resultSet.getInt("id_type"));
                 type.setNameType(resultSet.getString("name_type"));
                 types.add(type);
             }

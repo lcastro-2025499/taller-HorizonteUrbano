@@ -44,8 +44,6 @@ import org.horizonteurbano.system.service.BrochureService;
 import org.horizonteurbano.system.service.UserSession;
 import org.horizonteurbano.system.utils.AlertInformation;
 import org.horizonteurbano.system.utils.ViewFactory;
-import org.horizonteurbano.system.service.UserSession;
-import org.horizonteurbano.system.service.UserSession;
 
 public class SearchPropertyController implements Initializable {
 
