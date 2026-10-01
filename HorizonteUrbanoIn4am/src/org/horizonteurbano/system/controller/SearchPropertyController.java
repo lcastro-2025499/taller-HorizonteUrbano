@@ -5,8 +5,6 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +22,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -71,6 +70,8 @@ public class SearchPropertyController implements Initializable {
     private Button btnEdit;
     @FXML
     private Button btnDelete;
+    @FXML
+    private Button btnViewHistory;
 
     @FXML
     private TableView<Property> tblProperties;
@@ -92,6 +93,8 @@ public class SearchPropertyController implements Initializable {
     private TextField txtAreaMin;
     @FXML
     private TextField txtAreaMax;
+    @FXML
+    private CheckBox chkShowInactive;
 
     private final ObservableList<Property> propertyList = FXCollections.observableArrayList();
     private final AlertInformation alert = new AlertInformation();
@@ -120,6 +123,10 @@ public class SearchPropertyController implements Initializable {
         btnEdit.setManaged(isAdmin);
         btnDelete.setVisible(isAdmin);
         btnDelete.setManaged(isAdmin);
+        btnViewHistory.setVisible(isAdmin);
+        btnViewHistory.setManaged(isAdmin);
+        chkShowInactive.setVisible(isAdmin);
+        chkShowInactive.setManaged(isAdmin);
     }
 
     private void setupTableColumns() {
@@ -203,100 +210,19 @@ public class SearchPropertyController implements Initializable {
 
             loadProperties(searchText, minPrice, maxPrice, minArea, maxArea, stateId, typeId);
         } catch (NumberFormatException e) {
-            alert.viewAlert(2, "Error de Formato", "Por favor, ingresa números válidos en los campos de precio.", null);
-        } catch (SQLException e) {
-            alert.viewAlert(3, "Error de Búsqueda", e.getMessage(), null);
+            alert.viewAlert(2, "Error de Formato", "Por favor, ingresa números válidos en los campos numéricos.", null);
         }
     }
 
     private void loadProperties(String searchText, Double minPrice, Double maxPrice,
-            Double minArea, Double maxArea, Integer stateId, Integer propertyTypeId) throws SQLException {
-        propertyList.clear();
+            Double minArea, Double maxArea, Integer stateId, Integer propertyTypeId) {
 
-        try (Connection conn = ConnectionDB.getInstanceConnectionDB().getConnection(); CallableStatement stmt = conn.prepareCall("{call sp_search_properties(?, ?, ?, ?, ?, ?, ?)}")) {
+        boolean includeInactive = chkShowInactive != null && chkShowInactive.isSelected();
 
-            stmt.setString(1, searchText);
-            if (minPrice != null) {
-                stmt.setDouble(2, minPrice);
-            } else {
-                stmt.setNull(2, Types.DECIMAL);
-            }
-            if (maxPrice != null) {
-                stmt.setDouble(3, maxPrice);
-            } else {
-                stmt.setNull(3, Types.DECIMAL);
-            }
-            if (minArea != null) {
-                stmt.setDouble(4, minArea);
-            } else {
-                stmt.setNull(4, Types.FLOAT);
-            }
-            if (maxArea != null) {
-                stmt.setDouble(5, maxArea);
-            } else {
-                stmt.setNull(5, Types.FLOAT);
-            }
-            if (stateId != null) {
-                stmt.setInt(6, stateId);
-            } else {
-                stmt.setNull(6, Types.INTEGER);
-            }
-            if (propertyTypeId != null) {
-                stmt.setInt(7, propertyTypeId);
-            } else {
-                stmt.setNull(7, Types.INTEGER);
-            }
+        List<Property> results = propertyRepository.searchProperties(
+                searchText, minPrice, maxPrice, minArea, maxArea, stateId, propertyTypeId, includeInactive);
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    Property prop = new Property();
-                    prop.setIdProperty(rs.getInt("id_property"));
-                    prop.setInternalCode(rs.getString("internal_code"));
-                    prop.setAddress(rs.getString("address"));
-                    prop.setArea(rs.getDouble("area_m2"));
-                    prop.setPrice(rs.getDouble("price"));
-                    prop.setActive(rs.getBoolean("active"));
-
-                    Timestamp dateRegTs = rs.getTimestamp("date_register");
-                    if (dateRegTs != null) {
-                        prop.setDateRegister(dateRegTs.toLocalDateTime());
-                    }
-
-                    Timestamp updateDateTs = rs.getTimestamp("update_date");
-                    if (updateDateTs != null) {
-                        prop.setUpdateDate(updateDateTs.toLocalDateTime());
-                    }
-
-                    prop.setCoverUrl(rs.getString("cover_url"));
-                    prop.setIdUser(rs.getString("id_user"));
-
-                    PropertyType type = new PropertyType();
-                    type.setIdType(rs.getInt("id_property_type"));
-
-                    for (PropertyType pt : cmbType.getItems()) {
-                        if (pt.getIdType() == type.getIdType()) {
-                            type.setNameType(pt.getNameType());
-                            break;
-                        }
-                    }
-                    prop.setType(type);
-
-                    State state = new State();
-                    state.setIdState(rs.getInt("id_state"));
-
-                    for (State st : cmbStatus.getItems()) {
-                        if (st.getIdState() == state.getIdState()) {
-                            state.setNameState(st.getNameState());
-                            break;
-                        }
-                    }
-                    prop.setState(state);
-
-                    propertyList.add(prop);
-                }
-            }
-        }
-
+        propertyList.setAll(results);
         tblProperties.setItems(propertyList);
         lblResults.setText("Resultados: " + propertyList.size() + " propiedades encontradas");
     }
@@ -371,14 +297,44 @@ public class SearchPropertyController implements Initializable {
     }
 
     @FXML
+    public void actionViewHistory(ActionEvent event) {
+        Property selectedProperty = tblProperties.getSelectionModel().getSelectedItem();
+        if (selectedProperty == null) {
+            alert.viewAlert(2, "Selección Requerida", "Selecciona una propiedad de la tabla para ver su historial.", null);
+            return;
+        }
+        if (selectedProperty.isActive()) {
+            alert.viewAlert(2, "Propiedad Activa",
+                    "Esta propiedad está activa actualmente y no tiene historial de baja.", null);
+            return;
+        }
+        if (selectedProperty.getInactiveDate() == null) {
+            alert.viewAlert(2, "Sin Historial",
+                    "Esta propiedad no tiene registrado un historial de baja.", null);
+            return;
+        }
+
+        java.time.format.DateTimeFormatter fmt = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String fecha = selectedProperty.getInactiveDate().format(fmt);
+        String motivo = selectedProperty.getInactiveReason() != null && !selectedProperty.getInactiveReason().isBlank()
+                ? selectedProperty.getInactiveReason()
+                : "(Sin motivo registrado)";
+
+        alert.viewAlert(1, "Historial de Baja",
+                "Propiedad: " + selectedProperty.getInternalCode() + "\n"
+                + "Dirección: " + selectedProperty.getAddress() + "\n\n"
+                + "Fecha de baja: " + fecha + "\n"
+                + "Motivo: " + motivo,
+                null);
+    }
+
+    @FXML
     public void actionEdit(ActionEvent event) {
         Property selectedProperty = tblProperties.getSelectionModel().getSelectedItem();
         if (selectedProperty == null) {
             alert.viewAlert(2, "Selección Requerida", "Por favor, selecciona una propiedad para editar.", null);
             return;
         }
-        // Se pasa this::handleSearch como callback para que la tabla se refresque
-        // automáticamente al guardar en el popup de edición.
         ViewFactory.getInstance().showEditPropertyWindow(selectedProperty, this::handleSearch);
     }
 
@@ -405,18 +361,6 @@ public class SearchPropertyController implements Initializable {
                 alert.viewAlert(3, "Error", "No se pudo generar el archivo PDF.", null);
             }
         }
-    }
-
-    @FXML
-    private void handleViewDetails() {
-        Property selected = tblProperties.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            alert.viewAlert(2, "Selección requerida", "Por favor, selecciona una propiedad de la tabla antes de ver los detalles.", null);
-            return;
-        }
-        alert.viewAlert(1, "Detalles de la propiedad",
-                selected.getInternalCode() + "\n" + selected.getAddress() + "\nÁrea: " + selected.getArea() + " m²\nPrecio: Q" + selected.getPrice(),
-                null);
     }
 
     @FXML

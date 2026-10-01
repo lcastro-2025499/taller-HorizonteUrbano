@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,6 @@ public class PropertyRepository {
         }
     }
 
-    // Reads all columns of the table so the UI can display and edit every field
     public List<Property> getAllActiveProperties() {
         List<Property> properties = new ArrayList<>();
         String query = "SELECT id_property, internal_code, address, area_m2, price, active, "
@@ -70,6 +70,128 @@ public class PropertyRepository {
             }
         } catch (SQLException e) {
             System.err.println("Error loading properties: " + e.getMessage());
+        }
+        return properties;
+    }
+
+    /**
+     * Búsqueda flexible con filtros opcionales. Si {@code includeInactive} es
+     * true, también devuelve propiedades dadas de baja (necesario para el
+     * historial de bajas). Los campos de texto vacíos o nulos se ignoran. Trae
+     * los nombres de tipo y estado resueltos vía JOIN.
+     */
+    public List<Property> searchProperties(String searchText, Double minPrice, Double maxPrice,
+            Double minArea, Double maxArea, Integer stateId, Integer propertyTypeId,
+            boolean includeInactive) {
+
+        List<Property> properties = new ArrayList<>();
+
+        StringBuilder query = new StringBuilder(
+                "SELECT p.id_property, p.internal_code, p.address, p.area_m2, p.price, p.active, "
+                + "p.date_register, p.update_date, p.cover_url, p.id_state, p.id_user, p.id_property_type, "
+                + "p.inactive_reason, p.inactive_date, "
+                + "t.name_type, s.name_state "
+                + "FROM Properties p "
+                + "LEFT JOIN PropertyType t ON p.id_property_type = t.id_type "
+                + "LEFT JOIN State s ON p.id_state = s.id_state "
+                + "WHERE 1 = 1");
+
+        if (!includeInactive) {
+            query.append(" AND p.active = true");
+        }
+        if (searchText != null && !searchText.isBlank()) {
+            query.append(" AND (p.address LIKE ? OR p.internal_code LIKE ?)");
+        }
+        if (minPrice != null) {
+            query.append(" AND p.price >= ?");
+        }
+        if (maxPrice != null) {
+            query.append(" AND p.price <= ?");
+        }
+        if (minArea != null) {
+            query.append(" AND p.area_m2 >= ?");
+        }
+        if (maxArea != null) {
+            query.append(" AND p.area_m2 <= ?");
+        }
+        if (stateId != null) {
+            query.append(" AND p.id_state = ?");
+        }
+        if (propertyTypeId != null) {
+            query.append(" AND p.id_property_type = ?");
+        }
+
+        try (Connection connection = ConnectionDB.getInstanceConnectionDB().getConnection(); PreparedStatement stmt = connection.prepareStatement(query.toString())) {
+
+            int idx = 1;
+            if (searchText != null && !searchText.isBlank()) {
+                String likePattern = "%" + searchText + "%";
+                stmt.setString(idx++, likePattern);
+                stmt.setString(idx++, likePattern);
+            }
+            if (minPrice != null) {
+                stmt.setDouble(idx++, minPrice);
+            }
+            if (maxPrice != null) {
+                stmt.setDouble(idx++, maxPrice);
+            }
+            if (minArea != null) {
+                stmt.setDouble(idx++, minArea);
+            }
+            if (maxArea != null) {
+                stmt.setDouble(idx++, maxArea);
+            }
+            if (stateId != null) {
+                stmt.setInt(idx++, stateId);
+            }
+            if (propertyTypeId != null) {
+                stmt.setInt(idx++, propertyTypeId);
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Property prop = new Property();
+                    prop.setIdProperty(rs.getInt("id_property"));
+                    prop.setInternalCode(rs.getString("internal_code"));
+                    prop.setAddress(rs.getString("address"));
+                    prop.setArea(rs.getDouble("area_m2"));
+                    prop.setPrice(rs.getDouble("price"));
+                    prop.setActive(rs.getBoolean("active"));
+
+                    Timestamp dateRegTs = rs.getTimestamp("date_register");
+                    if (dateRegTs != null) {
+                        prop.setDateRegister(dateRegTs.toLocalDateTime());
+                    }
+
+                    Timestamp updateDateTs = rs.getTimestamp("update_date");
+                    if (updateDateTs != null) {
+                        prop.setUpdateDate(updateDateTs.toLocalDateTime());
+                    }
+
+                    prop.setCoverUrl(rs.getString("cover_url"));
+                    prop.setIdUser(rs.getString("id_user"));
+
+                    PropertyType type = new PropertyType();
+                    type.setIdType(rs.getInt("id_property_type"));
+                    type.setNameType(rs.getString("name_type"));
+                    prop.setType(type);
+
+                    State state = new State();
+                    state.setIdState(rs.getInt("id_state"));
+                    state.setNameState(rs.getString("name_state"));
+                    prop.setState(state);
+
+                    prop.setInactiveReason(rs.getString("inactive_reason"));
+                    Timestamp inactiveTs = rs.getTimestamp("inactive_date");
+                    if (inactiveTs != null) {
+                        prop.setInactiveDate(inactiveTs.toLocalDateTime());
+                    }
+
+                    properties.add(prop);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error searching properties: " + e.getMessage());
         }
         return properties;
     }

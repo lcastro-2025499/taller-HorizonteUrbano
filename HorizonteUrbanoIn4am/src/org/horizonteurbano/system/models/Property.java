@@ -16,6 +16,8 @@ public class Property {
     private LocalDateTime updateDate;
     private String coverUrl;
     private String idUser;
+    private String inactiveReason;
+    private LocalDateTime inactiveDate;
 
     public Property() {
     }
@@ -132,5 +134,21 @@ public class Property {
 
     public void setIdUser(String idUser) {
         this.idUser = idUser;
+    }
+
+    public String getInactiveReason() {
+        return inactiveReason;
+    }
+
+    public void setInactiveReason(String inactiveReason) {
+        this.inactiveReason = inactiveReason;
+    }
+
+    public LocalDateTime getInactiveDate() {
+        return inactiveDate;
+    }
+
+    public void setInactiveDate(LocalDateTime inactiveDate) {
+        this.inactiveDate = inactiveDate;
     }
 }
