@@ -116,6 +116,8 @@ public class SearchPropertyController implements Initializable {
         boolean isGerente = UserSession.getInstance().isGerente();
         btnReports.setVisible(isGerente);
         btnReports.setManaged(isGerente);
+        btnBack.setVisible(!isGerente);
+        btnBack.setManaged(!isGerente);
         boolean isAdmin = UserSession.getInstance().isAdmin();
         btnChangeStatus.setVisible(isAdmin);
         btnChangeStatus.setManaged(isAdmin);
