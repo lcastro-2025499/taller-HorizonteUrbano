@@ -90,7 +90,6 @@ public class ViewFactory {
         showView("Catalog - Horizonte Urbano", "MainView.fxml", 915, 600);
     }
 
-    // Rutas exclusivas de tu rama local
     public void showReportsWindow() {
         showView("Reportes Gerenciales - Horizonte Urbano", "ReportsView.fxml", 920, 540);
     }
@@ -99,8 +98,21 @@ public class ViewFactory {
         showView("Gestión de Personal - Horizonte Urbano", "UsersView.fxml", 1000, 650);
     }
 
-    // Este se mantiene como Pop-up independiente (inyecta los datos al controlador)
+    /**
+     * Abre el popup de edición sin callback. Se conserva por compatibilidad:
+     * equivale a {@code showEditPropertyWindow(property, null)}.
+     */
     public void showEditPropertyWindow(Property property) {
+        showEditPropertyWindow(property, null);
+    }
+
+    /**
+     * Abre el popup de edición. Si {@code onSaved} no es null, se ejecutará en
+     * el hilo de JavaFX después de que la propiedad se actualice con éxito. Se
+     * usa para que la vista padre (por ejemplo SearchPropertyController)
+     * refresque su tabla al cerrar el popup.
+     */
+    public void showEditPropertyWindow(Property property, Runnable onSaved) {
         try {
             Stage stage = new Stage();
             stage.setTitle("Editar Propiedad - Horizonte Urbano");
@@ -108,12 +120,12 @@ public class ViewFactory {
 
             String pathOfFile = PATH_VIEWS + "EditPropertyView.fxml";
 
-            // CORRECCIÓN DEL ERROR: Usamos ViewFactory.class en lugar de Main.class
             FXMLLoader loader = new FXMLLoader(ViewFactory.class.getResource(pathOfFile));
             Scene scene = new Scene(loader.load());
 
             EditPropertyController controller = loader.getController();
             controller.setPropertyData(property);
+            controller.setOnSaved(onSaved);
 
             stage.setScene(scene);
             stage.show();
@@ -122,7 +134,6 @@ public class ViewFactory {
         }
     }
 
-    // Utilidad para cerrar ventanas modales
     public void closeStage(Stage stage) {
         if (stage != null) {
             stage.close();

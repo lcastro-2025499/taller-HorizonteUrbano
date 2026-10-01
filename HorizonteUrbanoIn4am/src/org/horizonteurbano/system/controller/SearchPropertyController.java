@@ -377,7 +377,9 @@ public class SearchPropertyController implements Initializable {
             alert.viewAlert(2, "Selección Requerida", "Por favor, selecciona una propiedad para editar.", null);
             return;
         }
-        ViewFactory.getInstance().showEditPropertyWindow(selectedProperty);
+        // Se pasa this::handleSearch como callback para que la tabla se refresque
+        // automáticamente al guardar en el popup de edición.
+        ViewFactory.getInstance().showEditPropertyWindow(selectedProperty, this::handleSearch);
     }
 
     @FXML

@@ -48,6 +48,12 @@ public class EditPropertyController implements Initializable {
     private StateRepository stateRepository;
     private AlertInformation alertInformation;
 
+    /**
+     * Callback opcional que se ejecuta tras guardar con éxito. Lo usa la vista
+     * padre (p. ej. SearchPropertyController) para refrescar su tabla.
+     */
+    private Runnable onSaved;
+
     public EditPropertyController() {
         this.propertyRepository = new PropertyRepository();
         this.propertyTypeRepository = new PropertyTypeRepository();
@@ -62,6 +68,10 @@ public class EditPropertyController implements Initializable {
         cargarEstados();
 
         txtCode.setDisable(true);
+    }
+
+    public void setOnSaved(Runnable onSaved) {
+        this.onSaved = onSaved;
     }
 
     private void configureComboConverters() {
@@ -152,6 +162,9 @@ public class EditPropertyController implements Initializable {
             if (propertyRepository.updateProperty(updated)) {
                 alertInformation.viewAlert(1, "Éxito", "Propiedad actualizada correctamente en el sistema.", null);
                 cerrarVentana();
+                if (onSaved != null) {
+                    onSaved.run();
+                }
             } else {
                 alertInformation.viewAlert(3, "Error", "No se pudo actualizar la propiedad en la base de datos.", null);
             }
