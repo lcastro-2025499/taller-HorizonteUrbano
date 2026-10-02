@@ -3,14 +3,13 @@
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@../styles/MainStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.EditPropertyController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@../styles/EditPropertyStyles.css, @../styles/GlobalStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.EditPropertyController">
     <VBox spacing="15.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
         
         <Label text="Editar Datos de la Propiedad" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
         
         <HBox spacing="15.0">
             <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                <!-- Solución al Bug Latente: Este campo está deshabilitado desde el controlador -->
                 <Label text="Código Interno (Bloqueado)"/>
                 <TextField fx:id="txtCode" disable="true" style="-fx-background-color: #e9ecef;"/>
             </VBox>

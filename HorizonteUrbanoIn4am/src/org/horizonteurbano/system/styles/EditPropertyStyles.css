@@ -1,0 +1,116 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 26/09/2026, 22:00:48
+    Author     : pedro
+*/
+/* =========================================
+   ESTILOS PARA EDITPROPERTY (Tema: Horizonte Urbano)
+   ========================================= */
+
+.main-panel {
+    -fx-background-color: rgba(71, 40, 32, 0.4);
+    -fx-background-radius: 15;
+    -fx-border-color: rgba(232, 220, 200, 0.3);
+    -fx-border-radius: 15;
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 15, 0.1, 0, 5);
+    -fx-padding: 25;
+}
+
+.title-label {
+    -fx-font-size: 22px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-padding: 0 0 10 0;
+}
+
+/* =========================================
+   CAMPOS DE TEXTO Y COMBOBOX
+   ========================================= */
+
+.text-field:disabled, .combo-box:disabled {
+    -fx-background-color: rgba(71, 40, 32, 0.5);
+    -fx-text-fill: rgba(232, 220, 200, 0.5);
+    -fx-opacity: 1; 
+    -fx-border-color: rgba(232, 220, 200, 0.1);
+    -fx-cursor: default;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 8 8 0;
+}
+
+.combo-box .arrow {
+    -fx-background-color: #472820;
+    -fx-padding: 4 5 4 5;
+}
+
+.combo-box:hover .arrow {
+    -fx-background-color: #349626;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #2a1813;
+    -fx-border-color: rgba(232, 220, 200, 0.3);
+    -fx-border-radius: 8;
+}
+
+/* =========================================
+   BOTONES DE ACCIÓN
+   ========================================= */
+
+.btn-primary {
+    -fx-background-color: rgba(52, 150, 38, 0.85);
+    -fx-text-fill: #E8DCC8;
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-radius: 8;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-padding: 10 20 10 20;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+}
+
+.btn-primary:hover {
+    -fx-background-color: rgba(52, 150, 38, 1.0);
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(52, 150, 38, 0.5), 10, 0, 0, 0);
+}
+
+.btn-primary:pressed {
+    -fx-background-color: rgba(40, 120, 30, 1.0);
+    -fx-text-fill: white;
+    -fx-effect: none;
+}
+
+.btn-secondary {
+    -fx-background-color: rgba(232, 220, 200, 0.15);
+    -fx-text-fill: #E8DCC8;
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(232, 220, 200, 0.3);
+    -fx-border-radius: 8;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-padding: 10 20 10 20;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: rgba(232, 220, 200, 0.3);
+    -fx-text-fill: white;
+    -fx-border-color: rgba(232, 220, 200, 0.6);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0, 0, 0);
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: rgba(232, 220, 200, 0.1);
+    -fx-text-fill: rgba(232, 220, 200, 0.7);
+    -fx-effect: none;
+}
