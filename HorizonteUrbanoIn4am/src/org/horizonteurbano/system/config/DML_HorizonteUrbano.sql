@@ -1,15 +1,6 @@
 use HorizonteUrbano_in4am;
 
 -- =====================================================================
--- TESTEO DE DATOS
--- =====================================================================
-select * from Role;
-select * from State;
-select * from PropertyType;
-select * from Users;
-select * from PropertyImages;
-
--- =====================================================================
 -- DATOS SEMILLA
 -- =====================================================================
 -- ---------------------------------------------------------------------
@@ -44,9 +35,9 @@ INSERT INTO State (name_state) VALUES
 -- ---------------------------------------------------------------------
 set @hashed_password = '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy';
 
-call sp_create_user('admin', '123', @hashed_password, 'admin123@gmail.com', 'admin', true, 1);
-call sp_create_user('asesor', '456', @hashed_password, 'asesor456@gmail.com', 'asesor', true, 2);
-call sp_create_user('gerente', '789', @hashed_password, 'gerente789@gmail.com', 'gerente', true, 3);
+call sp_create_user(UUID(), 'admin', '123', @hashed_password, 'admin123@gmail.com', 'admin', true, 1);
+call sp_create_user(UUID(), 'asesor', '456', @hashed_password, 'asesor456@gmail.com', 'asesor', true, 2);
+call sp_create_user(UUID(), 'gerente', '789', @hashed_password, 'gerente789@gmail.com', 'gerente', true, 3);
 
 -- ---------------------------------------------------------------------
 -- PROPERTIES
@@ -67,9 +58,3 @@ set @prop2 = (select id_property from Properties where internal_code = 'HU-002' 
 call sp_create_property_image(@prop1, 'https://example.com/hu-001-a.jpg');
 call sp_create_property_image(@prop1, 'https://example.com/hu-001-b.jpg');
 call sp_create_property_image(@prop2, 'https://example.com/hu-002-a.jpg');
-
-
-
-
-
-

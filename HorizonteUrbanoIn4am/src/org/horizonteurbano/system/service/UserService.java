@@ -12,41 +12,28 @@ public class UserService {
         this.userRepository = new UserRepository();
     }
 
-    // Hashes the raw password and saves the user
     public boolean register(User user, String rawPassword) {
-        if (user == null || isBlank(rawPassword)) {
-            return false;
-        }
+        if (user == null || isBlank(rawPassword)) return false;
         user.setPassword(hashPassword(rawPassword));
         return userRepository.saveUser(user);
     }
 
-    // Returns the authenticated user or null if credentials are invalid
+    public boolean updateUser(User user) {
+        return userRepository.updateUser(user);
+    }
+
     public User login(String identifier, String rawPassword) {
-        if (isBlank(identifier) || isBlank(rawPassword)) {
-            return null;
-        }
+        if (isBlank(identifier) || isBlank(rawPassword)) return null;
         User stored = userRepository.getUserByIdentifier(identifier);
-        if (stored == null) {
-            return null;
-        }
-        if (!checkPassword(rawPassword, stored.getPassword())) {
-            return null;
-        }
+        if (stored == null || !checkPassword(rawPassword, stored.getPassword())) return null;
         return stored;
     }
 
-    // Changes password by email (used in the "forgot password" flow)
     public boolean changePassword(String email, String newRawPassword) {
-        if (isBlank(email) || isBlank(newRawPassword)) {
-            return false;
-        }
+        if (isBlank(email) || isBlank(newRawPassword)) return false;
         User user = userRepository.getUserByEmail(email);
-        if (user == null) {
-            return false;
-        }
-        String hashed = hashPassword(newRawPassword);
-        return userRepository.updatePassword(user.getIdUser(), hashed);
+        if (user == null) return false;
+        return userRepository.updatePassword(user.getIdUser(), hashPassword(newRawPassword));
     }
 
     private String hashPassword(String rawPassword) {
@@ -66,8 +53,7 @@ public class UserService {
         return value == null || value.trim().isEmpty();
     }
 
-    private static final java.util.regex.Pattern EMAIL_PATTERN
-            = java.util.regex.Pattern.compile("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$");
+    private static final java.util.regex.Pattern EMAIL_PATTERN = java.util.regex.Pattern.compile("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$");
 
     public boolean isValidEmail(String email) {
         return email != null && email.trim().length() <= 40 && EMAIL_PATTERN.matcher(email.trim()).matches();
