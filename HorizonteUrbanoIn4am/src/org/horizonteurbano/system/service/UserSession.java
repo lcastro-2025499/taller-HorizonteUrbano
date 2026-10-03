@@ -34,10 +34,10 @@ public class UserSession {
     }
 
     public int getCurrentRoleId() {
-        if (currentUser == null || currentUser.getRol() == null) {
+        if (currentUser == null || currentUser.getRole() == null) {
             return -1;
         }
-        return currentUser.getRol().getIdRole();
+        return currentUser.getRole().getIdRole();
     }
 
     public String getCurrentUserName() {

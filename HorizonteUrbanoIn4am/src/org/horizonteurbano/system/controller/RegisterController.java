@@ -5,24 +5,26 @@ import org.horizonteurbano.system.models.User;
 import org.horizonteurbano.system.service.UserService;
 import org.horizonteurbano.system.utils.AlertInformation;
 import org.horizonteurbano.system.utils.ViewFactory;
-import javafx.scene.control.TextField;
-import javafx.scene.control.PasswordField;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Circle;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.fxml.Initializable;
-import javafx.fxml.FXML;
-import javafx.event.ActionEvent;
 import javafx.util.Duration;
+
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.UUID;
-import javafx.scene.control.RadioButton;
 
 public class RegisterController implements Initializable {
 
@@ -108,17 +110,16 @@ public class RegisterController implements Initializable {
             double endX = 50 - 50 * Math.cos(Math.toRadians(angle));
             double endY = 50 - 50 * Math.sin(Math.toRadians(angle));
 
-            String cssGradiente = String.format(
+            String gradientCss = String.format(
                     "-fx-background-color: linear-gradient(from %.1f%% %.1f%% to %.1f%% %.1f%%, #E3D8C8 0%%, #A4AD8F 50%%, #6E8354 100%%);",
                     startX, startY, endX, endY
             );
-            apMainContainer.setStyle(cssGradiente);
+            apMainContainer.setStyle(gradientCss);
         }));
         gradientTimeline.setCycleCount(Timeline.INDEFINITE);
         gradientTimeline.play();
     }
 
-    // Stops the gradient animation when the view is detached from the scene
     private void stopTimelineOnSceneChange() {
         if (apMainContainer == null) {
             return;
@@ -171,11 +172,8 @@ public class RegisterController implements Initializable {
 
         Role role = new Role();
         role.setIdRole(selectedRoleId);
-        newUser.setRol(role);
+        newUser.setRole(role);
 
-        //1 = SUCCESS
-        //2 = ALERT
-        //3 = ERROR
         if (userService.register(newUser, password)) {
             alert.viewAlert(1, "Registro Exitoso", "Cuenta creada correctamente. Ya puedes iniciar sesión.", null);
             viewFactory.showLoginWindow();

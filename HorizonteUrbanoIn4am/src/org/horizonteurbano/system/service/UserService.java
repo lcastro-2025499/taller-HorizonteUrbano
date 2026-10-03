@@ -2,6 +2,7 @@ package org.horizonteurbano.system.service;
 
 import org.horizonteurbano.system.models.User;
 import org.horizonteurbano.system.repositories.UserRepository;
+
 import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {

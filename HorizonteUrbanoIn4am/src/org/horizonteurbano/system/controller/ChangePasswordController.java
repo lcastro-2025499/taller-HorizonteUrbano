@@ -3,10 +3,11 @@ package org.horizonteurbano.system.controller;
 import org.horizonteurbano.system.service.UserService;
 import org.horizonteurbano.system.utils.AlertInformation;
 import org.horizonteurbano.system.utils.ViewFactory;
-import javafx.scene.control.TextField;
-import javafx.scene.control.PasswordField;
-import javafx.fxml.FXML;
+
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 
 public class ChangePasswordController {
 
@@ -46,9 +47,6 @@ public class ChangePasswordController {
             return;
         }
 
-        //1 = SUCCESS
-        //2 = ALERT
-        //3 = ERROR
         if (userService.changePassword(email, newPassword)) {
             alert.viewAlert(1, "Contraseña Actualizada", "Tu contraseña fue cambiada correctamente. Ya puedes iniciar sesión.", null);
             viewFactory.showLoginWindow();

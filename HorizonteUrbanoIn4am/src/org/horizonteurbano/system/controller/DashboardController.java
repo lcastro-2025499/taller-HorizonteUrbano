@@ -1,17 +1,15 @@
 package org.horizonteurbano.system.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import org.horizonteurbano.system.models.Property;
+import org.horizonteurbano.system.models.PropertyType;
+import org.horizonteurbano.system.models.State;
+import org.horizonteurbano.system.models.User;
+import org.horizonteurbano.system.repositories.PropertyRepository;
+import org.horizonteurbano.system.repositories.PropertyTypeRepository;
+import org.horizonteurbano.system.repositories.StateRepository;
+import org.horizonteurbano.system.service.UserSession;
+import org.horizonteurbano.system.utils.AlertInformation;
+import org.horizonteurbano.system.utils.ViewFactory;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,16 +23,18 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 
-import org.horizonteurbano.system.models.Property;
-import org.horizonteurbano.system.models.PropertyType;
-import org.horizonteurbano.system.models.State;
-import org.horizonteurbano.system.models.User;
-import org.horizonteurbano.system.repositories.PropertyRepository;
-import org.horizonteurbano.system.repositories.PropertyTypeRepository;
-import org.horizonteurbano.system.repositories.StateRepository;
-import org.horizonteurbano.system.service.UserSession;
-import org.horizonteurbano.system.utils.AlertInformation;
-import org.horizonteurbano.system.utils.ViewFactory;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.UUID;
 
 public class DashboardController implements Initializable {
 
@@ -63,7 +63,7 @@ public class DashboardController implements Initializable {
     private PropertyRepository propertyRepository;
     private PropertyTypeRepository propertyTypeRepository;
     private StateRepository stateRepository;
-    private AlertInformation alerta;
+    private AlertInformation alertInformation;
     private ViewFactory viewFactory;
     private UserSession session;
 
@@ -71,7 +71,7 @@ public class DashboardController implements Initializable {
         this.propertyRepository = new PropertyRepository();
         this.propertyTypeRepository = new PropertyTypeRepository();
         this.stateRepository = new StateRepository();
-        this.alerta = new AlertInformation();
+        this.alertInformation = new AlertInformation();
         this.session = UserSession.getInstance();
         this.viewFactory = ViewFactory.getInstance();
     }
@@ -79,8 +79,8 @@ public class DashboardController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         configureComboConverters();
-        cargarTipos();
-        cargarEstados();
+        loadPropertyTypes();
+        loadStates();
         loadCurrentUser();
         applyRolePermissions();
         updateFooterStatus("Esperando ingreso de datos...");
@@ -137,14 +137,14 @@ public class DashboardController implements Initializable {
         });
     }
 
-    private void cargarTipos() {
-        List<PropertyType> tipos = propertyTypeRepository.getAllPropertyTypes();
-        cmbType.getItems().setAll(tipos);
+    private void loadPropertyTypes() {
+        List<PropertyType> propertyTypes = propertyTypeRepository.getAllPropertyTypes();
+        cmbType.getItems().setAll(propertyTypes);
     }
 
-    private void cargarEstados() {
-        List<State> estados = stateRepository.getAllStates();
-        cmbStatus.getItems().setAll(estados);
+    private void loadStates() {
+        List<State> states = stateRepository.getAllStates();
+        cmbStatus.getItems().setAll(states);
     }
 
     private void updateFooterStatus(String message) {
@@ -155,7 +155,7 @@ public class DashboardController implements Initializable {
     @FXML
     public void actionSaveProperty(ActionEvent event) {
         if (!session.isAdmin()) {
-            alerta.viewAlert(3, "Permiso Denegado", "No tienes permisos para registrar propiedades.", null);
+            alertInformation.viewAlert(3, "Permiso Denegado", "No tienes permisos para registrar propiedades.", null);
             return;
         }
 
@@ -163,7 +163,7 @@ public class DashboardController implements Initializable {
                 || txtArea.getText().trim().isEmpty() || txtPrice.getText().trim().isEmpty()
                 || cmbType.getSelectionModel().getSelectedItem() == null
                 || cmbStatus.getSelectionModel().getSelectedItem() == null) {
-            alerta.viewAlert(2, "Datos Incompletos", "Por favor, llena todos los campos obligatorios.", null);
+            alertInformation.viewAlert(2, "Datos Incompletos", "Por favor, llena todos los campos obligatorios.", null);
             updateFooterStatus("Error: Campos incompletos");
             return;
         }
@@ -182,15 +182,15 @@ public class DashboardController implements Initializable {
 
             if (propertyRepository.saveProperty(newProperty)) {
                 updateFooterStatus("Propiedad " + newProperty.getInternalCode() + " guardada exitosamente");
-                alerta.viewAlert(1, "Guardado Exitoso", "La propiedad se ha registrado correctamente.", null);
+                alertInformation.viewAlert(1, "Guardado Exitoso", "La propiedad se ha registrado correctamente.", null);
                 actionClear(null);
             } else {
                 updateFooterStatus("Error al guardar en la base de datos");
-                alerta.viewAlert(3, "Error de Registro", "Ocurrió un problema al guardar en la base de datos.", null);
+                alertInformation.viewAlert(3, "Error de Registro", "Ocurrió un problema al guardar en la base de datos.", null);
             }
         } catch (NumberFormatException e) {
             updateFooterStatus("Error: Formato numérico inválido");
-            alerta.viewAlert(2, "Error de Formato", "El Área y el Precio deben contener únicamente números.", null);
+            alertInformation.viewAlert(2, "Error de Formato", "El Área y el Precio deben contener únicamente números.", null);
         }
     }
 
@@ -246,7 +246,7 @@ public class DashboardController implements Initializable {
             updateFooterStatus("Imagen de portada seleccionada");
         } catch (IOException e) {
             updateFooterStatus("Error al copiar la imagen");
-            alerta.viewAlert(3, "Error", "No se pudo guardar la imagen seleccionada.", null);
+            alertInformation.viewAlert(3, "Error", "No se pudo guardar la imagen seleccionada.", null);
         }
     }
 }

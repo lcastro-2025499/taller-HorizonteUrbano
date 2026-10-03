@@ -171,8 +171,7 @@ END $$
 DELIMITER ;
  
 DELIMITER $$
-CREATE PROCEDURE sp_login_user(IN identifier_p VARCHAR(40),
-                                IN password_p VARCHAR(80))
+CREATE PROCEDURE sp_login_user(IN identifier_p VARCHAR(40))
 BEGIN
     SELECT id_user, name, last_name, email, user_name, password, active, id_role
     FROM Users
@@ -258,6 +257,48 @@ BEGIN
     UPDATE Properties SET id_state = id_state_p WHERE id_property = id_property_p;
 END $$
 DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_update_property_by_code(IN internal_code_p VARCHAR(20),
+                                             IN address_p VARCHAR(35),
+                                             IN area_m2_p FLOAT,
+                                             IN price_p DECIMAL(10,2),
+                                             IN id_property_type_p INT,
+                                             IN id_state_p INT,
+                                             IN cover_url_p VARCHAR(255))
+BEGIN
+    UPDATE Properties
+    SET address = address_p,
+        area_m2 = area_m2_p,
+        price = price_p,
+        id_property_type = id_property_type_p,
+        id_state = id_state_p,
+        cover_url = cover_url_p
+    WHERE internal_code = internal_code_p;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_deactivate_property_by_code(IN internal_code_p VARCHAR(20),
+                                                 IN inactive_reason_p VARCHAR(150))
+BEGIN
+    UPDATE Properties
+    SET active = false,
+        inactive_reason = inactive_reason_p,
+        inactive_date = NOW()
+    WHERE internal_code = internal_code_p;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_change_property_state_by_code(IN internal_code_p VARCHAR(20),
+                                                   IN id_state_p INT)
+BEGIN
+    UPDATE Properties
+    SET id_state = id_state_p
+    WHERE internal_code = internal_code_p;
+END $$
+DELIMITER ;
  
 DELIMITER $$
 CREATE PROCEDURE sp_delete_property(IN id_property_p INT)
@@ -273,19 +314,24 @@ CREATE PROCEDURE sp_search_properties(IN search_text VARCHAR(50),
                                        IN min_area FLOAT,
                                        IN max_area FLOAT,
                                        IN p_id_state INT,
-                                       IN p_id_property_type INT)
+                                       IN p_id_property_type INT,
+                                       IN include_inactive BOOLEAN)
 BEGIN
-    SELECT id_property, internal_code, address, area_m2, price, active,
-           date_register, update_date, cover_url, id_state, id_user, id_property_type
-    FROM Properties
-    WHERE active = true
-      AND (search_text IS NULL OR address LIKE CONCAT('%', search_text, '%') OR internal_code LIKE CONCAT('%', search_text, '%'))
-      AND (min_price IS NULL OR price >= min_price)
-      AND (max_price IS NULL OR price <= max_price)
-      AND (min_area IS NULL OR area_m2 >= min_area)
-      AND (max_area IS NULL OR area_m2 <= max_area)
-      AND (p_id_state IS NULL OR id_state = p_id_state)
-      AND (p_id_property_type IS NULL OR id_property_type = p_id_property_type);
+    SELECT p.id_property, p.internal_code, p.address, p.area_m2, p.price, p.active,
+           p.date_register, p.update_date, p.cover_url, p.id_state, p.id_user, p.id_property_type,
+           p.inactive_reason, p.inactive_date, t.name_type, s.name_state
+    FROM Properties p
+    LEFT JOIN PropertyType t ON p.id_property_type = t.id_type
+    LEFT JOIN State s ON p.id_state = s.id_state
+    WHERE (include_inactive = true OR p.active = true)
+      AND (search_text IS NULL OR p.address LIKE CONCAT('%', search_text, '%')
+           OR p.internal_code LIKE CONCAT('%', search_text, '%'))
+      AND (min_price IS NULL OR p.price >= min_price)
+      AND (max_price IS NULL OR p.price <= max_price)
+      AND (min_area IS NULL OR p.area_m2 >= min_area)
+      AND (max_area IS NULL OR p.area_m2 <= max_area)
+      AND (p_id_state IS NULL OR p.id_state = p_id_state)
+      AND (p_id_property_type IS NULL OR p.id_property_type = p_id_property_type);
 END $$
 DELIMITER ;
  
@@ -303,6 +349,13 @@ DELIMITER $$
 CREATE PROCEDURE sp_read_roles()
 BEGIN
     SELECT * FROM Role WHERE active = true;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_read_all_roles()
+BEGIN
+    SELECT * FROM Role;
 END $$
 DELIMITER ;
  

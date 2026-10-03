@@ -4,7 +4,6 @@ public class PropertyType {
 
     private int idType;
     private String nameType;
-    private boolean active;
 
     public PropertyType() {
     }
@@ -25,11 +24,4 @@ public class PropertyType {
         this.nameType = nameType;
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
 }

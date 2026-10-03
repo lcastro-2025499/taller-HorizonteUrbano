@@ -1,15 +1,12 @@
 package org.horizonteurbano.system.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import org.horizonteurbano.system.models.Property;
+import org.horizonteurbano.system.models.PropertyType;
+import org.horizonteurbano.system.models.State;
+import org.horizonteurbano.system.repositories.PropertyRepository;
+import org.horizonteurbano.system.repositories.PropertyTypeRepository;
+import org.horizonteurbano.system.repositories.StateRepository;
+import org.horizonteurbano.system.utils.AlertInformation;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,13 +19,16 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
-import org.horizonteurbano.system.models.Property;
-import org.horizonteurbano.system.models.PropertyType;
-import org.horizonteurbano.system.models.State;
-import org.horizonteurbano.system.repositories.PropertyRepository;
-import org.horizonteurbano.system.repositories.PropertyTypeRepository;
-import org.horizonteurbano.system.repositories.StateRepository;
-import org.horizonteurbano.system.utils.AlertInformation;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.UUID;
 
 public class EditPropertyController implements Initializable {
 
@@ -62,8 +62,8 @@ public class EditPropertyController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         configureComboConverters();
-        cargarTipos();
-        cargarEstados();
+        loadPropertyTypes();
+        loadStates();
     }
 
     public void setOnSaved(Runnable onSaved) {
@@ -82,12 +82,12 @@ public class EditPropertyController implements Initializable {
         });
     }
 
-    private void cargarTipos() {
+    private void loadPropertyTypes() {
         List<PropertyType> types = propertyTypeRepository.getAllPropertyTypes();
         cmbType.getItems().setAll(types);
     }
 
-    private void cargarEstados() {
+    private void loadStates() {
         List<State> states = stateRepository.getAllStates();
         cmbStatus.getItems().setAll(states);
     }
@@ -142,7 +142,7 @@ public class EditPropertyController implements Initializable {
 
             if (propertyRepository.updateProperty(updated)) {
                 alertInformation.viewAlert(1, "Éxito", "Propiedad actualizada correctamente en el sistema.", null);
-                cerrarVentana();
+                closeWindow();
                 if (onSaved != null) {
                     onSaved.run();
                 }
@@ -156,11 +156,10 @@ public class EditPropertyController implements Initializable {
 
     @FXML
     public void actionCancel(ActionEvent event) {
-        cerrarVentana();
+        closeWindow();
     }
 
-    private void cerrarVentana() {
-        // Usamos btnCancel (que sí existe en el FXML) para obtener la ventana
+    private void closeWindow() {
         Stage stage = (Stage) btnCancel.getScene().getWindow();
         stage.close();
     }

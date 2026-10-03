@@ -1,12 +1,14 @@
 package org.horizonteurbano.system.service;
 
+import org.horizonteurbano.system.models.Property;
+
+import java.io.File;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
-import org.horizonteurbano.system.models.Property;
-import java.io.File;
 
 public class BrochureService {
 
@@ -19,7 +21,6 @@ public class BrochureService {
                 PDType1Font fontBold = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
                 PDType1Font fontRegular = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
 
-                // Encabezado
                 contentStream.beginText();
                 contentStream.setFont(fontBold, 22);
                 contentStream.newLineAtOffset(50, 750);
@@ -37,7 +38,6 @@ public class BrochureService {
                 contentStream.lineTo(545, 715);
                 contentStream.stroke();
 
-                // Foto de portada (si existe y el archivo es accesible)
                 float textStartY = 680;
                 if (property.getCoverUrl() != null && !property.getCoverUrl().isBlank()) {
                     try {
@@ -60,7 +60,6 @@ public class BrochureService {
                     }
                 }
 
-                // Cuerpo
                 contentStream.beginText();
                 contentStream.setFont(fontRegular, 14);
                 contentStream.newLineAtOffset(50, textStartY);
@@ -86,7 +85,6 @@ public class BrochureService {
 
                 contentStream.endText();
 
-                // Pie de página
                 contentStream.beginText();
                 contentStream.setFont(fontRegular, 9);
                 contentStream.newLineAtOffset(50, 40);

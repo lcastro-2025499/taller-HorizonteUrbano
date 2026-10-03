@@ -1,16 +1,15 @@
 package org.horizonteurbano.system.controller;
 
-import java.net.URL;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import org.horizonteurbano.system.config.ConnectionDB;
+import org.horizonteurbano.system.models.Property;
+import org.horizonteurbano.system.models.PropertyType;
+import org.horizonteurbano.system.models.State;
+import org.horizonteurbano.system.repositories.PropertyRepository;
+import org.horizonteurbano.system.repositories.StateRepository;
+import org.horizonteurbano.system.service.BrochureService;
+import org.horizonteurbano.system.service.UserSession;
+import org.horizonteurbano.system.utils.AlertInformation;
+import org.horizonteurbano.system.utils.ViewFactory;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -33,16 +32,17 @@ import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 
-import org.horizonteurbano.system.config.ConnectionDB;
-import org.horizonteurbano.system.models.Property;
-import org.horizonteurbano.system.models.PropertyType;
-import org.horizonteurbano.system.models.State;
-import org.horizonteurbano.system.repositories.PropertyRepository;
-import org.horizonteurbano.system.repositories.StateRepository;
-import org.horizonteurbano.system.service.BrochureService;
-import org.horizonteurbano.system.service.UserSession;
-import org.horizonteurbano.system.utils.AlertInformation;
-import org.horizonteurbano.system.utils.ViewFactory;
+import java.net.URL;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class SearchPropertyController implements Initializable {
 
@@ -57,11 +57,7 @@ public class SearchPropertyController implements Initializable {
     @FXML
     private TextField txtPriceMax;
     @FXML
-    private Button btnSearch;
-    @FXML
     private Button btnBack;
-    @FXML
-    private Button btnViewDetails;
     @FXML
     private Button btnReports;
     @FXML
@@ -317,7 +313,7 @@ public class SearchPropertyController implements Initializable {
         }
 
         java.time.format.DateTimeFormatter fmt = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        String fecha = selectedProperty.getInactiveDate().format(fmt);
+        String inactiveDate = selectedProperty.getInactiveDate().format(fmt);
         String motivo = selectedProperty.getInactiveReason() != null && !selectedProperty.getInactiveReason().isBlank()
                 ? selectedProperty.getInactiveReason()
                 : "(Sin motivo registrado)";
@@ -325,7 +321,7 @@ public class SearchPropertyController implements Initializable {
         alert.viewAlert(1, "Historial de Baja",
                 "Propiedad: " + selectedProperty.getInternalCode() + "\n"
                 + "Dirección: " + selectedProperty.getAddress() + "\n\n"
-                + "Fecha de baja: " + fecha + "\n"
+                + "Fecha de baja: " + inactiveDate + "\n"
                 + "Motivo: " + motivo,
                 null);
     }

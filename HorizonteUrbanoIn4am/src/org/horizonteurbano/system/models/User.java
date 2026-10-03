@@ -1,7 +1,5 @@
 package org.horizonteurbano.system.models;
 
-import java.time.LocalDateTime;
-
 public class User {
 
     private String idUser;
@@ -9,28 +7,11 @@ public class User {
     private String lastName;
     private String userName;
     private String email;
-    private Role rol;
+    private Role role;
     private String phone;
     private String password;
     private boolean active;
-    private LocalDateTime dateRegister;
-
     public User() {
-    }
-
-    public User(String idUser, String name, String lastName, String userName, String email,
-            Role rol, String phone, String password, boolean active, LocalDateTime dateRegister) {
-
-        this.idUser = idUser;
-        this.name = name;
-        this.lastName = lastName;
-        this.userName = userName;
-        this.email = email;
-        this.rol = rol;
-        this.phone = phone;
-        this.password = password;
-        this.active = active;
-        this.dateRegister = dateRegister;
     }
 
     public String getIdUser() {
@@ -73,12 +54,12 @@ public class User {
         this.email = email;
     }
 
-    public Role getRol() {
-        return rol;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRol(Role rol) {
-        this.rol = rol;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public String getPhone() {
@@ -105,11 +86,4 @@ public class User {
         this.active = active;
     }
 
-    public LocalDateTime getDateRegister() {
-        return dateRegister;
-    }
-
-    public void setDateRegister(LocalDateTime dateRegister) {
-        this.dateRegister = dateRegister;
-    }
 }
