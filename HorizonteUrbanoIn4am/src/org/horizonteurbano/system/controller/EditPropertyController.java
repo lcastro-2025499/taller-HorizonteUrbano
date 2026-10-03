@@ -10,48 +10,46 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
-import org.horizonteurbano.system.models.*;
-import org.horizonteurbano.system.repositories.*;
+import org.horizonteurbano.system.models.Property;
+import org.horizonteurbano.system.models.PropertyType;
+import org.horizonteurbano.system.models.State;
+import org.horizonteurbano.system.repositories.PropertyRepository;
+import org.horizonteurbano.system.repositories.PropertyTypeRepository;
+import org.horizonteurbano.system.repositories.StateRepository;
 import org.horizonteurbano.system.utils.AlertInformation;
 
 public class EditPropertyController implements Initializable {
 
-    @FXML
-    private TextField txtCode;
-    @FXML
-    private ComboBox<PropertyType> cmbType;
-    @FXML
-    private TextField txtArea;
-    @FXML
-    private TextField txtAddress;
-    @FXML
-    private ComboBox<State> cmbStatus;
-    @FXML
-    private TextField txtPrice;
-    @FXML
-    private Button btnSelectImage;
-    @FXML
-    private Label lblImagePath;
+    @FXML private ComboBox<PropertyType> cmbType;
+    @FXML private TextField txtArea;
+    @FXML private TextField txtAddress;
+    @FXML private ComboBox<State> cmbStatus;
+    @FXML private TextField txtPrice;
+    @FXML private Button btnSelectImage;
+    @FXML private Label lblImagePath;
+    @FXML private Button btnCancel;
 
     private static final String UPLOAD_DIR = "uploads/properties/";
     private String selectedImagePath;
+    private String propertyCode; // Guarda el código interno sin depender de un TextField
+    
     private PropertyRepository propertyRepository;
     private PropertyTypeRepository propertyTypeRepository;
     private StateRepository stateRepository;
     private AlertInformation alertInformation;
 
-    /**
-     * Callback opcional que se ejecuta tras guardar con éxito. Lo usa la vista
-     * padre (p. ej. SearchPropertyController) para refrescar su tabla.
-     */
     private Runnable onSaved;
 
     public EditPropertyController() {
@@ -66,8 +64,6 @@ public class EditPropertyController implements Initializable {
         configureComboConverters();
         cargarTipos();
         cargarEstados();
-
-        txtCode.setDisable(true);
     }
 
     public void setOnSaved(Runnable onSaved) {
@@ -76,27 +72,13 @@ public class EditPropertyController implements Initializable {
 
     private void configureComboConverters() {
         cmbType.setConverter(new StringConverter<PropertyType>() {
-            @Override
-            public String toString(PropertyType type) {
-                return type == null ? "" : type.getNameType();
-            }
-
-            @Override
-            public PropertyType fromString(String string) {
-                return null;
-            }
+            @Override public String toString(PropertyType type) { return type == null ? "" : type.getNameType(); }
+            @Override public PropertyType fromString(String string) { return null; }
         });
 
         cmbStatus.setConverter(new StringConverter<State>() {
-            @Override
-            public String toString(State state) {
-                return state == null ? "" : state.getNameState();
-            }
-
-            @Override
-            public State fromString(String string) {
-                return null;
-            }
+            @Override public String toString(State state) { return state == null ? "" : state.getNameState(); }
+            @Override public State fromString(String string) { return null; }
         });
     }
 
@@ -111,7 +93,7 @@ public class EditPropertyController implements Initializable {
     }
 
     public void setPropertyData(Property property) {
-        txtCode.setText(property.getInternalCode());
+        this.propertyCode = property.getInternalCode();
         txtAddress.setText(property.getAddress());
         txtArea.setText(String.valueOf(property.getArea()));
         txtPrice.setText(String.valueOf(property.getPrice()));
@@ -145,13 +127,12 @@ public class EditPropertyController implements Initializable {
             if (txtAddress.getText().isEmpty() || txtArea.getText().isEmpty()
                     || txtPrice.getText().isEmpty() || selectedType == null
                     || selectedState == null) {
-
                 alertInformation.viewAlert(2, "Datos Incompletos", "Por favor, llena todos los campos.", null);
                 return;
             }
 
             Property updated = new Property();
-            updated.setInternalCode(txtCode.getText());
+            updated.setInternalCode(propertyCode); // Usamos la variable privada
             updated.setAddress(txtAddress.getText());
             updated.setArea(Double.parseDouble(txtArea.getText()));
             updated.setPrice(Double.parseDouble(txtPrice.getText()));
@@ -179,7 +160,8 @@ public class EditPropertyController implements Initializable {
     }
 
     private void cerrarVentana() {
-        Stage stage = (Stage) txtCode.getScene().getWindow();
+        // Usamos btnCancel (que sí existe en el FXML) para obtener la ventana
+        Stage stage = (Stage) btnCancel.getScene().getWindow();
         stage.close();
     }
 
