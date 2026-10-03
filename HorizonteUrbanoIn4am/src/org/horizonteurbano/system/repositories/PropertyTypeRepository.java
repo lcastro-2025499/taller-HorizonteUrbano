@@ -1,9 +1,10 @@
 package org.horizonteurbano.system.repositories;
 
-import org.horizonteurbano.system.models.PropertyType;
 import org.horizonteurbano.system.config.ConnectionDB;
+import org.horizonteurbano.system.models.PropertyType;
+
+import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,10 +14,11 @@ public class PropertyTypeRepository {
 
     public List<PropertyType> getAllPropertyTypes() {
         List<PropertyType> types = new ArrayList<>();
-        String query = "SELECT * FROM PropertyType WHERE active = true";
+        String procedure = "{call sp_read_propertytypes()}";
 
-        try (Connection conn = ConnectionDB.getInstanceConnectionDB().getConnection(); PreparedStatement preparedStmt = conn.prepareStatement(query); ResultSet resultSet = preparedStmt.executeQuery()) {
-
+        try (Connection connection = ConnectionDB.getInstanceConnectionDB().getConnection();
+             CallableStatement statement = connection.prepareCall(procedure);
+             ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 PropertyType type = new PropertyType();
                 type.setIdType(resultSet.getInt("id_type"));

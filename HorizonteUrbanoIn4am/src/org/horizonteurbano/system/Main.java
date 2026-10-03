@@ -1,6 +1,7 @@
 package org.horizonteurbano.system;
 
 import org.horizonteurbano.system.utils.ViewFactory;
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 

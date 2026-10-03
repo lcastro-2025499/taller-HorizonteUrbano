@@ -1,24 +1,25 @@
 package org.horizonteurbano.system.controller;
 
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.FlowPane;
-import javafx.geometry.Insets;
-
 import org.horizonteurbano.system.models.Property;
 import org.horizonteurbano.system.repositories.PropertyRepository;
 import org.horizonteurbano.system.service.UserSession;
 import org.horizonteurbano.system.utils.AlertInformation;
 import org.horizonteurbano.system.utils.ViewFactory;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
+
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class MainMenuController implements Initializable {
 
@@ -28,7 +29,6 @@ public class MainMenuController implements Initializable {
     @FXML private Button btnLogout;
 
     @FXML private TextField txtSearch;
-    @FXML private Button btnSearch;
     @FXML private FlowPane flowPanePropertyCatalog;
     @FXML private Label lblResults;
 
@@ -47,30 +47,28 @@ public class MainMenuController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         updateHeaderForSession();
-        cargarCatalogo(""); 
+        loadCatalog("");
     }
 
     private void updateHeaderForSession() {
         boolean loggedIn = session.isLoggedIn();
 
-        // 1. Visitantes (No logueados): Ven Login y Registro. Si están logueados, desaparecen.
         setVisible(btnLogin, !loggedIn);
         setVisible(btnRegister, !loggedIn);
 
-        // 2. Usuarios Logueados: Ven el botón de Cerrar Sesión.
         setVisible(btnLogout, loggedIn);
 
-        // 3. Permiso estricto para Buscar Propiedades (Solo roles 1, 2 y 3)
-        boolean puedeBuscar = false;
+        // Solo los roles autorizados pueden acceder a la búsqueda avanzada.
+        boolean canSearch = false;
         
-        if (loggedIn && session.getCurrentUser() != null && session.getCurrentUser().getRol() != null) {
-            int roleId = session.getCurrentUser().getRol().getIdRole();
+        if (loggedIn && session.getCurrentUser() != null && session.getCurrentUser().getRole() != null) {
+            int roleId = session.getCurrentUser().getRole().getIdRole();
             if (roleId == 1 || roleId == 2 || roleId == 3) {
-                puedeBuscar = true;
+                canSearch = true;
             }
         }
         
-        setVisible(btnGoSearch, puedeBuscar);
+        setVisible(btnGoSearch, canSearch);
     }
 
     private void setVisible(Node node, boolean visible) {
@@ -80,59 +78,59 @@ public class MainMenuController implements Initializable {
         }
     }
 
-    private void cargarCatalogo(String filtro) {
+    private void loadCatalog(String filter) {
         if (flowPanePropertyCatalog == null) return;
         
         flowPanePropertyCatalog.getChildren().clear();
-        List<Property> propiedades = propertyRepository.getAllActiveProperties();
-        int coincidencias = 0;
+        List<Property> properties = propertyRepository.getAllActiveProperties();
+        int matchCount = 0;
 
-        for (Property p : propiedades) {
-            boolean coincideFiltro = filtro.isEmpty() || 
-                                     p.getAddress().toLowerCase().contains(filtro.toLowerCase()) || 
-                                     p.getInternalCode().toLowerCase().contains(filtro.toLowerCase());
+        for (Property property : properties) {
+            boolean matchesFilter = filter.isEmpty()
+                    || property.getAddress().toLowerCase().contains(filter.toLowerCase())
+                    || property.getInternalCode().toLowerCase().contains(filter.toLowerCase());
             
-            if (coincideFiltro) {
-                flowPanePropertyCatalog.getChildren().add(crearTarjeta(p));
-                coincidencias++;
+            if (matchesFilter) {
+                flowPanePropertyCatalog.getChildren().add(createPropertyCard(property));
+                matchCount++;
             }
         }
         
-        if (coincidencias == 0) {
-            Label lblVacio = new Label("No se encontraron propiedades con la búsqueda: " + filtro);
-            lblVacio.setStyle("-fx-font-size: 16px; -fx-text-fill: white;");
-            flowPanePropertyCatalog.getChildren().add(lblVacio);
+        if (matchCount == 0) {
+            Label emptyResultLabel = new Label("No se encontraron propiedades con la búsqueda: " + filter);
+            emptyResultLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: white;");
+            flowPanePropertyCatalog.getChildren().add(emptyResultLabel);
         }
         
         if (lblResults != null) {
-            lblResults.setText("Mostrando " + coincidencias + " propiedades");
+            lblResults.setText("Mostrando " + matchCount + " propiedades");
         }
     }
 
-    private VBox crearTarjeta(Property p) {
+    private VBox createPropertyCard(Property property) {
         VBox card = new VBox(10);
         card.setPadding(new Insets(20));
         card.setStyle("-fx-background-color: white; -fx-background-radius: 12px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 5);");
         card.setPrefWidth(320);
 
-        Label lblTitulo = new Label("Código: " + p.getInternalCode());
-        lblTitulo.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2a3b4c;");
+        Label titleLabel = new Label("Código: " + property.getInternalCode());
+        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2a3b4c;");
         
-        Label lblDireccion = new Label(p.getAddress());
-        lblDireccion.setStyle("-fx-text-fill: #666666;");
-        lblDireccion.setWrapText(true);
+        Label addressLabel = new Label(property.getAddress());
+        addressLabel.setStyle("-fx-text-fill: #666666;");
+        addressLabel.setWrapText(true);
         
-        Label lblAreaPrecio = new Label("Área: " + p.getArea() + " m² | Precio: Q" + p.getPrice());
-        lblAreaPrecio.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #349626;");
+        Label areaAndPriceLabel = new Label("Área: " + property.getArea() + " m² | Precio: Q" + property.getPrice());
+        areaAndPriceLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #349626;");
 
-        Button btnDetalle = new Button("Solicitar Información");
-        btnDetalle.setMaxWidth(Double.MAX_VALUE);
-        btnDetalle.setStyle("-fx-background-color: #472820; -fx-text-fill: white; -fx-border-radius: 20;");
+        Button detailsButton = new Button("Solicitar Información");
+        detailsButton.setMaxWidth(Double.MAX_VALUE);
+        detailsButton.setStyle("-fx-background-color: #472820; -fx-text-fill: white; -fx-border-radius: 20;");
         
-        btnDetalle.setOnAction(e -> alert.viewAlert(1, "Detalles de la Propiedad", 
-            "Inmueble: " + p.getInternalCode() + "\nUbicación: " + p.getAddress() + "\n\nUn asesor se pondrá en contacto pronto.", null));
+        detailsButton.setOnAction(e -> alert.viewAlert(1, "Detalles de la Propiedad",
+            "Inmueble: " + property.getInternalCode() + "\nUbicación: " + property.getAddress() + "\n\nUn asesor se pondrá en contacto pronto.", null));
 
-        card.getChildren().addAll(lblTitulo, lblDireccion, lblAreaPrecio, btnDetalle);
+        card.getChildren().addAll(titleLabel, addressLabel, areaAndPriceLabel, detailsButton);
         return card;
     }
 
@@ -141,10 +139,10 @@ public class MainMenuController implements Initializable {
         String query = txtSearch.getText();
         if (query == null || query.trim().isEmpty()) {
             alert.viewAlert(2, "Búsqueda Vacía", "Por favor, ingresa una zona o palabra clave para buscar.", null);
-            cargarCatalogo(""); 
+            loadCatalog("");
             return;
         }
-        cargarCatalogo(query.trim()); 
+        loadCatalog(query.trim());
     }
 
     @FXML

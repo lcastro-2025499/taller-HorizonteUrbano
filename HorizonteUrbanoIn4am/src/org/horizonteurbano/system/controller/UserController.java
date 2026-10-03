@@ -1,10 +1,12 @@
 package org.horizonteurbano.system.controller;
 
-import java.net.URL;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import org.horizonteurbano.system.models.Role;
+import org.horizonteurbano.system.models.User;
+import org.horizonteurbano.system.repositories.RoleRepository;
+import org.horizonteurbano.system.repositories.UserRepository;
+import org.horizonteurbano.system.service.UserService;
+import org.horizonteurbano.system.utils.AlertInformation;
+import org.horizonteurbano.system.utils.ViewFactory;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -23,13 +25,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.StringConverter;
 
-import org.horizonteurbano.system.models.Role;
-import org.horizonteurbano.system.models.User;
-import org.horizonteurbano.system.repositories.RoleRepository;
-import org.horizonteurbano.system.repositories.UserRepository;
-import org.horizonteurbano.system.service.UserService;
-import org.horizonteurbano.system.utils.AlertInformation;
-import org.horizonteurbano.system.utils.ViewFactory;
+import java.net.URL;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
+import java.util.UUID;
 
 public class UserController implements Initializable {
 
@@ -71,7 +71,7 @@ public class UserController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         configureRoleCombo();
         loadRoles();
-        configurarTabla();
+        configureTable();
         listUsers(null);
     }
 
@@ -87,33 +87,32 @@ public class UserController implements Initializable {
         cmbRole.getItems().setAll(roleList);
     }
 
-    private void configurarTabla() {
+    private void configureTable() {
         if (colId != null) colId.setCellValueFactory(new PropertyValueFactory<>("idUser"));
         if (colName != null) colName.setCellValueFactory(new PropertyValueFactory<>("name"));
         if (colEmail != null) colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         if (colRole != null) {
             colRole.setCellValueFactory(cellData -> new SimpleStringProperty(
-                    cellData.getValue().getRol() != null ? cellData.getValue().getRol().getNameRole() : ""));
+                    cellData.getValue().getRole() != null ? cellData.getValue().getRole().getNameRole() : ""));
         }
     }
 
     @FXML
     public void actionEditUser(ActionEvent event) {
-        User seleccionado = tblUsers.getSelectionModel().getSelectedItem();
-        if (seleccionado == null) {
+        User selectedUser = tblUsers.getSelectionModel().getSelectedItem();
+        if (selectedUser == null) {
             alert.viewAlert(2, "Selección Requerida", "Selecciona un usuario de la tabla para editar.", null);
             return;
         }
-        txtUserId.setText(seleccionado.getIdUser());
-        txtName.setText(seleccionado.getName());
-        txtLastName.setText(seleccionado.getLastName());
-        txtEmail.setText(seleccionado.getEmail());
-        txtPhone.setText(seleccionado.getPhone() != null ? seleccionado.getPhone() : "");
+        txtUserId.setText(selectedUser.getIdUser());
+        txtName.setText(selectedUser.getName());
+        txtLastName.setText(selectedUser.getLastName());
+        txtEmail.setText(selectedUser.getEmail());
+        txtPhone.setText(selectedUser.getPhone() != null ? selectedUser.getPhone() : "");
         
-        // FIX: Buscar el rol por ID para asegurar que se seleccione visualmente en el ComboBox
-        Role rolSeleccionado = seleccionado.getRol();
+        Role selectedRole = selectedUser.getRole();
         for (Role role : cmbRole.getItems()) {
-            if (role.getIdRole() == rolSeleccionado.getIdRole()) {
+            if (role.getIdRole() == selectedRole.getIdRole()) {
                 cmbRole.getSelectionModel().select(role);
                 break;
             }
@@ -144,7 +143,7 @@ public class UserController implements Initializable {
             user.setPhone(txtPhone.getText());
             user.setUserName(generateUserName(txtEmail.getText()));
             user.setActive(true);
-            user.setRol(cmbRole.getSelectionModel().getSelectedItem());
+            user.setRole(cmbRole.getSelectionModel().getSelectedItem());
 
             if (isUpdate) {
                 user.setIdUser(txtUserId.getText());
@@ -188,20 +187,20 @@ public class UserController implements Initializable {
 
     @FXML
     public void deactivateUser(ActionEvent event) {
-        User seleccionado = tblUsers.getSelectionModel().getSelectedItem();
-        if (seleccionado == null) {
+        User selectedUser = tblUsers.getSelectionModel().getSelectedItem();
+        if (selectedUser == null) {
             alert.viewAlert(2, "Selección Requerida", "Selecciona un usuario de la tabla para desactivarlo.", null);
             return;
         }
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Confirmar Baja");
-        confirm.setHeaderText("Desactivar empleado: " + seleccionado.getName());
+        confirm.setHeaderText("Desactivar empleado: " + selectedUser.getName());
         confirm.setContentText("¿Estás seguro de que deseas revocar el acceso a este usuario?");
 
         Optional<ButtonType> result = confirm.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            if (userRepository.deleteUser(seleccionado.getIdUser())) {
+            if (userRepository.deleteUser(selectedUser.getIdUser())) {
                 alert.viewAlert(1, "Éxito", "Usuario desactivado.", null);
                 listUsers(null);
             } else {
@@ -213,10 +212,10 @@ public class UserController implements Initializable {
     @FXML
     public void listUsers(ActionEvent event) {
         if (tblUsers != null && userRepository != null) {
-            List<User> usuarios = (chkShowInactive != null && chkShowInactive.isSelected())
+            List<User> users = (chkShowInactive != null && chkShowInactive.isSelected())
                     ? userRepository.getAllUsers()
                     : userRepository.getAllActiveUsers();
-            tblUsers.setItems(FXCollections.observableArrayList(usuarios));
+            tblUsers.setItems(FXCollections.observableArrayList(users));
         }
     }
 

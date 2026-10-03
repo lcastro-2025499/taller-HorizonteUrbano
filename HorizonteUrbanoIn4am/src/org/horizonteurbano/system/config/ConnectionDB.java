@@ -23,7 +23,7 @@ public class ConnectionDB {
         return instanceConnectionDB;
     }
 
-    // Returns a fresh connection each time; caller is responsible for closing it
+    // Cada llamada crea una conexión nueva; quien la solicita debe cerrarla.
     public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(
                 "jdbc:mysql://" + Environment.LOCATION_SERVICE + "/" + Environment.DATA_BASE,

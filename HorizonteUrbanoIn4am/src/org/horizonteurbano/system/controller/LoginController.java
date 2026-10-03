@@ -1,17 +1,17 @@
 package org.horizonteurbano.system.controller;
 
+import org.horizonteurbano.system.models.User;
+import org.horizonteurbano.system.service.UserService;
+import org.horizonteurbano.system.service.UserSession;
+import org.horizonteurbano.system.utils.AlertInformation;
+import org.horizonteurbano.system.utils.ViewFactory;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-
-import org.horizonteurbano.system.models.User;
-import org.horizonteurbano.system.service.UserService;
-import org.horizonteurbano.system.service.UserSession;
-import org.horizonteurbano.system.utils.AlertInformation;
-import org.horizonteurbano.system.utils.ViewFactory;
 
 public class LoginController {
 
@@ -46,13 +46,10 @@ public class LoginController {
             alert.viewAlert(1, "Login Exitoso", "¡Bienvenido a Horizonte Urbano, " + loggedUser.getName() + "!", null);
             clearFields();
             
-            // Registramos la sesión globalmente
             session.setCurrentUser(loggedUser);
             
-            // Cerramos la ventana de login actual antes de abrir la nueva
             closeCurrentWindow(event);
             
-            // Redirigimos según la lógica de develop
             redirectByRole(loggedUser);
         } else {
             alert.viewAlert(3, "Acceso Denegado", "Correo o contraseña incorrectos, o cuenta inactiva.", null);
@@ -60,7 +57,7 @@ public class LoginController {
     }
 
     private void redirectByRole(User user) {
-        int roleId = user.getRol() != null ? user.getRol().getIdRole() : -1;
+        int roleId = user.getRole() != null ? user.getRole().getIdRole() : -1;
         
         switch (roleId) {
             case UserSession.ROLE_ADMIN:

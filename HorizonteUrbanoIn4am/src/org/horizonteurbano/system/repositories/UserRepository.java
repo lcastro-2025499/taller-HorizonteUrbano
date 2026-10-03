@@ -1,12 +1,13 @@
 package org.horizonteurbano.system.repositories;
 
+import org.horizonteurbano.system.config.ConnectionDB;
 import org.horizonteurbano.system.models.Role;
 import org.horizonteurbano.system.models.User;
-import org.horizonteurbano.system.config.ConnectionDB;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.ResultSet;
+
 import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class UserRepository {
             preparedStmt.setString(5, user.getEmail());
             preparedStmt.setString(6, user.getUserName());
             preparedStmt.setBoolean(7, user.isActive());
-            preparedStmt.setInt(8, user.getRol().getIdRole());
+            preparedStmt.setInt(8, user.getRole().getIdRole());
             
             return preparedStmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -34,13 +35,11 @@ public class UserRepository {
     }
 
     public User getUserByIdentifier(String identifier) {
-        // sp_login_user espera el identificador dos veces (para email o user_name)
-        String query = "{call sp_login_user(?, ?)}";
+        String query = "{call sp_login_user(?)}";
         try (Connection connection = ConnectionDB.getInstanceConnectionDB().getConnection();
              CallableStatement preparedStmt = connection.prepareCall(query)) {
             
             preparedStmt.setString(1, identifier);
-            preparedStmt.setString(2, identifier);
             
             try (ResultSet resultSet = preparedStmt.executeQuery()) {
                 if (resultSet.next()) {
@@ -67,24 +66,6 @@ public class UserRepository {
             }
         } catch (SQLException e) {
             System.err.println("Error fetching user by email: " + e.getMessage());
-        }
-        return null;
-    }
-
-    public User getUserById(String idUser) {
-        String query = "{call sp_read_userid(?)}";
-        try (Connection connection = ConnectionDB.getInstanceConnectionDB().getConnection();
-             CallableStatement preparedStmt = connection.prepareCall(query)) {
-            
-            preparedStmt.setString(1, idUser);
-            
-            try (ResultSet resultSet = preparedStmt.executeQuery()) {
-                if (resultSet.next()) {
-                    return mapUser(resultSet);
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error fetching user by id: " + e.getMessage());
         }
         return null;
     }
@@ -133,7 +114,7 @@ public class UserRepository {
             preparedStmt.setString(5, user.getUserName());
             preparedStmt.setString(6, user.getPhone() != null ? user.getPhone() : "");
             preparedStmt.setBoolean(7, user.isActive());
-            preparedStmt.setInt(8, user.getRol().getIdRole());
+            preparedStmt.setInt(8, user.getRole().getIdRole());
             
             return preparedStmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -147,8 +128,8 @@ public class UserRepository {
         try (Connection connection = ConnectionDB.getInstanceConnectionDB().getConnection();
              CallableStatement preparedStmt = connection.prepareCall(query)) {
             
-            preparedStmt.setString(1, hashedPassword);
-            preparedStmt.setString(2, idUser);
+            preparedStmt.setString(1, idUser);
+            preparedStmt.setString(2, hashedPassword);
             
             return preparedStmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -182,7 +163,7 @@ public class UserRepository {
 
         Role role = new Role();
         role.setIdRole(resultSet.getInt("id_role"));
-        user.setRol(role);
+        user.setRole(role);
 
         return user;
     }

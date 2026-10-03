@@ -1,12 +1,13 @@
 package org.horizonteurbano.system.utils;
 
-import org.horizonteurbano.system.models.Property;
 import org.horizonteurbano.system.controller.EditPropertyController;
+import org.horizonteurbano.system.models.Property;
 
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.net.URL;
 
@@ -28,10 +29,6 @@ public class ViewFactory {
 
     public void setMainStage(Stage stage) {
         this.mainStage = stage;
-    }
-
-    public Stage getMainStage() {
-        return mainStage;
     }
 
     private Scene loadFileFXML(String nameFXML, int width, int height) {
@@ -99,18 +96,8 @@ public class ViewFactory {
     }
 
     /**
-     * Abre el popup de edición sin callback. Se conserva por compatibilidad:
-     * equivale a {@code showEditPropertyWindow(property, null)}.
-     */
-    public void showEditPropertyWindow(Property property) {
-        showEditPropertyWindow(property, null);
-    }
-
-    /**
-     * Abre el popup de edición. Si {@code onSaved} no es null, se ejecutará en
-     * el hilo de JavaFX después de que la propiedad se actualice con éxito. Se
-     * usa para que la vista padre (por ejemplo SearchPropertyController)
-     * refresque su tabla al cerrar el popup.
+     * Ejecuta el callback en el hilo de JavaFX tras guardar para mantener
+     * sincronizada la vista que abrió el formulario.
      */
     public void showEditPropertyWindow(Property property, Runnable onSaved) {
         try {
