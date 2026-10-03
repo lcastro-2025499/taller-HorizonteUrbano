@@ -52,7 +52,6 @@ public class ViewFactory {
         }
     }
 
-    // Reemplaza la escena en la ventana principal (Arquitectura de develop)
     private void showView(String title, String fxml, int width, int height) {
         if (mainStage == null) {
             throw new IllegalStateException("Main stage not set. Call setMainStage() first.");
@@ -60,8 +59,7 @@ public class ViewFactory {
         Scene scene = loadFileFXML(fxml, width, height);
         mainStage.setTitle(title);
         mainStage.setScene(scene);
-        mainStage.setWidth(width);
-        mainStage.setHeight(height);
+        mainStage.sizeToScene();
         mainStage.centerOnScreen();
         if (!mainStage.isShowing()) {
             mainStage.show();
@@ -73,7 +71,7 @@ public class ViewFactory {
     }
 
     public void showDashboardWindow() {
-        showView("Dashboard - Horizonte Urbano", "DashboardView.fxml", 960, 680);
+        showView("Dashboard - Horizonte Urbano", "DashboardView.fxml", 1100, 680);
     }
 
     public void showRegisterWindow() {
@@ -81,7 +79,7 @@ public class ViewFactory {
     }
 
     public void showChangePasswordWindow() {
-        showView("Change Password - Horizonte Urbano", "ChangePasswordView.fxml", 450, 550);
+        showView("Change Password - Horizonte Urbano", "ChangePasswordView.fxml", 450, 580);
     }
 
     public void showSearchPropertyWindow() {
@@ -89,10 +87,9 @@ public class ViewFactory {
     }
 
     public void showMainViewWindow() {
-        showView("Catalog - Horizonte Urbano", "MainView.fxml", 900, 600);
+        showView("Catalog - Horizonte Urbano", "MainView.fxml", 915, 600);
     }
 
-    // Rutas exclusivas de tu rama local
     public void showReportsWindow() {
         showView("Reportes Gerenciales - Horizonte Urbano", "ReportsView.fxml", 920, 540);
     }
@@ -101,21 +98,34 @@ public class ViewFactory {
         showView("Gestión de Personal - Horizonte Urbano", "UsersView.fxml", 1000, 650);
     }
 
-    // Este se mantiene como Pop-up independiente (inyecta los datos al controlador)
+    /**
+     * Abre el popup de edición sin callback. Se conserva por compatibilidad:
+     * equivale a {@code showEditPropertyWindow(property, null)}.
+     */
     public void showEditPropertyWindow(Property property) {
+        showEditPropertyWindow(property, null);
+    }
+
+    /**
+     * Abre el popup de edición. Si {@code onSaved} no es null, se ejecutará en
+     * el hilo de JavaFX después de que la propiedad se actualice con éxito. Se
+     * usa para que la vista padre (por ejemplo SearchPropertyController)
+     * refresque su tabla al cerrar el popup.
+     */
+    public void showEditPropertyWindow(Property property, Runnable onSaved) {
         try {
             Stage stage = new Stage();
             stage.setTitle("Editar Propiedad - Horizonte Urbano");
             stage.setResizable(false);
 
             String pathOfFile = PATH_VIEWS + "EditPropertyView.fxml";
-            
-            // CORRECCIÓN DEL ERROR: Usamos ViewFactory.class en lugar de Main.class
+
             FXMLLoader loader = new FXMLLoader(ViewFactory.class.getResource(pathOfFile));
             Scene scene = new Scene(loader.load());
 
             EditPropertyController controller = loader.getController();
             controller.setPropertyData(property);
+            controller.setOnSaved(onSaved);
 
             stage.setScene(scene);
             stage.show();
@@ -124,7 +134,6 @@ public class ViewFactory {
         }
     }
 
-    // Utilidad para cerrar ventanas modales
     public void closeStage(Stage stage) {
         if (stage != null) {
             stage.close();

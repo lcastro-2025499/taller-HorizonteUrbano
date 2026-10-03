@@ -13,12 +13,10 @@ public class StateRepository {
 
     public List<State> getAllStates() {
         List<State> states = new ArrayList<>();
-        String query = "SELECT * FROM State";
-        
-        try (Connection connection = ConnectionDB.getInstanceConnectionDB().getConnection();
-             PreparedStatement preparedStmt = connection.prepareStatement(query);
-             ResultSet resultSet = preparedStmt.executeQuery()) {
-            
+        String query = "SELECT * FROM State WHERE active = true";
+
+        try (Connection connection = ConnectionDB.getInstanceConnectionDB().getConnection(); PreparedStatement preparedStmt = connection.prepareStatement(query); ResultSet resultSet = preparedStmt.executeQuery()) {
+
             while (resultSet.next()) {
                 State state = new State();
                 state.setIdState(resultSet.getInt("id_state"));

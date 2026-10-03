@@ -142,6 +142,10 @@ public class RegisterController implements Initializable {
             alert.viewAlert(2, "Campos Vacíos", "Por favor, completa todos los campos.", null);
             return;
         }
+        if (!userService.isValidEmail(email)) {
+            alert.viewAlert(2, "Correo Inválido", "Ingresa un correo electrónico válido (máximo 40 caracteres).", null);
+            return;
+        }
         if (!password.equals(confirmPassword)) {
             alert.viewAlert(2, "Contraseñas no coinciden", "La contraseña y su confirmación deben ser iguales.", null);
             return;

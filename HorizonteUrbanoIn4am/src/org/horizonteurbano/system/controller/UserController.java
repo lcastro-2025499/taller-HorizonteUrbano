@@ -12,7 +12,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
@@ -27,10 +29,19 @@ import org.horizonteurbano.system.repositories.RoleRepository;
 import org.horizonteurbano.system.repositories.UserRepository;
 import org.horizonteurbano.system.service.UserService;
 import org.horizonteurbano.system.utils.AlertInformation;
+import org.horizonteurbano.system.utils.ViewFactory;
 
 public class UserController implements Initializable {
 
-    @FXML private TextField txtIdUser;
+    @FXML private Button btnGoBack;
+    @FXML private Button btnClear;
+    @FXML private Button btnEdit;
+    @FXML private Button btnSave;
+    @FXML private Button btnDeactivate;
+    @FXML private Button btnRefresh;
+
+    @FXML private CheckBox chkShowInactive;
+    @FXML private TextField txtUserId;
     @FXML private TextField txtName;
     @FXML private TextField txtLastName;
     @FXML private TextField txtEmail;
@@ -66,15 +77,8 @@ public class UserController implements Initializable {
 
     private void configureRoleCombo() {
         cmbRole.setConverter(new StringConverter<Role>() {
-            @Override
-            public String toString(Role role) {
-                return role == null ? "" : role.getNameRole();
-            }
-
-            @Override
-            public Role fromString(String string) {
-                return null;
-            }
+            @Override public String toString(Role role) { return role == null ? "" : role.getNameRole(); }
+            @Override public Role fromString(String string) { return null; }
         });
     }
 
@@ -87,56 +91,99 @@ public class UserController implements Initializable {
         if (colId != null) colId.setCellValueFactory(new PropertyValueFactory<>("idUser"));
         if (colName != null) colName.setCellValueFactory(new PropertyValueFactory<>("name"));
         if (colEmail != null) colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-        if (colRole != null) colRole.setCellValueFactory(cellData -> 
-            new SimpleStringProperty(cellData.getValue().getRol() != null ? cellData.getValue().getRol().getNameRole() : ""));
+        if (colRole != null) {
+            colRole.setCellValueFactory(cellData -> new SimpleStringProperty(
+                    cellData.getValue().getRol() != null ? cellData.getValue().getRol().getNameRole() : ""));
+        }
     }
 
     @FXML
-    public void createUser(ActionEvent event) {
-        if (isEmpty(txtName.getText()) || isEmpty(txtLastName.getText())
-                || isEmpty(txtEmail.getText()) || isEmpty(pwdPassword.getText())
-                || cmbRole.getSelectionModel().getSelectedItem() == null) {
+    public void actionEditUser(ActionEvent event) {
+        User seleccionado = tblUsers.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            alert.viewAlert(2, "Selección Requerida", "Selecciona un usuario de la tabla para editar.", null);
+            return;
+        }
+        txtUserId.setText(seleccionado.getIdUser());
+        txtName.setText(seleccionado.getName());
+        txtLastName.setText(seleccionado.getLastName());
+        txtEmail.setText(seleccionado.getEmail());
+        txtPhone.setText(seleccionado.getPhone() != null ? seleccionado.getPhone() : "");
+        
+        // FIX: Buscar el rol por ID para asegurar que se seleccione visualmente en el ComboBox
+        Role rolSeleccionado = seleccionado.getRol();
+        for (Role role : cmbRole.getItems()) {
+            if (role.getIdRole() == rolSeleccionado.getIdRole()) {
+                cmbRole.getSelectionModel().select(role);
+                break;
+            }
+        }
+        
+        pwdPassword.clear();
+        pwdPassword.setPromptText("Dejar en blanco para mantener la actual");
+    }
+
+    @FXML
+    public void actionSaveUser(ActionEvent event) {
+        if (isEmpty(txtName.getText()) || isEmpty(txtLastName.getText()) || isEmpty(txtEmail.getText()) || cmbRole.getSelectionModel().getSelectedItem() == null) {
             alert.viewAlert(2, "Campos Vacíos", "Por favor, completa todos los campos obligatorios.", null);
             return;
         }
+        if (!userService.isValidEmail(txtEmail.getText())) {
+            alert.viewAlert(2, "Correo Inválido", "Ingresa un correo electrónico válido.", null);
+            return;
+        }
+
+        boolean isUpdate = !isEmpty(txtUserId.getText());
 
         try {
-            User newUser = new User();
-            
-            if (txtIdUser != null && !txtIdUser.getText().trim().isEmpty()) {
-                newUser.setIdUser(txtIdUser.getText().trim());
-            } else {
-                newUser.setIdUser(UUID.randomUUID().toString());
-            }
-            
-            newUser.setName(txtName.getText());
-            newUser.setLastName(txtLastName.getText());
-            newUser.setEmail(txtEmail.getText());
-            if (txtPhone != null) newUser.setPhone(txtPhone.getText());
-            
-            newUser.setUserName(generateUserName(txtEmail.getText()));
-            newUser.setActive(true);
-            newUser.setRol(cmbRole.getSelectionModel().getSelectedItem());
+            User user = new User();
+            user.setName(txtName.getText());
+            user.setLastName(txtLastName.getText());
+            user.setEmail(txtEmail.getText());
+            user.setPhone(txtPhone.getText());
+            user.setUserName(generateUserName(txtEmail.getText()));
+            user.setActive(true);
+            user.setRol(cmbRole.getSelectionModel().getSelectedItem());
 
-            if (userService.register(newUser, pwdPassword.getText())) {
-                alert.viewAlert(1, "Éxito", "Usuario registrado correctamente en el sistema.", null);
-                clearFields();
-                listUsers(null);
+            if (isUpdate) {
+                user.setIdUser(txtUserId.getText());
+                if (userRepository.updateUser(user)) {
+                    alert.viewAlert(1, "Éxito", "Usuario actualizado correctamente.", null);
+                    actionClearForm(null);
+                    listUsers(null);
+                } else {
+                    alert.viewAlert(3, "Error", "No se pudo actualizar el usuario.", null);
+                }
             } else {
-                alert.viewAlert(3, "Error", "No se pudo registrar al usuario. Verifica los datos.", null);
+                if (isEmpty(pwdPassword.getText())) {
+                    alert.viewAlert(2, "Contraseña Requerida", "La contraseña es obligatoria para nuevos usuarios.", null);
+                    return;
+                }
+                user.setIdUser(UUID.randomUUID().toString());
+                if (userService.register(user, pwdPassword.getText())) {
+                    alert.viewAlert(1, "Éxito", "Usuario registrado correctamente.", null);
+                    actionClearForm(null);
+                    listUsers(null);
+                } else {
+                    alert.viewAlert(3, "Error", "No se pudo registrar al usuario.", null);
+                }
             }
         } catch (Exception e) {
-            alert.viewAlert(3, "Error Crítico", "Ocurrió un problema al procesar los datos.", null);
-            System.err.println("Error creating user: " + e.getMessage());
+            alert.viewAlert(3, "Error Crítico", "Ocurrió un problema: " + e.getMessage(), null);
         }
     }
 
-    private String generateUserName(String email) {
-        return email.contains("@") ? email.substring(0, email.indexOf("@")) : email;
-    }
-
-    private boolean isEmpty(String value) {
-        return value == null || value.trim().isEmpty();
+    @FXML
+    public void actionClearForm(ActionEvent event) {
+        txtUserId.clear();
+        txtName.clear();
+        txtLastName.clear();
+        txtEmail.clear();
+        txtPhone.clear();
+        pwdPassword.clear();
+        pwdPassword.setPromptText("Contraseña");
+        cmbRole.getSelectionModel().clearSelection();
     }
 
     @FXML
@@ -166,21 +213,23 @@ public class UserController implements Initializable {
     @FXML
     public void listUsers(ActionEvent event) {
         if (tblUsers != null && userRepository != null) {
-            List<User> usuarios = userRepository.getAllActiveUsers();
+            List<User> usuarios = (chkShowInactive != null && chkShowInactive.isSelected())
+                    ? userRepository.getAllUsers()
+                    : userRepository.getAllActiveUsers();
             tblUsers.setItems(FXCollections.observableArrayList(usuarios));
         }
     }
 
-    private void clearFields() {
-        if (txtIdUser != null) txtIdUser.clear();
-        if (txtName != null) txtName.clear();
-        if (txtLastName != null) txtLastName.clear();
-        if (txtEmail != null) txtEmail.clear();
-        if (txtPhone != null) txtPhone.clear();
-        if (pwdPassword != null) pwdPassword.clear();
-        if (cmbRole != null) cmbRole.getSelectionModel().clearSelection();
+    private String generateUserName(String email) {
+        return email.contains("@") ? email.substring(0, email.indexOf("@")) : email;
     }
 
-    @FXML public void updateUser(ActionEvent event) {}
-    @FXML public void updateProfile(ActionEvent event) {}
+    private boolean isEmpty(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
+    @FXML
+    public void actionGoBack(ActionEvent event) {
+        ViewFactory.getInstance().showDashboardWindow();
+    }
 }

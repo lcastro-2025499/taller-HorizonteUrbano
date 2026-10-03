@@ -5,8 +5,6 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,13 +22,16 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
+import javafx.util.StringConverter;
 
 import org.horizonteurbano.system.config.ConnectionDB;
 import org.horizonteurbano.system.models.Property;
@@ -61,6 +62,16 @@ public class SearchPropertyController implements Initializable {
     private Button btnBack;
     @FXML
     private Button btnViewDetails;
+    @FXML
+    private Button btnReports;
+    @FXML
+    private Button btnChangeStatus;
+    @FXML
+    private Button btnEdit;
+    @FXML
+    private Button btnDelete;
+    @FXML
+    private Button btnViewHistory;
 
     @FXML
     private TableView<Property> tblProperties;
@@ -76,9 +87,14 @@ public class SearchPropertyController implements Initializable {
     private TableColumn<Property, Double> colPrice;
     @FXML
     private TableColumn<Property, String> colStatus;
-
     @FXML
     private Label lblResults;
+    @FXML
+    private TextField txtAreaMin;
+    @FXML
+    private TextField txtAreaMax;
+    @FXML
+    private CheckBox chkShowInactive;
 
     private final ObservableList<Property> propertyList = FXCollections.observableArrayList();
     private final AlertInformation alert = new AlertInformation();
@@ -93,9 +109,26 @@ public class SearchPropertyController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        configureComboConverters();
         setupTableColumns();
         loadComboBoxes();
         handleSearch();
+        boolean isGerente = UserSession.getInstance().isGerente();
+        btnReports.setVisible(isGerente);
+        btnReports.setManaged(isGerente);
+        btnBack.setVisible(!isGerente);
+        btnBack.setManaged(!isGerente);
+        boolean isAdmin = UserSession.getInstance().isAdmin();
+        btnChangeStatus.setVisible(isAdmin);
+        btnChangeStatus.setManaged(isAdmin);
+        btnEdit.setVisible(isAdmin);
+        btnEdit.setManaged(isAdmin);
+        btnDelete.setVisible(isAdmin);
+        btnDelete.setManaged(isAdmin);
+        btnViewHistory.setVisible(isAdmin);
+        btnViewHistory.setManaged(isAdmin);
+        chkShowInactive.setVisible(isAdmin);
+        chkShowInactive.setManaged(isAdmin);
     }
 
     private void setupTableColumns() {
@@ -168,6 +201,8 @@ public class SearchPropertyController implements Initializable {
             String searchText = txtSearch.getText().trim().isEmpty() ? null : txtSearch.getText().trim();
             Double minPrice = txtPriceMin.getText().trim().isEmpty() ? null : Double.parseDouble(txtPriceMin.getText().trim());
             Double maxPrice = txtPriceMax.getText().trim().isEmpty() ? null : Double.parseDouble(txtPriceMax.getText().trim());
+            Double minArea = txtAreaMin.getText().trim().isEmpty() ? null : Double.parseDouble(txtAreaMin.getText().trim());
+            Double maxArea = txtAreaMax.getText().trim().isEmpty() ? null : Double.parseDouble(txtAreaMax.getText().trim());
 
             PropertyType selectedType = cmbType.getSelectionModel().getSelectedItem();
             Integer typeId = (selectedType != null && selectedType.getIdType() != 0) ? selectedType.getIdType() : null;
@@ -175,102 +210,21 @@ public class SearchPropertyController implements Initializable {
             State selectedState = cmbStatus.getSelectionModel().getSelectedItem();
             Integer stateId = (selectedState != null && selectedState.getIdState() != 0) ? selectedState.getIdState() : null;
 
-            loadProperties(searchText, minPrice, maxPrice, null, null, stateId, typeId);
+            loadProperties(searchText, minPrice, maxPrice, minArea, maxArea, stateId, typeId);
         } catch (NumberFormatException e) {
-            alert.viewAlert(2, "Error de Formato", "Por favor, ingresa números válidos en los campos de precio.", null);
-        } catch (SQLException e) {
-            alert.viewAlert(3, "Error de Búsqueda", e.getMessage(), null);
+            alert.viewAlert(2, "Error de Formato", "Por favor, ingresa números válidos en los campos numéricos.", null);
         }
     }
 
     private void loadProperties(String searchText, Double minPrice, Double maxPrice,
-            Double minArea, Double maxArea, Integer stateId, Integer propertyTypeId) throws SQLException {
-        propertyList.clear();
+            Double minArea, Double maxArea, Integer stateId, Integer propertyTypeId) {
 
-        try (Connection conn = ConnectionDB.getInstanceConnectionDB().getConnection(); CallableStatement stmt = conn.prepareCall("{call sp_search_properties(?, ?, ?, ?, ?, ?, ?)}")) {
+        boolean includeInactive = chkShowInactive != null && chkShowInactive.isSelected();
 
-            stmt.setString(1, searchText);
-            if (minPrice != null) {
-                stmt.setDouble(2, minPrice);
-            } else {
-                stmt.setNull(2, Types.DECIMAL);
-            }
-            if (maxPrice != null) {
-                stmt.setDouble(3, maxPrice);
-            } else {
-                stmt.setNull(3, Types.DECIMAL);
-            }
-            if (minArea != null) {
-                stmt.setDouble(4, minArea);
-            } else {
-                stmt.setNull(4, Types.FLOAT);
-            }
-            if (maxArea != null) {
-                stmt.setDouble(5, maxArea);
-            } else {
-                stmt.setNull(5, Types.FLOAT);
-            }
-            if (stateId != null) {
-                stmt.setInt(6, stateId);
-            } else {
-                stmt.setNull(6, Types.INTEGER);
-            }
-            if (propertyTypeId != null) {
-                stmt.setInt(7, propertyTypeId);
-            } else {
-                stmt.setNull(7, Types.INTEGER);
-            }
+        List<Property> results = propertyRepository.searchProperties(
+                searchText, minPrice, maxPrice, minArea, maxArea, stateId, propertyTypeId, includeInactive);
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    Property prop = new Property();
-                    prop.setIdProperty(rs.getInt("id_property"));
-                    prop.setInternalCode(rs.getString("internal_code"));
-                    prop.setAddress(rs.getString("address"));
-                    prop.setArea(rs.getDouble("area_m2"));
-                    prop.setPrice(rs.getDouble("price"));
-                    prop.setActive(rs.getBoolean("active"));
-
-                    Timestamp dateRegTs = rs.getTimestamp("date_register");
-                    if (dateRegTs != null) {
-                        prop.setDateRegister(dateRegTs.toLocalDateTime());
-                    }
-
-                    Timestamp updateDateTs = rs.getTimestamp("update_date");
-                    if (updateDateTs != null) {
-                        prop.setUpdateDate(updateDateTs.toLocalDateTime());
-                    }
-
-                    prop.setCoverUrl(rs.getString("cover_url"));
-                    prop.setIdUser(rs.getString("id_user"));
-
-                    PropertyType type = new PropertyType();
-                    type.setIdType(rs.getInt("id_property_type"));
-
-                    for (PropertyType pt : cmbType.getItems()) {
-                        if (pt.getIdType() == type.getIdType()) {
-                            type.setNameType(pt.getNameType());
-                            break;
-                        }
-                    }
-                    prop.setType(type);
-
-                    State state = new State();
-                    state.setIdState(rs.getInt("id_state"));
-
-                    for (State st : cmbStatus.getItems()) {
-                        if (st.getIdState() == state.getIdState()) {
-                            state.setNameState(st.getNameState());
-                            break;
-                        }
-                    }
-                    prop.setState(state);
-
-                    propertyList.add(prop);
-                }
-            }
-        }
-
+        propertyList.setAll(results);
         tblProperties.setItems(propertyList);
         lblResults.setText("Resultados: " + propertyList.size() + " propiedades encontradas");
     }
@@ -317,6 +271,17 @@ public class SearchPropertyController implements Initializable {
             return;
         }
 
+        TextInputDialog reasonDialog = new TextInputDialog();
+        reasonDialog.setTitle("Motivo de Baja");
+        reasonDialog.setHeaderText("Dar de baja " + selectedProperty.getInternalCode());
+        reasonDialog.setContentText("Motivo (ej. Vendida, Retirada por el propietario):");
+
+        Optional<String> reasonResult = reasonDialog.showAndWait();
+        if (reasonResult.isEmpty() || reasonResult.get().trim().isEmpty()) {
+            alert.viewAlert(2, "Motivo Requerido", "Debes ingresar un motivo para dar de baja la propiedad.", null);
+            return;
+        }
+
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Confirmar Baja");
         confirm.setHeaderText(null);
@@ -324,7 +289,7 @@ public class SearchPropertyController implements Initializable {
 
         Optional<ButtonType> result = confirm.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            if (propertyRepository.deactivateProperty(selectedProperty.getInternalCode())) {
+            if (propertyRepository.deactivateProperty(selectedProperty.getInternalCode(), reasonResult.get().trim())) {
                 alert.viewAlert(1, "Éxito", "Propiedad dada de baja.", null);
                 handleSearch();
             } else {
@@ -334,13 +299,45 @@ public class SearchPropertyController implements Initializable {
     }
 
     @FXML
+    public void actionViewHistory(ActionEvent event) {
+        Property selectedProperty = tblProperties.getSelectionModel().getSelectedItem();
+        if (selectedProperty == null) {
+            alert.viewAlert(2, "Selección Requerida", "Selecciona una propiedad de la tabla para ver su historial.", null);
+            return;
+        }
+        if (selectedProperty.isActive()) {
+            alert.viewAlert(2, "Propiedad Activa",
+                    "Esta propiedad está activa actualmente y no tiene historial de baja.", null);
+            return;
+        }
+        if (selectedProperty.getInactiveDate() == null) {
+            alert.viewAlert(2, "Sin Historial",
+                    "Esta propiedad no tiene registrado un historial de baja.", null);
+            return;
+        }
+
+        java.time.format.DateTimeFormatter fmt = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String fecha = selectedProperty.getInactiveDate().format(fmt);
+        String motivo = selectedProperty.getInactiveReason() != null && !selectedProperty.getInactiveReason().isBlank()
+                ? selectedProperty.getInactiveReason()
+                : "(Sin motivo registrado)";
+
+        alert.viewAlert(1, "Historial de Baja",
+                "Propiedad: " + selectedProperty.getInternalCode() + "\n"
+                + "Dirección: " + selectedProperty.getAddress() + "\n\n"
+                + "Fecha de baja: " + fecha + "\n"
+                + "Motivo: " + motivo,
+                null);
+    }
+
+    @FXML
     public void actionEdit(ActionEvent event) {
         Property selectedProperty = tblProperties.getSelectionModel().getSelectedItem();
         if (selectedProperty == null) {
             alert.viewAlert(2, "Selección Requerida", "Por favor, selecciona una propiedad para editar.", null);
             return;
         }
-        ViewFactory.getInstance().showEditPropertyWindow(selectedProperty);
+        ViewFactory.getInstance().showEditPropertyWindow(selectedProperty, this::handleSearch);
     }
 
     @FXML
@@ -369,18 +366,6 @@ public class SearchPropertyController implements Initializable {
     }
 
     @FXML
-    private void handleViewDetails() {
-        Property selected = tblProperties.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            alert.viewAlert(2, "Selección requerida", "Por favor, selecciona una propiedad de la tabla antes de ver los detalles.", null);
-            return;
-        }
-        alert.viewAlert(1, "Detalles de la propiedad",
-                selected.getInternalCode() + "\n" + selected.getAddress() + "\nÁrea: " + selected.getArea() + " m²\nPrecio: Q" + selected.getPrice(),
-                null);
-    }
-
-    @FXML
     public void goBack() {
         if (UserSession.getInstance().isAsesor()) {
             viewFactory.showMainViewWindow();
@@ -392,5 +377,36 @@ public class SearchPropertyController implements Initializable {
     @FXML
     public void goToMainMenu() {
         viewFactory.showMainViewWindow();
+    }
+
+    @FXML
+    public void goToReports(ActionEvent event) {
+        ViewFactory.getInstance().showReportsWindow();
+    }
+
+    private void configureComboConverters() {
+        cmbType.setConverter(new StringConverter<PropertyType>() {
+            @Override
+            public String toString(PropertyType type) {
+                return type == null ? "" : type.getNameType();
+            }
+
+            @Override
+            public PropertyType fromString(String string) {
+                return null;
+            }
+        });
+
+        cmbStatus.setConverter(new StringConverter<State>() {
+            @Override
+            public String toString(State state) {
+                return state == null ? "" : state.getNameState();
+            }
+
+            @Override
+            public State fromString(String string) {
+                return null;
+            }
+        });
     }
 }

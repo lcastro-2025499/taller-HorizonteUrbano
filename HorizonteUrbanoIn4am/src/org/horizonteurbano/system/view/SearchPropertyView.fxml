@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
@@ -14,7 +15,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="rootPane" prefHeight="540.0" prefWidth="920.0" stylesheets="@../styles/SearchPropertyStyles.css" xmlns="http://javafx.com/javafx/21.0.9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.SearchPropertyController">
+<AnchorPane fx:id="rootPane" prefHeight="700.0" prefWidth="1000.0" stylesheets="@../styles/SearchPropertyStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.SearchPropertyController">
 
     <VBox fx:id="mainPanel" spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
         <padding>
@@ -37,6 +38,7 @@
             <Region prefHeight="60.0" prefWidth="160.0" HBox.hgrow="ALWAYS" />
             <Button fx:id="btnBack" mnemonicParsing="false" onAction="#goBack" text="Volver" />
             <Button fx:id="btnGoMenu" mnemonicParsing="false" onAction="#goToMainMenu" text="Menú" />
+            <Button fx:id="btnReports" managed="false" mnemonicParsing="false" onAction="#goToReports" text="Reportes" visible="false" />
 
             <ImageView fx:id="imgProfile" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <HBox.margin>
@@ -53,7 +55,11 @@
             </padding>
 
             <HBox fx:id="searchRow" spacing="10.0">
-                <TextField fx:id="txtSearch" prefWidth="400.0" promptText="Código o Dirección..." />
+                <TextField fx:id="txtSearch" prefHeight="40.0" prefWidth="400.0" promptText="Código o Dirección..." />
+   
+                            <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#handleSearch" prefHeight="40.0" prefWidth="120.0" text="Buscar" />
+   
+                   <CheckBox fx:id="chkShowInactive" mnemonicParsing="false" onAction="#handleSearch" prefHeight="36.0" prefWidth="158.0" text="Mostrar dadas de baja" textFill="WHITE" />
             </HBox>
 
             <HBox fx:id="filterRow" alignment="CENTER_LEFT" spacing="20.0">
@@ -69,40 +75,43 @@
                 </VBox>
 
                 <VBox spacing="5.0">
-                    <Label fx:id="lblPrice" text="Rango de Precio" />
-                    <HBox spacing="10.0">
-                        <TextField fx:id="txtPriceMin" prefWidth="100.0" promptText="Min" />
-                        <TextField fx:id="txtPriceMax" prefWidth="100.0" promptText="Max" />
-                    </HBox>
+                    <Label fx:id="lblPrice" prefHeight="15.0" prefWidth="555.0" text="Rango de Precio                                      Rango de Precio" />
+               <HBox layoutX="10.0" layoutY="30.0" spacing="10.0">
+                  <children>
+                           <TextField fx:id="txtPriceMin" prefWidth="98.0" promptText="Min" />
+                           <TextField fx:id="txtPriceMax" prefWidth="100.0" promptText="Max" />
+                     <TextField fx:id="txtAreaMin" promptText="Área mín. (m²)" />
+                     <TextField fx:id="txtAreaMax" promptText="Área máx. (m²)" />
+                          <HBox spacing="10.0" />
+                  </children>
+               </HBox>
                 </VBox>
 
                 <Region HBox.hgrow="ALWAYS" />
-
-                <!-- Search Button -->
-                <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#handleSearch" prefWidth="120.0" text="Buscar" />
             </HBox>
         </VBox>
 
         <TableView fx:id="tblProperties" VBox.vgrow="ALWAYS">
             <columns>
-                <TableColumn fx:id="colCode" prefWidth="120.0" text="Código Interno" />
-                <TableColumn fx:id="colAddress" prefWidth="250.0" text="Dirección Exacta" />
-                <TableColumn fx:id="colType" prefWidth="120.0" text="Tipo" />
-                <TableColumn fx:id="colArea" prefWidth="120.0" text="Área (m²)" />
-                <TableColumn fx:id="colPrice" prefWidth="130.0" text="Precio (Oferta)" />
-                <TableColumn fx:id="colStatus" prefWidth="120.0" text="Estado" />
+                <TableColumn fx:id="colCode" prefWidth="132.79999232292175" text="Código Interno" />
+                <TableColumn fx:id="colAddress" prefWidth="282.3999786376953" text="Dirección Exacta" />
+                <TableColumn fx:id="colType" prefWidth="102.4000244140625" text="Tipo" />
+                <TableColumn fx:id="colArea" prefWidth="152.0" text="Área (m²)" />
+                <TableColumn fx:id="colPrice" prefWidth="149.5999755859375" text="Precio (Oferta)" />
+                <TableColumn fx:id="colStatus" prefWidth="116.0" text="Estado" />
             </columns>
         </TableView>
 
         <HBox fx:id="footerBox" alignment="CENTER_LEFT" spacing="10.0">
             <Label fx:id="lblResults" text="Resultados: " />
             <Region HBox.hgrow="ALWAYS" />
-            
-            <Button fx:id="btnChangeStatus" mnemonicParsing="false" onAction="#actionChangeStatus" styleClass="btn-secondary" text="Cambiar Estado"/>
-            <Button fx:id="btnEdit" mnemonicParsing="false" onAction="#actionEdit" styleClass="btn-primary" text="Editar Propiedad"/>
-            <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#actionDelete" styleClass="btn-danger" text="Dar de Baja"/>
-            
-            <Button fx:id="btnViewDetails" mnemonicParsing="false" onAction="#actionExportPDF" prefWidth="160.0" text="Ver Ficha Detallada" styleClass="btn-primary"/>
+
+            <Button fx:id="btnChangeStatus" mnemonicParsing="false" onAction="#actionChangeStatus" styleClass="btn-secondary" text="Cambiar Estado" />
+            <Button fx:id="btnEdit" mnemonicParsing="false" onAction="#actionEdit" styleClass="btn-primary" text="Editar Propiedad" />
+            <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#actionDelete" styleClass="btn-danger" text="Dar de Baja" />
+            <Button fx:id="btnViewHistory" mnemonicParsing="false" onAction="#actionViewHistory" styleClass="btn-secondary" text="Ver Historial de Baja" />
+
+            <Button fx:id="btnViewDetails" mnemonicParsing="false" onAction="#actionExportPDF" prefWidth="160.0" styleClass="btn-primary" text="Ver Ficha Detallada" />
         </HBox>
 
     </VBox>

@@ -37,6 +37,10 @@ public class ChangePasswordController {
             alert.viewAlert(2, "Campos Vacíos", "Completa todos los campos.", null);
             return;
         }
+        if (!userService.isValidEmail(email)) {
+            alert.viewAlert(2, "Correo Inválido", "Ingresa un correo electrónico válido.", null);
+            return;
+        }
         if (!newPassword.equals(confirmPassword)) {
             alert.viewAlert(2, "Contraseñas no coinciden", "La nueva contraseña y su confirmación deben ser iguales.", null);
             return;

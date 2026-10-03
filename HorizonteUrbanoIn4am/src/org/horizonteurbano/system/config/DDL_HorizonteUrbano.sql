@@ -33,6 +33,7 @@ create table Users(
     password VARCHAR(80) NOT NULL,
     email VARCHAR(40) NOT NULL,
     user_name VARCHAR(30) NOT NULL,
+    phone VARCHAR(40) NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
     id_role INT NOT NULL,
     CONSTRAINT pk_users PRIMARY KEY (id_user),
@@ -55,6 +56,8 @@ create table Properties(
     id_state INT NOT NULL,
     id_user VARCHAR(36) NOT NULL,
     id_property_type INT NOT NULL,
+    inactive_reason VARCHAR(150) NULL,
+    inactive_date DATETIME NULL,
     CONSTRAINT pk_properties PRIMARY KEY (id_property),
     CONSTRAINT uk_properties_internal_code UNIQUE (internal_code),
     CONSTRAINT fk_properties_state FOREIGN KEY (id_state)
@@ -82,7 +85,8 @@ create table PropertyImages(
 -- USERS
 -- ---------------------------------------------------------------------
 DELIMITER $$
-CREATE PROCEDURE sp_create_user(IN name_p VARCHAR(40),
+CREATE PROCEDURE sp_create_user(IN id_user_p VARCHAR(36),
+                                 IN name_p VARCHAR(40),
                                  IN last_name_p VARCHAR(40),
                                  IN password_p VARCHAR(80),
                                  IN email_p VARCHAR(40),
@@ -90,15 +94,15 @@ CREATE PROCEDURE sp_create_user(IN name_p VARCHAR(40),
                                  IN active_p BOOLEAN,
                                  IN id_role_p INT)
 BEGIN
-    INSERT INTO Users (id_user, name, last_name, password, email, user_name, active, id_role)
-    VALUES (uuid(), name_p, last_name_p, password_p, email_p, user_name_p, active_p, id_role_p);
+    INSERT INTO Users (id_user, name, last_name, password, email, user_name, phone, active, id_role)
+    VALUES (id_user_p, name_p, last_name_p, password_p, email_p, user_name_p, NULL, active_p, id_role_p);
 END $$
 DELIMITER ;
  
 DELIMITER $$
 CREATE PROCEDURE sp_read_users()
 BEGIN
-    SELECT id_user, name, last_name, email, user_name, active, id_role
+    SELECT id_user, name, last_name, password, email, user_name, phone, active, id_role
     FROM Users
     WHERE active = true;
 END $$
@@ -107,18 +111,34 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE sp_read_userid(IN id_user_p VARCHAR(36))
 BEGIN
-    SELECT id_user, name, last_name, email, user_name, active, id_role
+    SELECT id_user, name, last_name, password, email, user_name, phone, active, id_role
     FROM Users
     WHERE id_user = id_user_p;
 END $$
 DELIMITER ;
- 
+
+DELIMITER $$
+CREATE PROCEDURE sp_read_user_by_email(IN email_p VARCHAR(40))
+BEGIN
+    SELECT id_user, name, last_name, password, email, user_name, phone, active, id_role 
+    FROM Users WHERE email = email_p;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_read_all_users()
+BEGIN
+    SELECT id_user, name, last_name, password, email, user_name, phone, active, id_role FROM Users;
+END $$
+DELIMITER ;
+
 DELIMITER $$
 CREATE PROCEDURE sp_update_user(IN id_user_p VARCHAR(36),
                                  IN name_p VARCHAR(40),
                                  IN last_name_p VARCHAR(40),
                                  IN email_p VARCHAR(40),
                                  IN user_name_p VARCHAR(30),
+                                 IN phone_p VARCHAR(40),
                                  IN active_p BOOLEAN,
                                  IN id_role_p INT)
 BEGIN
@@ -128,6 +148,7 @@ BEGIN
         last_name = last_name_p,
         email = email_p,
         user_name = user_name_p,
+        phone = phone_p,
         active = active_p,
         id_role = id_role_p
     WHERE id_user = id_user_p;
@@ -186,7 +207,14 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE sp_read_properties()
 BEGIN
-    SELECT * FROM Properties WHERE active = true;
+    SELECT p.id_property, p.internal_code, p.address, p.area_m2, p.price, p.active,
+           p.date_register, p.update_date, p.cover_url, p.id_state, p.id_user, p.id_property_type,
+           p.inactive_reason, p.inactive_date,
+           t.name_type, s.name_state
+    FROM Properties p
+    LEFT JOIN PropertyType t ON p.id_property_type = t.id_type
+    LEFT JOIN State s ON p.id_state = s.id_state
+    WHERE p.active = true;
 END $$
 DELIMITER ;
  
@@ -401,5 +429,79 @@ DELIMITER $$
 CREATE PROCEDURE sp_delete_property_image(IN id_image_p INT)
 BEGIN
     DELETE FROM PropertyImages WHERE id_image = id_image_p;
+END $$
+DELIMITER ;
+
+-- ---------------------------------------------------------------------
+-- METRICAS
+-- ---------------------------------------------------------------------
+DELIMITER $$
+CREATE PROCEDURE sp_count_active_properties()
+BEGIN
+    SELECT COUNT(*) AS total FROM Properties WHERE active = 1;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_get_total_inventory_value()
+BEGIN
+    SELECT IFNULL(SUM(price), 0) AS total_value FROM Properties WHERE active = 1;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_count_sold_properties()
+BEGIN
+    SELECT COUNT(*) AS total FROM Properties p 
+    JOIN State s ON p.id_state = s.id_state 
+    WHERE s.name_state = 'Vendido' AND p.active = 1;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_count_rented_properties()
+BEGIN
+    SELECT COUNT(*) AS total FROM Properties p 
+    JOIN State s ON p.id_state = s.id_state 
+    WHERE s.name_state = 'Alquilado' AND p.active = 1;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_get_sold_value()
+BEGIN
+    SELECT IFNULL(SUM(price), 0) AS total_value FROM Properties p 
+    JOIN State s ON p.id_state = s.id_state 
+    WHERE s.name_state = 'Vendido' AND p.active = 1;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_get_rented_value()
+BEGIN
+    SELECT IFNULL(SUM(price), 0) AS total_value FROM Properties p 
+    JOIN State s ON p.id_state = s.id_state 
+    WHERE s.name_state = 'Alquilado' AND p.active = 1;
+END $$
+DELIMITER ;
+
+-- ---------------------------------------------------------------------
+-- DESGLOSES
+-- ---------------------------------------------------------------------
+DELIMITER $$
+CREATE PROCEDURE sp_count_by_state()
+BEGIN
+    SELECT s.name_state, COUNT(p.id_property) AS count 
+    FROM Properties p JOIN State s ON p.id_state = s.id_state 
+    WHERE p.active = 1 GROUP BY s.name_state;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_count_by_type()
+BEGIN
+    SELECT t.name_type, COUNT(p.id_property) AS count 
+    FROM Properties p JOIN PropertyType t ON p.id_property_type = t.id_type 
+    WHERE p.active = 1 GROUP BY t.name_type;
 END $$
 DELIMITER ;
