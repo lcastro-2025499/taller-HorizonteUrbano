@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="rootPane" prefHeight="650.0" prefWidth="960.0" stylesheets="@../styles/DashboardStyles.css, @../styles/GlobalStyles.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.DashboardController">
+
+    <VBox fx:id="mainPanel" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+        
+        <!-- Header Compacto -->
+        <HBox fx:id="headerBox" alignment="CENTER_LEFT" spacing="15.0">
+            <ImageView fx:id="imgLogo" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                <image><Image url="@../resources/logoImage.png" /></image>
+            </ImageView>
+            <Label fx:id="lblTitle" styleClass="title-label" text="Horizonte Urbano" />
+            
+            <Region HBox.hgrow="ALWAYS" />
+            
+            <Button fx:id="btnManageUsers" onAction="#actionManageUsers" styleClass="btn-compact" text="Gestionar Personal">
+            <HBox.margin>
+               <Insets />
+            </HBox.margin></Button>
+            <Button fx:id="btnGoSearch" onAction="#goToSearch" styleClass="btn-compact" text="Buscar Propiedades">
+            <HBox.margin>
+               <Insets right="2.0" />
+            </HBox.margin></Button>
+            <Button onAction="#goToMainMenu" styleClass="btn-compact" text="Menú Principal">
+            <HBox.margin>
+               <Insets />
+            </HBox.margin></Button>
+            
+            <ImageView fx:id="imgProfile" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                <HBox.margin><Insets left="20.0" /></HBox.margin>
+            </ImageView>
+            <Label fx:id="lblUser" text="Usuario: Invitado">
+            <HBox.margin>
+               <Insets left="-30.0" />
+            </HBox.margin></Label>
+        </HBox>
+
+        <!-- Panel de Formulario -->
+        <VBox fx:id="formPanel" spacing="20.0" styleClass="glass-panel">
+            <Label fx:id="lblFormTitle" styleClass="title-label" text="Formulario para Nueva Propiedad" />
+
+            <HBox fx:id="formColumns" spacing="30.0">
+                <!-- Columna Izquierda -->
+                <VBox fx:id="colLeft" spacing="12.0" HBox.hgrow="ALWAYS">
+                    <Label text="Código Interno" />
+                    <TextField fx:id="txtCode" promptText="Ej: HU-030" />
+
+                    <Label text="Tipo de Inmueble" />
+                    <ComboBox fx:id="cmbType" promptText="Seleccionar tipo" />
+
+                    <Label text="Área (m²)" />
+                    <TextField fx:id="txtArea" promptText="Ej: 150.5" />
+                    
+                    <Label text="Foto de Portada" />
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Button fx:id="btnSelectImage" onAction="#actionSelectImage" styleClass="btn-compact" text="Seleccionar Imagen" />
+                        <Label fx:id="lblImagePath" style="-fx-text-fill: rgba(232, 220, 200, 0.6); -fx-font-size: 13px; -fx-font-style: italic;" text="Ningún archivo seleccionado" />
+                    </HBox>
+                </VBox>
+
+                <!-- Columna Derecha -->
+                <VBox fx:id="colRight" spacing="12.0" HBox.hgrow="ALWAYS">
+                    <Label text="Dirección Exacta" />
+                    <TextField fx:id="txtAddress" promptText="Ej: Zona 10, Edificio Torre" />
+
+                    <Label text="Estado Comercial" />
+                    <ComboBox fx:id="cmbStatus" promptText="Seleccionar estado" />
+
+                    <Label text="Precio de Oferta (Q)" />
+                    <TextField fx:id="txtPrice" promptText="Ej: 1500000.00" />
+                </VBox>
+            </HBox>
+
+            <VBox fx:id="descriptionSection" spacing="8.0">
+                <Label text="Descripción Breve / Observaciones" />
+                <TextArea fx:id="txtDescription" prefHeight="80.0" styleClass="text-area-custom" wrapText="true" />
+            </VBox>
+
+            <!-- Botones de Acción -->
+            <HBox fx:id="buttonsBox" alignment="CENTER_RIGHT" spacing="15.0">
+                <Button fx:id="btnClear" onAction="#actionClear" styleClass="btn-secondary" text="Limpiar Formulario" />
+                <Button fx:id="btnSave" onAction="#actionSaveProperty" styleClass="btn-primary" text="Guardar Propiedad" />
+            </HBox>
+        </VBox>
+
+        <!-- Footer Dinámico -->
+        <HBox fx:id="footerBox" alignment="CENTER_LEFT" spacing="10.0">
+            <Label fx:id="lblFooterStatus" text="Estado: Esperando ingreso de datos..." />
+            <Region HBox.hgrow="ALWAYS" />
+        </HBox>
+
+    </VBox>
+</AnchorPane>

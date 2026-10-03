@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="root" fx:id="rootPane" prefHeight="750.0" prefWidth="920.0" style="-fx-background-color: linear-gradient(to bottom right, #2a1813, #472820);" stylesheets="@../styles/ReportsStyles.css, @../styles/GlobalStyles.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.ReportsController">
+    
+    <!-- ScrollPane para contenido dinámico y adaptable -->
+    <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent;" vbarPolicy="AS_NEEDED" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        
+        <VBox spacing="25.0" style="-fx-padding: 25 25 25 25;" styleClass="track" stylesheets="@../styles/ReportsStyles.css">
+            
+            <!-- Header -->
+            <HBox alignment="CENTER_LEFT">
+                <Label styleClass="title-label" text="Dashboard Gerencial - Reportes" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="btnGoBack" onAction="#actionGoBack" styleClass="btn-secondary" text="Volver al Catálogo" />
+            </HBox>
+            
+            <!-- Grid de Tarjetas de Resumen (2x2) -->
+            <GridPane hgap="20.0" vgap="20.0">
+                <!-- Fila 1: Métricas Generales -->
+                <VBox spacing="10.0" styleClass="stat-card, stat-card-primary" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0">
+                    <Label styleClass="stat-label" text="Total Propiedades Activas" />
+                    <Label fx:id="lblTotalProperties" styleClass="stat-value" text="0" />
+                </VBox>
+                
+                <VBox spacing="10.0" styleClass="stat-card, stat-card-cream" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0">
+                    <Label styleClass="stat-label" text="Valor Total del Inventario" />
+                    <Label fx:id="lblTotalValue" styleClass="stat-value" text="Q 0.00" />
+                </VBox>
+
+                <!-- Fila 2: Métricas US4.1 (Vendidas y Arrendadas) -->
+                <VBox spacing="10.0" styleClass="stat-card, stat-card-success" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
+                    <Label styleClass="stat-label" text="Propiedades Vendidas" />
+                    <Label fx:id="lblSoldCount" styleClass="stat-value" text="0" />
+                    <Label fx:id="lblSoldValue" style="-fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 14px;" text="Q 0.00" />
+                </VBox>
+
+                <VBox spacing="10.0" styleClass="stat-card, stat-card-warning" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
+                    <Label styleClass="stat-label" text="Propiedades Arrendadas" />
+                    <Label fx:id="lblRentedCount" styleClass="stat-value" text="0" />
+                    <Label fx:id="lblRentedValue" style="-fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 14px;" text="Q 0.00" />
+                </VBox>
+                <columnConstraints>
+                    <ColumnConstraints />
+                    <ColumnConstraints />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints />
+                    <RowConstraints />
+                </rowConstraints>
+            </GridPane>
+            
+            <!-- Desglose por Estado Comercial -->
+            <VBox spacing="10.0" styleClass="glass-panel" VBox.vgrow="ALWAYS">
+                <Label styleClass="section-title" text="Desglose por Estado Comercial" />
+                <ListView fx:id="listStateStats" prefHeight="200.0" styleClass="stats-list" VBox.vgrow="ALWAYS" />
+            </VBox>
+            
+            <!-- Desglose por Tipo de Inmueble -->
+            <VBox spacing="10.0" styleClass="glass-panel" VBox.vgrow="ALWAYS">
+                <Label styleClass="section-title" text="Desglose por Tipo de Inmueble" />
+                <ListView fx:id="listTypeStats" prefHeight="200.0" styleClass="stats-list" VBox.vgrow="ALWAYS" />
+            </VBox>
+            
+        </VBox>
+    </ScrollPane>
+</AnchorPane>

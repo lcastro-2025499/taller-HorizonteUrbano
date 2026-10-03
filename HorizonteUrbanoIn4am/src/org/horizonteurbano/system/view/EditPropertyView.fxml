@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane fx:id="rootPane" prefHeight="550.0" prefWidth="800.0" stylesheets="@../styles/EditPropertyStyles.css, @../styles/GlobalStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.EditPropertyController">
+    
+    <VBox spacing="25.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="25.0">
+        
+        <!-- Título principal -->
+        <Label text="Editar Datos de la Propiedad" styleClass="title-label"/>
+        
+        <!-- Formulario encapsulado en Glass Panel -->
+        <VBox spacing="20.0" styleClass="glass-panel">
+            
+            <!-- Fila 1: Tipo y Estado -->
+            <HBox spacing="20.0">
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Tipo de Inmueble"/>
+                    <ComboBox fx:id="cmbType" promptText="Seleccionar tipo"/>
+                </VBox>
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Estado Comercial"/>
+                    <ComboBox fx:id="cmbStatus" promptText="Seleccionar estado"/>
+                </VBox>
+            </HBox>
+
+            <!-- Fila 2: Dirección (Ancho completo para evitar cortes) -->
+            <VBox spacing="5.0">
+                <Label text="Dirección Exacta"/>
+                <TextField fx:id="txtAddress" promptText="Ej: Zona 10, Edificio Torre Empresarial, Oficina 4B"/>
+            </VBox>
+
+            <!-- Fila 3: Área y Precio -->
+            <HBox spacing="20.0">
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Área (m²)"/>
+                    <TextField fx:id="txtArea" promptText="Ej: 150.5"/>
+                </VBox>
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Precio de Oferta (Q)"/>
+                    <TextField fx:id="txtPrice" promptText="Ej: 1500000.00"/>
+                </VBox>
+            </HBox>
+
+            <!-- Fila 4: Foto de Portada -->
+            <VBox spacing="5.0">
+                <Label text="Foto de Portada"/>
+                <HBox spacing="15.0" alignment="CENTER_LEFT">
+                    <Button fx:id="btnSelectImage" text="Seleccionar Imagen" onAction="#actionSelectImage" styleClass="btn-secondary"/>
+                    <Label fx:id="lblImagePath" text="Ningún archivo seleccionado" style="-fx-text-fill: rgba(232, 220, 200, 0.7); -fx-font-style: italic;"/>
+                </HBox>
+            </VBox>
+
+        </VBox>
+
+        <Region VBox.vgrow="ALWAYS"/>
+
+        <!-- Botones de Acción -->
+        <HBox alignment="CENTER_RIGHT" spacing="15.0">
+            <Button fx:id="btnCancel" text="Cancelar Edición" onAction="#actionCancel" styleClass="btn-secondary"/>
+            <Button fx:id="btnSave" text="Guardar Cambios" onAction="#actionUpdateProperty" styleClass="btn-secondary"/>
+        </HBox>
+        
+    </VBox>
+</AnchorPane>
