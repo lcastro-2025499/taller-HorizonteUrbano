@@ -7,7 +7,7 @@
     
     <VBox spacing="25.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="25.0">
         
-        <!-- Título principal (Igual que en ReportsView) -->
+        <!-- Título principal -->
         <Label text="Editar Datos de la Propiedad" styleClass="title-label"/>
         
         <!-- Formulario encapsulado en Glass Panel -->
@@ -56,7 +56,7 @@
 
         <Region VBox.vgrow="ALWAYS"/>
 
-        <!-- Botones de Acción (Alineados a la derecha, ambos en beige/crema) -->
+        <!-- Botones de Acción -->
         <HBox alignment="CENTER_RIGHT" spacing="15.0">
             <Button fx:id="btnCancel" text="Cancelar Edición" onAction="#actionCancel" styleClass="btn-secondary"/>
             <Button fx:id="btnSave" text="Guardar Cambios" onAction="#actionUpdateProperty" styleClass="btn-secondary"/>

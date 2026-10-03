@@ -186,7 +186,14 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE sp_read_properties()
 BEGIN
-    SELECT * FROM Properties WHERE active = true;
+    SELECT p.id_property, p.internal_code, p.address, p.area_m2, p.price, p.active,
+           p.date_register, p.update_date, p.cover_url, p.id_state, p.id_user, p.id_property_type,
+           p.inactive_reason, p.inactive_date,
+           t.name_type, s.name_state
+    FROM Properties p
+    LEFT JOIN PropertyType t ON p.id_property_type = t.id_type
+    LEFT JOIN State s ON p.id_state = s.id_state
+    WHERE p.active = true;
 END $$
 DELIMITER ;
  
@@ -407,3 +414,77 @@ DELIMITER ;
 ALTER TABLE Properties
     ADD COLUMN inactive_reason VARCHAR(150) NULL,
     ADD COLUMN inactive_date DATETIME NULL;
+
+-- ---------------------------------------------------------------------
+-- METRICAS
+-- ---------------------------------------------------------------------
+DELIMITER $$
+CREATE PROCEDURE sp_count_active_properties()
+BEGIN
+    SELECT COUNT(*) AS total FROM Properties WHERE active = 1;
+END $$
+DELIMITER $;
+
+DELIMITER $$
+CREATE PROCEDURE sp_get_total_inventory_value()
+BEGIN
+    SELECT IFNULL(SUM(price), 0) AS total_value FROM Properties WHERE active = 1;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_count_sold_properties()
+BEGIN
+    SELECT COUNT(*) AS total FROM Properties p 
+    JOIN State s ON p.id_state = s.id_state 
+    WHERE s.name_state = 'Vendido' AND p.active = 1;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_count_rented_properties()
+BEGIN
+    SELECT COUNT(*) AS total FROM Properties p 
+    JOIN State s ON p.id_state = s.id_state 
+    WHERE s.name_state = 'Alquilado' AND p.active = 1;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_get_sold_value()
+BEGIN
+    SELECT IFNULL(SUM(price), 0) AS total_value FROM Properties p 
+    JOIN State s ON p.id_state = s.id_state 
+    WHERE s.name_state = 'Vendido' AND p.active = 1;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_get_rented_value()
+BEGIN
+    SELECT IFNULL(SUM(price), 0) AS total_value FROM Properties p 
+    JOIN State s ON p.id_state = s.id_state 
+    WHERE s.name_state = 'Alquilado' AND p.active = 1;
+END $$
+DELIMITER ;
+
+-- ---------------------------------------------------------------------
+-- DESGLOSES
+-- ---------------------------------------------------------------------
+DELIMITER $$
+CREATE PROCEDURE sp_count_by_state()
+BEGIN
+    SELECT s.name_state, COUNT(p.id_property) AS count 
+    FROM Properties p JOIN State s ON p.id_state = s.id_state 
+    WHERE p.active = 1 GROUP BY s.name_state;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_count_by_type()
+BEGIN
+    SELECT t.name_type, COUNT(p.id_property) AS count 
+    FROM Properties p JOIN PropertyType t ON p.id_property_type = t.id_type 
+    WHERE p.active = 1 GROUP BY t.name_type;
+END $$
+DELIMITER ;

@@ -20,7 +20,7 @@
     -fx-font-family: "Segoe UI", Arial, sans-serif;
 }
 
-/* --- TARJETAS DE ESTADÍSTICAS (Esquinas redondeadas) --- */
+/* --- TARJETAS DE ESTADÍSTICAS --- */
 .stat-card {
     -fx-background-radius: 15px;
     -fx-border-radius: 15px;
@@ -34,10 +34,19 @@
     -fx-border-color: rgba(232, 220, 200, 0.3);
 }
 
-/* NUEVA: Tarjeta en tonos Beige/Crema */
 .stat-card-cream {
     -fx-background-color: linear-gradient(to bottom right, #e8dfce, #d7c3a2);
     -fx-border-color: rgba(71, 40, 32, 0.3);
+}
+
+.stat-card-success {
+    -fx-background-color: linear-gradient(to bottom right, #349626, #28781c);
+    -fx-border-color: rgba(52, 150, 38, 0.5);
+}
+
+.stat-card-warning {
+    -fx-background-color: linear-gradient(to bottom right, #b45309, #92400e);
+    -fx-border-color: rgba(180, 83, 9, 0.5);
 }
 
 .stat-label {
@@ -46,7 +55,6 @@
     -fx-font-family: "Segoe UI", Arial, sans-serif;
 }
 
-/* Sobrescribir color de texto para la tarjeta crema (contraste oscuro sobre claro) */
 .stat-card-cream .stat-label {
     -fx-text-fill: #472820;
 }
@@ -58,7 +66,6 @@
     -fx-font-family: "Segoe UI", Arial, sans-serif;
 }
 
-/* Sobrescribir color del valor para la tarjeta crema */
 .stat-card-cream .stat-value {
     -fx-text-fill: #2a1813;
 }
@@ -113,7 +120,6 @@
     -fx-background-color: rgba(52, 150, 38, 0.1);
 }
 
-/* Scrollbar del ListView */
 .stats-list .scroll-bar:vertical, .stats-list .scroll-bar:horizontal {
     -fx-background-color: transparent;
 }
@@ -136,4 +142,14 @@
 .label {
     -fx-text-fill: #E8DCC8;
     -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* --- SCROLLPANE TRANSPARENTE (Para que se vea el fondo degradado) --- */
+#scrollPane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+#scrollPane .viewport {
+    -fx-background-color: transparent;
 }
