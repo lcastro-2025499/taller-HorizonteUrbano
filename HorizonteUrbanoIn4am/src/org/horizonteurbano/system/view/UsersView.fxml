@@ -1,43 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.geometry.Insets?>
 
-<AnchorPane prefHeight="650.0" prefWidth="1000.0" stylesheets="@../styles/MainStyles.css, @../styles/GlobalStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.UserController">
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="rootPane" prefHeight="650.0" prefWidth="1000.0" stylesheets="@../styles/UsersStyles.css, @../styles/GlobalStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.UserController">
     <VBox spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
         
+        <!-- Header -->
         <HBox alignment="CENTER_LEFT">
-            <Label text="Gestión de Personal" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button text="Volver al Dashboard" onAction="#actionGoBack" styleClass="btn-secondary"/>
+            <Label styleClass="title-label" text="Gestión de Personal" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnGoBack" onAction="#actionGoBack" styleClass="btn-secondary" text="Volver al Dashboard" />
         </HBox>
 
         <HBox spacing="20.0" VBox.vgrow="ALWAYS">
-            <!-- Formulario de Registro -->
-            <VBox spacing="10.0" prefWidth="300.0" styleClass="glass-panel">
-                <Label text="Datos del Empleado" style="-fx-font-weight: bold;"/>
-                <TextField fx:id="txtName" promptText="Nombres"/>
-                <TextField fx:id="txtLastName" promptText="Apellidos"/>
-                <TextField fx:id="txtEmail" promptText="Correo Electrónico"/>
-                <TextField fx:id="txtPhone" promptText="Teléfono"/>
-                <PasswordField fx:id="pwdPassword" promptText="Contraseña de Acceso"/>
+            <!-- Formulario de Registro (Izquierda) -->
+            <VBox prefWidth="320.0" spacing="15.0" styleClass="glass-panel">
+                <Label style="-fx-font-weight: bold; -fx-font-size: 16px;" text="Datos del Empleado" />
+                <TextField fx:id="txtName" promptText="Nombres" />
+                <TextField fx:id="txtLastName" promptText="Apellidos" />
+                <TextField fx:id="txtEmail" promptText="Correo Electrónico" />
+                <TextField fx:id="txtPhone" promptText="Teléfono" />
+                <PasswordField fx:id="pwdPassword" promptText="Contraseña" />
                 
-                <ComboBox fx:id="cmbRole" promptText="Seleccionar Rol" prefWidth="300.0"/>
+                <ComboBox fx:id="cmbRole" promptText="Seleccionar Rol" />
                 
-                <Region VBox.vgrow="ALWAYS"/>
-                <Button text="Registrar Empleado" onAction="#createUser" prefWidth="300.0" styleClass="btn-primary"/>
-                <Button text="Desactivar Seleccionado" onAction="#deactivateUser" prefWidth="300.0" styleClass="btn-danger"/>
+                <Region VBox.vgrow="ALWAYS" />
+                <Button fx:id="btnRegister" onAction="#createUser" styleClass="btn-secondary" text="Registrar Empleado" />
+                <Button fx:id="btnDeactivate" onAction="#deactivateUser" styleClass="btn-secondary" text="Desactivar Empleado" />
             </VBox>
-            <CheckBox fx:id="chkShowInactive" text="Mostrar usuarios inactivos" onAction="#listUsers"/>
-            <!-- Tabla de Usuarios -->
-            <TableView fx:id="tblUsers" HBox.hgrow="ALWAYS">
-                <columns>
-                    <TableColumn fx:id="colId" text="ID Empleado" prefWidth="100"/>
-                    <TableColumn fx:id="colName" text="Nombres" prefWidth="180"/>
-                    <TableColumn fx:id="colEmail" text="Correo" prefWidth="200"/>
-                    <TableColumn fx:id="colRole" text="Rol Asignado" prefWidth="150"/>
-                </columns>
-            </TableView>
+            
+            <!-- Tabla de Usuarios (Derecha) -->
+            <VBox spacing="10.0" styleClass="glass-panel" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <CheckBox fx:id="chkShowInactive" onAction="#listUsers" text="Mostrar usuarios inactivos" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Button fx:id="btnRefresh" onAction="#listUsers" styleClass="btn-secondary" text="Actualizar Lista" />
+                </HBox>
+                <TableView fx:id="tblUsers" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colId" prefWidth="60" text="ID" />
+                        <TableColumn fx:id="colName" prefWidth="250" text="Nombres y Apellidos" />
+                        <TableColumn fx:id="colEmail" prefWidth="250" text="Correo" />
+                        <TableColumn fx:id="colRole" prefWidth="150" text="Rol" />
+                    </columns>
+                </TableView>
+            </VBox>
         </HBox>
     </VBox>
 </AnchorPane>

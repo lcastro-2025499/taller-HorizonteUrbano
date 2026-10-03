@@ -1,11 +1,3 @@
-/*
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
-*/
-/* 
-    Created on : Sep 23, 2026, 10:31:35 AM
-    Author     : informatica
-*/
 /* ============================================ */
 /* 1. FONDO RAÍZ (Degradado oscuro café)        */
 /* ============================================ */
@@ -205,6 +197,21 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-background-color: rgba(232, 220, 200, 0.6);
 }
 
+#btnGoSearch{
+    -fx-background-color: transparent;
+    -fx-text-fill: #E8DCC8;
+    -fx-border-color: rgba(232, 220, 200, 0.5);
+    -fx-font-weight: bold;
+    -fx-border-radius: 8;
+    -fx-border-width: 1.5;
+}
+
+#btnGoSearch:hover{
+    -fx-background-color: rgba(232, 220, 200, 0.15);
+    -fx-text-fill: white;
+    -fx-border-color: #E8DCC8;
+}
+
 /* Botón de búsqueda destacado (verde) */
 #btnSearch {
     -fx-background-color: rgba(52, 150, 38, 0.85);
@@ -263,28 +270,26 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-background-color: #E8DCC8;
 }
 
-#btnGoSearch{
-    -fx-background-color: transparent;
-    -fx-text-fill: #E8DCC8;
-    -fx-border-color: rgba(232, 220, 200, 0.5);
-    -fx-border-radius: 8;
-    -fx-border-width: 1.5;
-}
-
-#btnGoSearch:hover{
-     -fx-background-color: rgba(232, 220, 200, 0.15);
-    -fx-text-fill: white;
-    -fx-border-color: #E8DCC8;
-}
-#btnLogout{
-     -fx-background-color: rgba(232, 220, 200, 0.8);
+/* CORREGIDO: Botón Cerrar Sesión con el mismo diseño beige redondeado */
+#btnLogout {
+    -fx-background-color: rgba(232, 220, 200, 0.8);
     -fx-text-fill: #472820;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-padding: 8 18;
+    -fx-cursor: hand;
 }
 
-#btnLogout:hover{
-       -fx-background-color: #E8DCC8;
+#btnLogout:hover {
+    -fx-background-color: #E8DCC8;
+    -fx-effect: dropshadow(gaussian, rgba(232, 220, 200, 0.5), 10, 0, 0, 0);
 }
 
+#btnLogout:pressed {
+    -fx-background-color: rgba(232, 220, 200, 0.6);
+}
 
 /* ============================================ */
 /* 8. FOOTER                                    */
@@ -321,4 +326,3 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
 .image-view {
     -fx-background-color: rgba(255, 255, 255, 0.05);
 }
-

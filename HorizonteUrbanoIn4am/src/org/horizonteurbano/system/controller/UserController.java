@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -32,6 +33,17 @@ import org.horizonteurbano.system.utils.ViewFactory;
 
 public class UserController implements Initializable {
 
+    // --- Botones (Vinculados para evitar warnings y permitir manipulación futura) ---
+    @FXML
+    private Button btnGoBack;
+    @FXML
+    private Button btnRegister;
+    @FXML
+    private Button btnDeactivate;
+    @FXML
+    private Button btnRefresh;
+
+    // --- Formulario ---
     @FXML
     private CheckBox chkShowInactive;
     @FXML
@@ -47,6 +59,7 @@ public class UserController implements Initializable {
     @FXML
     private ComboBox<Role> cmbRole;
 
+    // --- Tabla ---
     @FXML
     private TableView<User> tblUsers;
     @FXML
@@ -128,16 +141,13 @@ public class UserController implements Initializable {
 
         try {
             User newUser = new User();
-
             newUser.setIdUser(UUID.randomUUID().toString());
-
             newUser.setName(txtName.getText());
             newUser.setLastName(txtLastName.getText());
             newUser.setEmail(txtEmail.getText());
             if (txtPhone != null) {
                 newUser.setPhone(txtPhone.getText());
             }
-
             newUser.setUserName(generateUserName(txtEmail.getText()));
             newUser.setActive(true);
             newUser.setRol(cmbRole.getSelectionModel().getSelectedItem());
@@ -198,32 +208,22 @@ public class UserController implements Initializable {
     }
 
     private void clearFields() {
-        if (txtName != null) {
-            txtName.clear();
-        }
-        if (txtLastName != null) {
-            txtLastName.clear();
-        }
-        if (txtEmail != null) {
-            txtEmail.clear();
-        }
-        if (txtPhone != null) {
-            txtPhone.clear();
-        }
-        if (pwdPassword != null) {
-            pwdPassword.clear();
-        }
-        if (cmbRole != null) {
-            cmbRole.getSelectionModel().clearSelection();
-        }
+        if (txtName != null) txtName.clear();
+        if (txtLastName != null) txtLastName.clear();
+        if (txtEmail != null) txtEmail.clear();
+        if (txtPhone != null) txtPhone.clear();
+        if (pwdPassword != null) pwdPassword.clear();
+        if (cmbRole != null) cmbRole.getSelectionModel().clearSelection();
     }
 
     @FXML
     public void updateUser(ActionEvent event) {
+        // Pendiente de implementación
     }
 
     @FXML
     public void updateProfile(ActionEvent event) {
+        // Pendiente de implementación
     }
 
     @FXML

@@ -17,7 +17,7 @@
 
     <!-- BARRA SUPERIOR (HEADER) -->
     <top>
-        <HBox fx:id="headerBox" alignment="CENTER_LEFT" prefWidth="915.0" spacing="20.0">
+        <HBox fx:id="headerBox" alignment="CENTER_LEFT" prefWidth="900.0" spacing="20.0">
             <padding>
                 <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
             </padding>
@@ -30,10 +30,10 @@
             
             <Region HBox.hgrow="ALWAYS" />
             
-            <Button fx:id="btnGoSearch" mnemonicParsing="false" onAction="#actionGoToSearch" text="Buscar Propiedades" />
-            <Button fx:id="btnLogout" mnemonicParsing="false" onAction="#actionLogout" text="Cerrar Sesión" />
-            <Button fx:id="btnLogin" mnemonicParsing="false" onAction="#actionLogin" text="Iniciar Sesión" />
-            <Button fx:id="btnRegister" mnemonicParsing="false" onAction="#actionRegister" text="Registrarse" />
+            <Button fx:id="btnGoSearch" mnemonicParsing="false" onAction="#actionGoToSearch" prefHeight="34.0" prefWidth="123.0" text="Buscar Propiedades" />
+            <Button fx:id="btnLogout" mnemonicParsing="false" onAction="#actionLogout" prefHeight="34.0" prefWidth="123.0" text="Cerrar Sesión" />
+            <Button fx:id="btnLogin" mnemonicParsing="false" onAction="#actionLogin" prefHeight="34.0" prefWidth="123.0" text="Iniciar Sesión" />
+            <Button fx:id="btnRegister" mnemonicParsing="false" onAction="#actionRegister" prefHeight="34.0" prefWidth="123.0" text="Registrarse" />
         </HBox>
     </top>
 

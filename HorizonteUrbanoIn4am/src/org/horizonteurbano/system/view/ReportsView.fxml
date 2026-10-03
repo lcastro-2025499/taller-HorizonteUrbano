@@ -1,39 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.geometry.Insets?>
 
-<AnchorPane fx:id="rootPane" prefHeight="540.0" prefWidth="920.0" stylesheets="@../styles/MainStyles.css, @../styles/GlobalStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.ReportsController">
+<AnchorPane fx:id="rootPane" prefHeight="540.0" prefWidth="920.0" stylesheets="@../styles/ReportsStyles.css, @../styles/GlobalStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.horizonteurbano.system.controller.ReportsController">
     <VBox spacing="25.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="25.0">
         
+        <!-- Header -->
         <HBox alignment="CENTER_LEFT">
-            <Label text="Dashboard Gerencial - Reportes" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+            <Label text="Dashboard Gerencial - Reportes" styleClass="title-label"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="Volver al Catálogo" onAction="#actionGoBack" styleClass="btn-secondary"/>
+            <Button fx:id="btnGoBack" text="Volver al Catálogo" onAction="#actionGoBack" styleClass="btn-secondary"/>
         </HBox>
         
+        <!-- Tarjetas de Resumen -->
         <HBox spacing="20.0">
             <!-- Tarjeta 1: Conteo Total -->
-            <VBox spacing="10.0" style="-fx-background-color: #472820; -fx-padding: 20; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
-                <Label text="Total Propiedades Activas" style="-fx-text-fill: white; -fx-font-size: 16px;"/>
-                <Label fx:id="lblTotalProperties" text="0" style="-fx-text-fill: white; -fx-font-size: 36px; -fx-font-weight: bold;"/>
+            <VBox spacing="10.0" styleClass="stat-card, stat-card-primary" HBox.hgrow="ALWAYS">
+                <Label text="Total Propiedades Activas" styleClass="stat-label"/>
+                <Label fx:id="lblTotalProperties" text="0" styleClass="stat-value"/>
             </VBox>
             
-            <!-- Tarjeta 2: Valor Monetario -->
-            <VBox spacing="10.0" style="-fx-background-color: #349626; -fx-padding: 20; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
-                <Label text="Valor Total del Inventario" style="-fx-text-fill: white; -fx-font-size: 16px;"/>
-                <Label fx:id="lblTotalValue" text="Q 0.00" style="-fx-text-fill: white; -fx-font-size: 36px; -fx-font-weight: bold;"/>
+            <!-- Tarjeta 2: Valor Monetario (AHORA BEIGE/CREMA) -->
+            <VBox spacing="10.0" styleClass="stat-card, stat-card-cream" HBox.hgrow="ALWAYS">
+                <Label text="Valor Total del Inventario" styleClass="stat-label"/>
+                <Label fx:id="lblTotalValue" text="Q 0.00" styleClass="stat-value"/>
             </VBox>
         </HBox>
         
-        <VBox spacing="10.0" VBox.vgrow="ALWAYS">
-            <Label text="Desglose por Estado Comercial" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-            <ListView fx:id="listStateStats" prefHeight="200.0" VBox.vgrow="ALWAYS"/>
+        <!-- Desglose por Estado Comercial -->
+        <VBox spacing="10.0" VBox.vgrow="ALWAYS" styleClass="glass-panel">
+            <Label text="Desglose por Estado Comercial" styleClass="section-title"/>
+            <ListView fx:id="listStateStats" VBox.vgrow="ALWAYS" styleClass="stats-list"/>
         </VBox>
         
-        <VBox spacing="10.0" VBox.vgrow="ALWAYS">
-            <Label text="Desglose por Tipo de Inmueble" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-            <ListView fx:id="listTypeStats" prefHeight="200.0" VBox.vgrow="ALWAYS"/>
+        <!-- Desglose por Tipo de Inmueble -->
+        <VBox spacing="10.0" VBox.vgrow="ALWAYS" styleClass="glass-panel">
+            <Label text="Desglose por Tipo de Inmueble" styleClass="section-title"/>
+            <ListView fx:id="listTypeStats" VBox.vgrow="ALWAYS" styleClass="stats-list"/>
         </VBox>
     </VBox>
 </AnchorPane>
